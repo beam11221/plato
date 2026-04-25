@@ -134,7 +134,24 @@ class FedAsyncAggregationStrategy(AggregationStrategy):
         if not updates:
             return baseline_weights
 
+        pool = [
+            (getattr(u, "client_id", "?"), getattr(u, "staleness", 0))
+            for u in updates
+        ]
+        logging.info(
+            "FedAsync: %d client(s) in aggregation pool: %s",
+            len(pool),
+            ", ".join(f"#{cid}(staleness={s})" for cid, s in pool),
+        )
+
+        selected_client_id = getattr(updates[0], "client_id", "?")
         client_staleness = getattr(updates[0], "staleness", 0)
+        logging.info(
+            "FedAsync: Selected client #%s to aggregate (staleness=%d rounds); discarding %d other update(s).",
+            selected_client_id,
+            client_staleness,
+            len(updates) - 1,
+        )
         mixing = self.mixing_hyperparam
 
         if self.adaptive_mixing:

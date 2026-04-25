@@ -148,12 +148,14 @@ class CustomCollateFnDataLoaderStrategy(DataLoaderStrategy):
         num_workers: int = 0,
         pin_memory: bool | None = False,
         drop_last: bool = False,
+        persistent_workers: bool = False,
     ):
         """Initialize custom collate data loader parameters."""
         self.collate_fn = collate_fn
         self.num_workers = num_workers
         self.pin_memory = pin_memory
         self.drop_last = drop_last
+        self.persistent_workers = persistent_workers
 
     def create_train_loader(
         self, trainset, sampler, batch_size: int, context: TrainingContext
@@ -183,6 +185,7 @@ class CustomCollateFnDataLoaderStrategy(DataLoaderStrategy):
             pin_memory=_resolve_pin_memory(self.pin_memory, context),
             drop_last=self.drop_last,
             collate_fn=self.collate_fn,
+            persistent_workers=self.persistent_workers if self.num_workers > 0 else False,
         )
 
 

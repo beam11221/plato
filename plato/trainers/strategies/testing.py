@@ -66,6 +66,8 @@ class DefaultTestingStrategy(TestingStrategy):
 
         correct = 0
         total = 0
+        total_loss = 0.0
+        loss_fn = torch.nn.CrossEntropyLoss()
 
         with torch.no_grad():
             for examples, labels in test_loader:
@@ -79,21 +81,25 @@ class DefaultTestingStrategy(TestingStrategy):
 
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+                total_loss += loss_fn(outputs, labels).item() * labels.size(0)
 
         accuracy = correct / total if total > 0 else 0
+        context.state["valid_loss"] = total_loss / total if total > 0 else None
 
         # Log results
         if context.client_id == 0:
             logging.info(
-                "[Server #%d] Test accuracy: %.2f%%",
+                "[Server #%d] Test accuracy: %.2f%% | validation loss: %.4f",
                 os.getpid(),
                 100 * accuracy,
+                context.state["valid_loss"]
             )
         else:
             logging.info(
-                "[Client #%d] Test accuracy: %.2f%%",
+                "[Client #%d] Test accuracy: %.2f%% | validation loss: %.4f",
                 context.client_id,
                 100 * accuracy,
+                context.state["valid_loss"]
             )
 
         return accuracy

@@ -487,6 +487,7 @@ class Server:
                     client_id,
                     port,
                 )
+                os.environ["PLATO_CLIENT_ID"] = str(client_id)
                 proc = mp.Process(
                     target=run,
                     args=(
@@ -500,8 +501,10 @@ class Server:
                     ),
                 )
                 proc.start()
+                del os.environ["PLATO_CLIENT_ID"]
             else:
                 logging.info("Starting client #%d's process.", client_id)
+                os.environ["PLATO_CLIENT_ID"] = str(client_id)
                 proc = mp.Process(
                     target=run,
                     args=(
@@ -515,6 +518,7 @@ class Server:
                     ),
                 )
                 proc.start()
+                del os.environ["PLATO_CLIENT_ID"]
 
     async def _close_connections(self):
         """Closes all socket.io connections after training completes."""
@@ -844,12 +848,12 @@ class Server:
                 await self._process_reports()
                 await self.wrap_up()
                 await self._select_clients()
-            else:
-                logging.info(
-                    "[%s] No sufficient number of client reports have been received. "
-                    "Nothing to process.",
-                    self,
-                )
+            # else:
+                # logging.info(
+                #     "[%s] No sufficient number of client reports have been received. "
+                #     "Nothing to process.",
+                #     self,
+                # )
 
     async def _send_in_chunks(self, data, sid, client_id) -> None:
         """Sends a bytes object in fixed-sized chunks to the client."""

@@ -336,6 +336,25 @@ class Config:
 
             os.makedirs(Config.params["base_path"], exist_ok=True)
 
+            if "PLATO_CLIENT_ID" in os.environ:
+                log_file = os.path.join(
+                    Config.params["base_path"],
+                    f"client_{os.environ['PLATO_CLIENT_ID']}.log",
+                )
+            else:
+                log_file = os.path.join(
+                    Config.params["base_path"],
+                    f"server_{Config.params['run_id']}.log",
+                )
+            file_handler = logging.FileHandler(log_file)
+            file_handler.setLevel(numeric_level)
+            file_handler.setFormatter(
+                logging.Formatter(
+                    "[%(levelname)s][%(asctime)s]: %(message)s", datefmt="%H:%M:%S"
+                )
+            )
+            root_logger.addHandler(file_handler)
+
             # Directory of dataset
             if hasattr(Config().data, "data_path"):
                 Config.params["data_path"] = os.path.join(

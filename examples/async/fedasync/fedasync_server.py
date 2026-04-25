@@ -11,9 +11,27 @@ https://opt-ml.org/papers/2020/paper_28.pdf
 
 import logging
 
+# --- FedAsync example fixes (see companion modules for details) ------------
+# Two new sibling modules drive the bug fixes and the batched-update
+# workaround. They are imported here so this server can wire them in.
+#   * fedasync_selection: RandomSelectionStrategy subclass that filters out
+#       clients still in `self.training_clients`. Fixes the KeyError in
+#       process_client_info (plato/servers/base.py:1025) caused by the same
+#       client being re-selected while its prior round's report was still in
+#       flight.
+#   * fedasync_aggregation: FedAsyncAggregationStrategy subclass that walks
+#       the full `updates` list in arrival order instead of keeping only
+#       updates[0] and discarding the rest. See the "Issue 2 - batched
+#       updates" notes for semantics.
+import fedasync_aggregation
+import fedasync_selection
+
 from plato.config import Config
 from plato.servers import fedavg
-from plato.servers.strategies import FedAsyncAggregationStrategy
+
+# Original import kept for reference; we now instantiate the subclass from
+# fedasync_aggregation instead:
+# from plato.servers.strategies import FedAsyncAggregationStrategy
 
 
 class Server(fedavg.Server):
@@ -27,8 +45,20 @@ class Server(fedavg.Server):
         trainer=None,
         callbacks=None,
     ):
-        aggregation_strategy = FedAsyncAggregationStrategy()
+        # Previous wiring used the stock FedAsyncAggregationStrategy, which
+        # keeps only `updates[0]` and logs "discarding N other update(s)".
+        # That discarded most client work whenever several reports arrived in
+        # the same periodic tick.
+        # aggregation_strategy = FedAsyncAggregationStrategy()
+        aggregation_strategy = fedasync_aggregation.SequentialFedAsyncAggregationStrategy()
 
+        # New: custom selection strategy skips clients still training. Without
+        # this, in `simulate_wall_time=false` mode the base.py filter at
+        # base.py:557-595 is bypassed and busy clients can be re-selected.
+        client_selection_strategy = fedasync_selection.FedAsyncClientSelectionStrategy()
+
+        logging.info("FedAsync Server: Initialized with FedAsync aggregation strategy.")
+        logging.info(f"model: {model}, datasource: {datasource}, algorithm: {algorithm}, trainer: {trainer}, callbacks: {callbacks}")
         super().__init__(
             model=model,
             datasource=datasource,
@@ -36,7 +66,10 @@ class Server(fedavg.Server):
             trainer=trainer,
             callbacks=callbacks,
             aggregation_strategy=aggregation_strategy,
+            # Newly passed through so base.py uses our filtering selection.
+            client_selection_strategy=client_selection_strategy,
         )
+        logging.info(f"[After super] model: {self.model}, datasource: {self.datasource}, algorithm: {self.algorithm}, trainer: {self.trainer}, callbacks: {self.callbacks}")
 
     def configure(self) -> None:
         """Configure the mixing hyperparameter for the server, as well as
@@ -69,3 +102,56 @@ class Server(fedavg.Server):
                     "FedAsync: Invalid mixing hyperparameter. "
                     "The hyperparameter needs to be between 0 and 1 (exclusive)."
                 )
+
+    async def _process_reports(self):
+        """Aggregate weights every round, but only run the expensive server-side
+        model test every `server.eval_interval` rounds (default: every round)."""
+        eval_interval = getattr(Config().server, "eval_interval", 1)
+        if self.current_round % eval_interval != 0:
+            logging.info(
+                "[FedAsync] Round %d: skipping evaluation (next at round %d).",
+                self.current_round,
+                self.current_round + (eval_interval - self.current_round % eval_interval),
+            )
+            trainer = self.require_trainer()
+            _orig_test = trainer.test
+            # Return last known accuracy so logging/callbacks still work
+            trainer.test = lambda *a, **kw: self.accuracy
+            try:
+                await super()._process_reports()
+            finally:
+                trainer.test = _orig_test
+        else:
+            await super()._process_reports()
+
+    async def _select_clients(self, for_next_batch=False):
+        """Guard against process-slot exhaustion before delegating to super.
+
+        Context - Bug B in the reviewed log: when `clients_per_round` exceeds
+        the number of currently-free client processes, base.py's inner loop
+        (plato/servers/base.py:665-674) falls off the end with
+        `client_process_id` unassigned and raises a bare `UnboundLocalError`.
+
+        With the filtering selection strategy above, `selected_clients` should
+        already be capped at the number of free clients, so this branch is
+        defensive; if it ever fires we surface an actionable message instead
+        of the opaque UnboundLocalError.
+        """
+        if not for_next_batch and not Config().is_central_server():
+            busy_sids = set(self.training_sids)
+            free_processes = [
+                pid
+                for pid in self.clients
+                if self.clients[pid]["sid"] not in busy_sids
+            ]
+            requested = len(self.selected_clients) if self.selected_clients else 0
+            if requested > len(free_processes):
+                raise RuntimeError(
+                    f"[FedAsync] Cannot select {requested} clients - only "
+                    f"{len(free_processes)} client process(es) are free. "
+                    f"Increase `trainer.max_concurrency`, reduce "
+                    f"`clients.per_round`, or let the previous round finish "
+                    f"before the next periodic_task triggers."
+                )
+
+        await super()._select_clients(for_next_batch=for_next_batch)

@@ -184,6 +184,7 @@ class ComposableTrainer(base.Trainer):
             EVALUATION_RESULTS_KEY,
             EVALUATION_PRIMARY_KEY,
             "nanochat_core_results",
+            "valid_loss",
         )
 
     def _test_accuracy_filename(self, run_id: str) -> str:
@@ -719,66 +720,94 @@ class ComposableTrainer(base.Trainer):
         # Set the start time of training in absolute time
         self.training_start_time = time.time()
 
+        # --- ORIGINAL subprocess-based max_concurrency path (REPLACED) ---
+        # The original code spawned a fresh mp.Process(spawn) subprocess whenever
+        # max_concurrency was set. The intent was correct: the subprocess loaded
+        # the model on GPU, trained, saved weights to disk, then terminated —
+        # automatically freeing GPU memory. The parent kept the model on CPU and
+        # reloaded trained weights after join(). This gave GPU isolation when the
+        # server dispatches N clients simultaneously (base.py:616-648 batches
+        # clients at max_concurrency per GPU).
+        #
+        # The problem: mp.set_start_method("spawn", force=True) cold-started a
+        # fresh Python interpreter for every training call (~2.5 min overhead:
+        # Python init + CUDA init + 30 MB model deserialization). With
+        # num_workers > 0, the subprocess tried to spawn DataLoader workers —
+        # nested spawning that deadlocked or exhausted OS process limits.
+        # GPU utilization was 0% throughout.
+        #
+        # REPLACEMENT: train directly in-process, then explicitly offload the
+        # model back to CPU. Same GPU isolation (N clients × per_client_memory
+        # peak, freed after each batch), zero subprocess overhead.
+        #
+        # if "max_concurrency" in config:
+        #     tic = time.perf_counter()
+        #     if mp.get_start_method(allow_none=True) != "spawn":
+        #         mp.set_start_method("spawn", force=True)
+        #     if hasattr(torch.multiprocessing, "set_sharing_strategy"):
+        #         try:
+        #             torch.multiprocessing.set_sharing_strategy("file_system")
+        #         except (RuntimeError, ValueError):
+        #             logging.debug(
+        #                 "Unable to set torch sharing strategy to file_system."
+        #             )
+        #     train_proc = mp.Process(
+        #         target=self.train_process,
+        #         args=(config, trainset, sampler),
+        #         kwargs=kwargs,
+        #     )
+        #     train_proc.start()
+        #     train_proc.join()
+        #     if train_proc.exitcode not in (0, None):
+        #         raise ValueError(
+        #             f"Training worker for client {self.client_id} exited with code {train_proc.exitcode}."
+        #         )
+        #     model_name = Config().trainer.model_name
+        #     filename = (
+        #         f"{model_name}_{self.client_id}_{Config().params['run_id']}.safetensors"
+        #     )
+        #     try:
+        #         self.load_model(filename)
+        #     except OSError as error:
+        #         logging.error(
+        #             "[Client #%d] Failed to load model from %s: %s",
+        #             self.client_id, filename, error,
+        #         )
+        #         raise ValueError(
+        #             f"Training on client {self.client_id} failed."
+        #         ) from error
+        #     except Exception as error:
+        #         logging.error(
+        #             "[Client #%d] Unexpected error loading model: %s",
+        #             self.client_id, error,
+        #         )
+        #         raise ValueError(
+        #             f"Training on client {self.client_id} failed."
+        #         ) from error
+        #     toc = time.perf_counter()
+        #     self.pause_training()
+        # else:
+        #     tic = time.perf_counter()
+        #     self.train_process(config, trainset, sampler, **kwargs)
+        #     toc = time.perf_counter()
+        # --- END original path ---
+
+        tic = time.perf_counter()
+        self.train_process(config, trainset, sampler, **kwargs)
+        toc = time.perf_counter()
+
         if "max_concurrency" in config:
-            tic = time.perf_counter()
-
-            if mp.get_start_method(allow_none=True) != "spawn":
-                mp.set_start_method("spawn", force=True)
-
-            if hasattr(torch.multiprocessing, "set_sharing_strategy"):
-                try:
-                    torch.multiprocessing.set_sharing_strategy("file_system")
-                except (RuntimeError, ValueError):
-                    logging.debug(
-                        "Unable to set torch sharing strategy to file_system."
-                    )
-
-            train_proc = mp.Process(
-                target=self.train_process,
-                args=(config, trainset, sampler),
-                kwargs=kwargs,
-            )
-            train_proc.start()
-            train_proc.join()
-
-            if train_proc.exitcode not in (0, None):
-                raise ValueError(
-                    f"Training worker for client {self.client_id} exited with code {train_proc.exitcode}."
-                )
-
-            model_name = Config().trainer.model_name
-            filename = (
-                f"{model_name}_{self.client_id}_{Config().params['run_id']}.safetensors"
-            )
-
-            try:
-                self.load_model(filename)
-            except OSError as error:
-                logging.error(
-                    "[Client #%d] Failed to load model from %s: %s",
-                    self.client_id,
-                    filename,
-                    error,
-                )
-                raise ValueError(
-                    f"Training on client {self.client_id} failed."
-                ) from error
-            except Exception as error:
-                logging.error(
-                    "[Client #%d] Unexpected error loading model: %s",
-                    self.client_id,
-                    error,
-                )
-                raise ValueError(
-                    f"Training on client {self.client_id} failed."
-                ) from error
-
-            toc = time.perf_counter()
+            # Offload model back to CPU after training so the GPU slot is free
+            # for the next batch of clients. The server (base.py:616-648)
+            # dispatches exactly max_concurrency clients at a time, so peak GPU
+            # usage is max_concurrency × per_client_memory (e.g. 1 × ~2 GB for
+            # YOLOP on a 20 GB card). Offloading here ensures that memory is
+            # actually released before the next batch starts.
+            model = self._require_model()
+            model.cpu()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             self.pause_training()
-        else:
-            tic = time.perf_counter()
-            self.train_process(config, trainset, sampler, **kwargs)
-            toc = time.perf_counter()
 
         training_time = toc - tic
         return training_time
@@ -806,7 +835,11 @@ class ComposableTrainer(base.Trainer):
         config = Config().trainer._asdict()
         config["run_id"] = Config().params["run_id"]
 
-        if "max_concurrency" in config:
+        # client_id == 0 means this is server-side global model testing.
+        # The server runs in the main process where the model already lives on GPU.
+        # Spawning a subprocess would require model.cpu() (CUDA tensors aren't
+        # picklable), losing GPU acceleration. Skip subprocess for server testing.
+        if "max_concurrency" in config and self.client_id != 0:
             model = self._require_model()
             model.cpu()
 
@@ -842,6 +875,8 @@ class ComposableTrainer(base.Trainer):
             self.pause_training()
             return accuracy
         else:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             return self.test_model(config, testset, sampler, **kwargs)
 
     def test_model(self, config, testset, sampler=None, **kwargs):

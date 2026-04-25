@@ -323,6 +323,15 @@ class Server(base.Server):
             "comm_overhead": self.comm_overhead,
         }
 
+        # Add valid_loss from the global model tested at the server
+        trainer = getattr(self, "trainer", None)
+        if trainer is not None and hasattr(trainer, "context"):
+            logging.info("\n\n\n ============================= DEBUG =================")  # Debugging line
+            logging.info("Trainer context state: %s", trainer.context.state)  # Debugging line
+            logging.info("Valid loss in context state: %s", trainer.context.state.get("valid_loss"))  # Debugging line
+            logging.info(" ============================= ============= =================\n\n\n")  # Debugging line
+            logged["valid_loss"] = trainer.context.state.get("valid_loss")
+
         # Add train_loss if available from client reports
         if self.updates and hasattr(self.updates[0].report, "train_loss"):
             # Compute weighted average of train_loss across clients
