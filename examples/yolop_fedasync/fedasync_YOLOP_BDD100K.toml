@@ -1,0 +1,121 @@
+[general]
+base_path = "./runs/yolop_fedasync"
+
+[clients]
+type = "simple"
+total_clients = 15
+per_round = 10
+
+# Server-side eval is the source of truth; clients skip local test.
+do_test = false
+
+# Async simulation: model client speed heterogeneity for staleness.
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "uniform"
+low = 0
+high = 20
+
+[server]
+address = "127.0.0.1"
+port = 8000
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync hyperparameters.
+staleness_bound = 11
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.9
+adaptive_mixing = true
+# YOLOP eval is expensive (NMS + per-image matching); only test occasionally.
+eval_interval = 1
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[data]
+# datasource is bypassed by `client.custom_datasource = DataSource`,
+# but Plato still requires the field.
+datasource = "BDD100K"
+
+# Plato's IID sampler partitions indices uniformly across clients.
+# It only uses len(trainset); our targets() stub is enough.
+sampler = "iid"
+
+# Per-client training subset size. Choose so partition_size * total_clients
+# is at most len(BDD100K trainset) (~70k). 1000 * 70 = 70000.
+partition_size = 100
+
+random_seed = 84
+
+[trainer]
+type = "yolop"
+model_name = "yolop"
+
+# Number of FL rounds.
+rounds = 5
+
+# Local epochs per round (YOLOP fed_buff convention: 1).
+epochs = 1
+batch_size = 16
+
+# SGD per the YOLOP paper's training recipe.
+optimizer = "SGD"
+
+# Number of DataLoader workers.
+# 0 = synchronous loading (no worker processes, no spawn overhead).
+# For production (partition_size ~15k) set to 4 and enable persistent_workers.
+num_workers = 0
+
+# Keep worker processes alive between FL rounds so the spawn startup cost
+# is paid once per client lifetime rather than once per round.
+# Only effective when num_workers > 0.
+persistent_workers = false
+
+# Limit how many clients the server dispatches for training simultaneously.
+# The server (base.py:616-648) uses this to batch selected clients, ensuring
+# only max_concurrency clients run on GPU at once. Without this, all
+# per_round=10 clients train concurrently and OOM the GPU.
+max_concurrency = 1
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.dataset]
+# The single full-dataset root. Per-client subsets come from the IID sampler.
+# Each *root entry must contain {train,val} subdirectories matching
+# train_set/test_set below.
+dataroot = "/workspace/YOLOP/dataset/70_clients/client_0/images"
+labelroot = "/workspace/YOLOP/dataset/70_clients/client_0/det_annotations"
+maskroot = "/workspace/YOLOP/dataset/70_clients/client_0/da_seg_annotations"
+laneroot = "/workspace/YOLOP/dataset/70_clients/client_0/ll_seg_annotations"
+train_set = "train"
+test_set = "val"
+img_size = [640, 640]
+org_img_size = [720, 1280]
+
+[parameters.loss]
+# Order matches MultiHeadLoss.lambdas: [cls, obj, iou, da_seg, ll_seg, ll_iou]
+multi_head_lambda = [0.5, 1.0, 0.05, 0.2, 0.2, 0.2]
+cls_pos_weight = 1.0
+obj_pos_weight = 1.0
+seg_pos_weight = 1.0
+fl_gamma = 0.0
+
+[parameters.optimizer]
+lr = 0.001
+momentum = 0.937
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
