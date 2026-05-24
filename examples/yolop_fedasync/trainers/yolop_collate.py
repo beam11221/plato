@@ -35,6 +35,6 @@ def yolop_collate_fn(batch):
     in the variable-length detection-label batching (it prepends the
     image index to column 0 of each row).
     """
-    imgs, labels, _paths, shapes = AutoDriveDataset.collate_fn(batch)
+    imgs, labels, paths, shapes = AutoDriveDataset.collate_fn(batch)
     det, da_seg, ll_seg = labels
-    return imgs, MultiTaskLabels(det, da_seg, ll_seg, shapes=shapes)
+    return imgs, MultiTaskLabels(det, da_seg, ll_seg, shapes=shapes, paths=paths)

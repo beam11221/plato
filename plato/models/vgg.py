@@ -12,13 +12,15 @@ class Model(nn.Module):
     class ConvModule(nn.Module):
         """A single convolutional module in a VGG network."""
 
-        def __init__(self, in_filters, out_filters):
+        def __init__(self, in_filters, out_filters, num_groups=32):
             super().__init__()
             self.conv = nn.Conv2d(in_filters, out_filters, kernel_size=3, padding=1)
-            self.bn = nn.BatchNorm2d(out_filters)
+            # GroupNorm is used instead of BatchNorm2d for stability in FL Non-IID settings,
+            # where small per-client batch sizes make batch statistics unreliable.
+            self.gn = nn.GroupNorm(num_groups, out_filters)
 
         def forward(self, x):
-            return F.relu(self.bn(self.conv(x)))
+            return F.relu(self.gn(self.conv(x)))
 
     def __init__(self, plan, outputs=10):
         super().__init__()
@@ -110,4 +112,7 @@ class Model(nn.Module):
                 512,
             ]
 
-        return Model(plan, outputs)
+        model = Model(plan, outputs)
+        print(f"\n[VGG] Model architecture ({model_name}):")
+        print(model)
+        return model

@@ -1,10 +1,11 @@
 [general]
-base_path = "./runs/yolop_fedasync"
+base_path = "./runs/yolop_fedasync_full_bdd100k_random_quick_test_ver2"
 
 [clients]
 type = "simple"
 total_clients = 15
 per_round = 10
+# per_round = 1
 
 # Server-side eval is the source of truth; clients skip local test.
 do_test = false
@@ -31,10 +32,11 @@ ping_timeout = 3600
 # FedAsync hyperparameters.
 staleness_bound = 11
 minimum_clients_aggregated = 1
-mixing_hyperparameter = 0.9
+mixing_hyperparameter = 0.3
 adaptive_mixing = true
-# YOLOP eval is expensive (NMS + per-image matching); only test occasionally.
-eval_interval = 1
+# Set to 1 temporarily to test evaluation-round memory behaviour; restore to
+# 30 (or higher) for production runs where eval dominates wall-clock time.
+eval_interval = 15
 
 [server.staleness_weighting_function]
 type = "polynomial"
@@ -50,8 +52,9 @@ datasource = "BDD100K"
 sampler = "iid"
 
 # Per-client training subset size. Choose so partition_size * total_clients
-# is at most len(BDD100K trainset) (~70k). 1000 * 70 = 70000.
-partition_size = 100
+# is at most len(BDD100K trainset) (~70k). 4666 * 15 = 69990.
+# partition_size = 4666
+partition_size = 1000
 
 random_seed = 84
 
@@ -60,24 +63,42 @@ type = "yolop"
 model_name = "yolop"
 
 # Number of FL rounds.
-rounds = 5
+rounds = 500
 
 # Local epochs per round (YOLOP fed_buff convention: 1).
 epochs = 1
 batch_size = 16
 
-# SGD per the YOLOP paper's training recipe.
+# SGD: more stable than Adam in FL (no stale momentum states after aggregation).
 optimizer = "SGD"
 
 # Number of DataLoader workers.
-# 0 = synchronous loading (no worker processes, no spawn overhead).
-# For production (partition_size ~15k) set to 4 and enable persistent_workers.
-num_workers = 0
+# With max_concurrency=1, 2 workers is sufficient and avoids excessive RAM.
+# Each forked worker inherits the parent's memory via COW (~1 GB per worker
+# after Python's reference-counting forces page copies). 4 workers was
+# calculated for max_concurrency=3; use 2 here to save ~2 GB of RAM.
+# Set to 0 to disable parallelism entirely (slower loading but minimal RAM).
+num_workers = 1
+
+# Batches prefetched per worker. Default PyTorch value is 2 when
+# num_workers > 0: (prefetch_factor × num_workers) batches sit in the
+# prefetch queue at once. Each batch is ~184 MB (16 imgs × 640×640 tensors).
+# Set to 1 to halve the queue from ~736 MB to ~368 MB; raise back to 2 if
+# you have ample RAM and want to hide I/O latency behind compute.
+prefetch_factor = 1
 
 # Keep worker processes alive between FL rounds so the spawn startup cost
 # is paid once per client lifetime rather than once per round.
-# Only effective when num_workers > 0.
+# Only effective when num_workers > 0 AND epochs > 1 per round; with the
+# current epochs=1 setting each round creates a new DataLoader anyway.
 persistent_workers = false
+
+# Pin batches in non-swappable CPU RAM for faster GPU DMA transfer.
+# WARNING: PyTorch's CUDA host allocator grows a pinned-memory pool up to the
+# training high-water mark (~20-30 GB for one BDD100K epoch at batch_size=16)
+# and never returns it to the OS. On a 46 GB container this exhausts RAM.
+# Keep false unless you have ample headroom; the throughput difference is <5%.
+pin_memory = false
 
 # Limit how many clients the server dispatches for training simultaneously.
 # The server (base.py:616-648) uses this to batch selected clients, ensuring
@@ -94,27 +115,36 @@ type = "fedavg"
 # The single full-dataset root. Per-client subsets come from the IID sampler.
 # Each *root entry must contain {train,val} subdirectories matching
 # train_set/test_set below.
-dataroot = "/workspace/YOLOP/dataset/70_clients/client_0/images"
-labelroot = "/workspace/YOLOP/dataset/70_clients/client_0/det_annotations"
-maskroot = "/workspace/YOLOP/dataset/70_clients/client_0/da_seg_annotations"
-laneroot = "/workspace/YOLOP/dataset/70_clients/client_0/ll_seg_annotations"
+dataroot = "/workspace/dataset/dbb100k/images"
+labelroot = "/workspace/dataset/dbb100k/det_annotations"
+maskroot = "/workspace/dataset/dbb100k/da_seg_annotations"
+laneroot = "/workspace/dataset/dbb100k/ll_seg_annotations"
 train_set = "train"
 test_set = "val"
 img_size = [640, 640]
 org_img_size = [720, 1280]
 
 [parameters.loss]
-# Order matches MultiHeadLoss.lambdas: [cls, obj, iou, da_seg, ll_seg, ll_iou]
-multi_head_lambda = [0.5, 1.0, 0.05, 0.2, 0.2, 0.2]
+# lambdas are additional multipliers on top of the GAIN values in default.py.
+# Set all to 1.0 so the GAIN values (BOX=0.05, OBJ=1.0, CLS=0.5, SEG=0.2) are
+# the sole weights — avoids the previous double-penalty on segmentation.
+multi_head_lambda = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 cls_pos_weight = 1.0
 obj_pos_weight = 1.0
-seg_pos_weight = 1.0
+# Upweight foreground pixels in segmentation BCE. Lane lines are ~5-10% of
+# pixels in BDD100K; without this the model collapses to all-background.
+seg_pos_weight = 10.0
 fl_gamma = 0.0
 
 [parameters.optimizer]
-lr = 0.001
+lr = 0.01
 momentum = 0.937
 weight_decay = 0.0005
+
+[parameters.test]
+# Save per-image overlays for the first batch of each eval round.
+# Outputs land in <base_path>/visualization/.
+plots = true
 
 [results]
 types = "round, elapsed_time, accuracy, train_loss, valid_loss"

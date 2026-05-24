@@ -9,6 +9,8 @@ in Proc. 12th Annual Workshop on Optimization for Machine Learning (OPT 2020).
 https://opt-ml.org/papers/2020/paper_28.pdf
 """
 
+import ctypes
+import gc
 import logging
 
 # --- FedAsync example fixes (see companion modules for details) ------------
@@ -123,6 +125,36 @@ class Server(fedavg.Server):
                 trainer.test = _orig_test
         else:
             await super()._process_reports()
+
+    async def wrap_up(self) -> None:
+        """Wraps up after each round with explicit server-side memory cleanup.
+
+        The client trainer calls malloc_trim after every training epoch, but
+        the server process never did. Each round the server allocates ~30 MB of
+        safetensor bytes + decoded numpy arrays + aggregation tensors. Without
+        compacting the heap, glibc retains these pages in its free list and the
+        server RSS grows monotonically across rounds.
+
+        Steps:
+        1. Nullify stale client_payload entries so the zero-copy safetensor
+           buffers (numpy views of the raw bytes) are released as soon as
+           possible — they linger until the next report from the same client
+           would otherwise reset them.
+        2. Run the cycle collector to catch any tensor/closure reference cycles.
+        3. Call malloc_trim(0) to return free heap pages to the OS.
+        """
+        await super().wrap_up()
+
+        # Drop stale payload refs before trimming so the freed buffers show
+        # up as free heap space that malloc_trim can reclaim.
+        for sid in list(self.client_payload.keys()):
+            self.client_payload[sid] = None
+
+        gc.collect()
+        try:
+            ctypes.CDLL("libc.so.6").malloc_trim(0)
+        except (OSError, AttributeError):
+            pass
 
     # NOTE: the original fedasync example wrapped _select_clients with a
     # defensive guard that raised RuntimeError if the previously-selected

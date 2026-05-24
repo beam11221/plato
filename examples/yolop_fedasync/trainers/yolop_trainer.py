@@ -33,6 +33,11 @@ def _resolve_num_workers() -> int:
     return int(getattr(Config().trainer, "num_workers", 0))
 
 
+def _resolve_prefetch_factor() -> int:
+    """Read prefetch_factor from [trainer] section, default 2 (PyTorch default)."""
+    return int(getattr(Config().trainer, "prefetch_factor", 2))
+
+
 def _resolve_persistent_workers() -> bool:
     """Read persistent_workers from [trainer] section, default False.
 
@@ -45,12 +50,20 @@ def _resolve_persistent_workers() -> bool:
 
 
 def _resolve_pin_memory() -> bool:
-    """Pin memory only if a CUDA device is available."""
-    try:
-        import torch
-        return bool(torch.cuda.is_available())
-    except ImportError:
-        return False
+    """Read pin_memory from [trainer] config; default False.
+
+    Pinning batches in non-swappable RAM lets the DMA engine transfer them to
+    the GPU without an intermediate copy, shaving a few percent off data-load
+    time. The cost is that PyTorch's CUDA host allocator builds a pool that
+    grows to the training high-water mark and never returns it to the OS —
+    easily 20-30 GB for a full BDD100K epoch at batch_size=16. On memory-
+    constrained machines this overwhelms the benefit, so the default is False.
+    Set pin_memory = true in [trainer] only if you have ample RAM headroom.
+    """
+    cfg_value = getattr(Config().trainer, "pin_memory", None)
+    if cfg_value is not None:
+        return bool(cfg_value)
+    return False
 
 
 class Trainer(ComposableTrainer):
@@ -61,6 +74,10 @@ class Trainer(ComposableTrainer):
         # consistent view of cfg.LOSS regardless of how often it is
         # constructed during a session.
         yacs_cfg = _build_yacs_cfg(Config())
+
+        enable_plots = bool(
+            getattr(getattr(getattr(Config(), "parameters", object()), "test", object()), "plots", False)
+        )
 
         super().__init__(
             model=model,
@@ -77,6 +94,10 @@ class Trainer(ComposableTrainer):
                 pin_memory=_resolve_pin_memory(),
                 drop_last=False,
                 persistent_workers=_resolve_persistent_workers(),
+                prefetch_factor=_resolve_prefetch_factor(),
+                # 5-minute timeout: if a worker is killed by the OOM killer the
+                # training loop raises RuntimeError instead of hanging forever.
+                timeout=300,
             ),
-            testing_strategy=YOLOPTestingStrategy(),
+            testing_strategy=YOLOPTestingStrategy(yacs_cfg=yacs_cfg, enable_plots=enable_plots),
         )

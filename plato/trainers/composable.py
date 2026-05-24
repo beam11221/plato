@@ -19,6 +19,8 @@ Example:
 """
 
 import copy
+import ctypes
+import gc
 import logging
 import multiprocessing as mp
 import os
@@ -61,6 +63,22 @@ from plato.trainers.strategies.model_update import NoOpUpdateStrategy
 from plato.trainers.strategies.optimizer import DefaultOptimizerStrategy
 from plato.trainers.strategies.testing import DefaultTestingStrategy
 from plato.trainers.strategies.training_step import DefaultTrainingStepStrategy
+
+
+def _trim_malloc_heap() -> None:
+    """Ask glibc to return free heap pages to the OS.
+
+    PyTorch's CPU tensor allocator (backed by system malloc) keeps freed
+    blocks in its pool rather than returning them immediately. After a full
+    DataLoader epoch the pool can hold several GB. malloc_trim(0) compacts
+    the top-of-heap and releases contiguous free pages via sbrk/madvise,
+    shrinking the process RSS without affecting live allocations.
+    Only available on glibc (Linux); silently skipped elsewhere.
+    """
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except (OSError, AttributeError):
+        pass
 
 
 class ComposableTrainer(base.Trainer):
@@ -447,6 +465,22 @@ class ComposableTrainer(base.Trainer):
         # Strategy hook: on_train_start
         self.model_update_strategy.on_train_start(self.context)
 
+        # Drop the old DataLoader before creating the new one so its worker
+        # processes terminate before new ones are spawned. Each forked worker
+        # inherits the parent's memory via CoW (~300-600 MB per worker on
+        # Linux), so old and new workers running simultaneously doubles that
+        # overhead. context.state holds a second reference that would otherwise
+        # keep the old DataLoader alive until the line after the new one is
+        # created — clearing it first ensures ref count hits zero immediately.
+        self.context.state.pop("train_loader", None)
+        _old_loader = self.train_loader
+        self.train_loader = None
+        del _old_loader
+        gc.collect()
+        # NOTE: do NOT call malloc_trim here — it compacts the parent heap
+        # right before DataLoader forks workers, which reduces copy-on-write
+        # sharing and forces each worker to allocate more private pages.
+
         # Create data loader using strategy
         self.train_loader = self.data_loader_strategy.create_train_loader(
             trainset, sampler, batch_size, self.context
@@ -795,6 +829,17 @@ class ComposableTrainer(base.Trainer):
         tic = time.perf_counter()
         self.train_process(config, trainset, sampler, **kwargs)
         toc = time.perf_counter()
+
+        # Release the DataLoader and its worker processes now that training is
+        # done. Workers hold forked copies of the parent's memory; freeing them
+        # here (rather than waiting for the next round's setup) reclaims RAM
+        # before the process sits idle waiting for the server's next selection.
+        self.context.state.pop("train_loader", None)
+        _old_loader = self.train_loader
+        self.train_loader = None
+        del _old_loader
+        gc.collect()
+        _trim_malloc_heap()
 
         if "max_concurrency" in config:
             # Offload model back to CPU after training so the GPU slot is free

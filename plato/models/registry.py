@@ -11,6 +11,7 @@ from plato.config import Config
 from plato.models import (
     cnn_encoder,
     dcgan,
+    fedasync_cnn,
     general_multilayer,
     huggingface,
     lenet5,
@@ -31,6 +32,7 @@ except ImportError:  # pragma: no cover
 registered_models = {
     "lenet5": lenet5.Model,
     "dcgan": dcgan.Model,
+    "fedasync_cnn": fedasync_cnn.Model,
     "multilayer": multilayer.Model,
 }
 

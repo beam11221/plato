@@ -1,0 +1,94 @@
+# uv run fedasync_gpu_tier_polaris_vi.py -c configs/fedasync_CIFAR10_resnet18_100client_gpu_tier_polaris_vi.toml
+
+[general]
+base_path = "./runs/fedasync_CIFAR10_resnet18_100client_gpu_tier_polaris_vi"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# speed_simulation=true: PLATO calls simulate_client_speed() in each client
+# process.  distribution="custom" makes it read the CSV that fedasync_gpu_tier.py
+# generates from the tier formula before server.run() is called.
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tier_client_sleep_times_generated.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8013
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters
+staleness_bound = 11
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.9
+adaptive_mixing = true
+eval_interval = 10
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+# Polaris aggregation hyper-parameters
+# alpha: proxy multiplier for unexplored clients (G_i = alpha * mean_observed_norm)
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+# data_path = "../fedasync_CIFAR10_resnet18_100client_2gpus/data"
+
+# 500 samples per client (same for all, IID or non-IID label distribution)
+partition_size = 500
+
+# Non-IID label distribution via Dirichlet(α=0.5)
+sampler = "noniid"
+concentration = 0.5
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 60000
+max_concurrency = 10
+target_accuracy = 0.52
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.003
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# ---------------------------------------------------------------------------
+# GPU-tier configuration (read by gpu_tier_sleep.get_computer())
+# Edit tiers.csv to change eta_nominal or noise_sigma — no code changes needed.
+# ---------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/tiers.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/clients.csv"

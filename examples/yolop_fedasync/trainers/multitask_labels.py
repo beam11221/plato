@@ -27,7 +27,7 @@ class MultiTaskLabels:
                 never moved to the device.
     """
 
-    __slots__ = ("det", "da_seg", "ll_seg", "shapes")
+    __slots__ = ("det", "da_seg", "ll_seg", "shapes", "paths")
 
     def __init__(
         self,
@@ -35,14 +35,16 @@ class MultiTaskLabels:
         da_seg: torch.Tensor,
         ll_seg: torch.Tensor,
         shapes=None,
+        paths=None,
     ) -> None:
         self.det = det
         self.da_seg = da_seg
         self.ll_seg = ll_seg
         self.shapes = shapes
+        self.paths = paths  # tuple[str] — CPU-only, never moved to device
 
     def to(self, device, *args, **kwargs) -> "MultiTaskLabels":
-        """Move all tensor components to `device`. Shapes stays on CPU.
+        """Move all tensor components to `device`. Shapes and paths stay on CPU.
 
         We accept *args/**kwargs so calls like .to(device, non_blocking=True)
         from Plato or DataLoader pin-memory workers don't break.
@@ -52,6 +54,7 @@ class MultiTaskLabels:
             self.da_seg.to(device, *args, **kwargs),
             self.ll_seg.to(device, *args, **kwargs),
             self.shapes,
+            self.paths,
         )
 
     def size(self, dim=None):
@@ -72,6 +75,7 @@ class MultiTaskLabels:
             self.da_seg.pin_memory(),
             self.ll_seg.pin_memory(),
             self.shapes,
+            self.paths,
         )
 
     def __repr__(self) -> str:

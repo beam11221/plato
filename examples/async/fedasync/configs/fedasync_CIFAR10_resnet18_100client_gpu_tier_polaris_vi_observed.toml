@@ -1,0 +1,121 @@
+# Polaris V_i + GPU-tier speeds + observed-staleness predictor.
+#
+# Identical to fedasync_CIFAR10_resnet18_100client_gpu_tier_polaris_vi_gpu_tops.toml
+# except for three lines:
+#   base_path          → separate run directory so results don't collide
+#   port               → 8015 (8013 = polaris_vi, 8014 = gpu_tops)
+#   staleness_predictor = "observed"  ← uses last observed τ_i (default behaviour)
+#
+# With staleness_predictor = "observed":
+#   PolarisViClientSelectionStrategy uses the most recently observed τ_i (in
+#   rounds) for each client when scoring V_i = G_i / sqrt(1 + τ̂_i).
+#   τ̂_i is updated after every aggregation event from the PLATO staleness
+#   attached to each client report (current_round − round_when_selected).
+#   Clients that have never reported fall back to τ̂_i = 0.01 (initial value).
+#
+# With staleness_predictor = "gpu_tops" (the sibling config):
+#   τ̂_i = gpu_tops_predict_seconds(cid, partition_size, epochs) / T_round
+#   (deterministic, noise-free forward prediction).
+#
+# Run:
+#   cd plato/examples/async/fedasync
+#   uv run fedasync_gpu_tier_polaris_vi.py \
+#       -c configs/fedasync_CIFAR10_resnet18_100client_gpu_tier_polaris_vi_observed.toml
+
+[general]
+base_path = "./runs/fedasync_CIFAR10_resnet18_100client_gpu_tier_polaris_vi_observed"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# speed_simulation=true: PLATO calls simulate_client_speed() in each client
+# process.  distribution="custom" makes it read the CSV that fedasync_gpu_tier.py
+# generates from the tier formula before server.run() is called.
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tier_client_sleep_times_generated.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8015
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters
+staleness_bound = 11
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.9
+adaptive_mixing = true
+eval_interval = 10
+
+# Staleness predictor for V_i scoring.
+# "gpu_tops": τ̂_i = gpu_tops_predict_seconds(cid, partition_size, epochs) / T_round
+# "observed" (default, omit key): τ̂_i = last observed τ_i in rounds
+staleness_predictor = "observed"
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+# Polaris aggregation hyper-parameters
+# alpha: proxy multiplier for unexplored clients (G_i = alpha * mean_observed_norm)
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+# data_path = "../fedasync_CIFAR10_resnet18_100client_2gpus/data"
+
+# 500 samples per client (same for all, IID or non-IID label distribution)
+partition_size = 500
+
+# Non-IID label distribution via Dirichlet(α=0.5)
+sampler = "noniid"
+concentration = 1.0
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 10000
+max_concurrency = 10
+target_accuracy = 0.7
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.01
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# ---------------------------------------------------------------------------
+# GPU-tier configuration (read by gpu_tier_sleep.get_computer())
+# Edit tiers.csv to change eta_nominal or noise_sigma — no code changes needed.
+# ---------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/tiers.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/clients.csv"

@@ -1,5 +1,5 @@
 [general]
-base_path = "./runs/fedasync_CIFAR10_resnet18_100client_2gpus"
+base_path = "./async_fedavg_CIFAR10_resnet18_15client_p10_ver3"
 
 [clients]
 
@@ -7,10 +7,10 @@ base_path = "./runs/fedasync_CIFAR10_resnet18_100client_2gpus"
 type = "simple"
 
 # The total number of clients
-total_clients = 100
+total_clients = 15
 
 # The number of clients selected in each round
-per_round = 10
+per_round = 5
 
 # Should the clients compute test accuracy locally?
 do_test = false
@@ -26,7 +26,7 @@ sleep_simulation = false
 # staleness is simulated from uniform distribution as mentioned in Section 5.2
 distribution = "uniform"
 low = 0
-high = 30
+high = 20
 
 [server]
 address = "127.0.0.1"
@@ -57,7 +57,7 @@ dataset_name = "CIFAR10"
 download = true
 
 # Number of samples in each partition
-partition_size = 500
+partition_size = 3330
 
 # IID or non-IID?
 sampler = "noniid"
@@ -79,7 +79,7 @@ rounds = 20000
 max_concurrency = 5
 
 # The target accuracy
-target_accuracy = 0.85
+target_accuracy = 0.8
 
 # The machine learning model
 model_name = "resnet_18"

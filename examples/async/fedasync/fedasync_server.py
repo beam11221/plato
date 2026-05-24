@@ -25,6 +25,7 @@ import logging
 #       updates" notes for semantics.
 import fedasync_aggregation
 import fedasync_selection
+import fedasync_speed_greedy_selection
 
 from plato.config import Config
 from plato.servers import fedavg
@@ -32,6 +33,17 @@ from plato.servers import fedavg
 # Original import kept for reference; we now instantiate the subclass from
 # fedasync_aggregation instead:
 # from plato.servers.strategies import FedAsyncAggregationStrategy
+
+
+def _make_selection_strategy():
+    """Return SpeedGreedyClientSelectionStrategy when the TOML requests it."""
+    try:
+        sel_cfg = getattr(Config().server, "client_selection", None)
+        if sel_cfg is not None and getattr(sel_cfg, "strategy", "") == "speed_greedy":
+            return fedasync_speed_greedy_selection.SpeedGreedyClientSelectionStrategy()
+    except Exception:  # noqa: BLE001 — Config not yet initialised in tests
+        pass
+    return fedasync_selection.FedAsyncClientSelectionStrategy()
 
 
 class Server(fedavg.Server):
@@ -55,7 +67,9 @@ class Server(fedavg.Server):
         # New: custom selection strategy skips clients still training. Without
         # this, in `simulate_wall_time=false` mode the base.py filter at
         # base.py:557-595 is bypassed and busy clients can be re-selected.
-        client_selection_strategy = fedasync_selection.FedAsyncClientSelectionStrategy()
+        # If [server.client_selection] strategy = "speed_greedy" is set in the
+        # TOML, use SpeedGreedyClientSelectionStrategy instead.
+        client_selection_strategy = _make_selection_strategy()
 
         logging.info("FedAsync Server: Initialized with FedAsync aggregation strategy.")
         logging.info(f"model: {model}, datasource: {datasource}, algorithm: {algorithm}, trainer: {trainer}, callbacks: {callbacks}")

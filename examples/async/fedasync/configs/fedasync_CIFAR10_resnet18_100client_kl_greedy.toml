@@ -1,0 +1,117 @@
+# KL-greedy oracle client selection experiment (Exp 1 — diversity sanity check).
+#
+# Identical to the SpeedGreedy Exp 1 config in every dimension that touches
+# the training dynamics (dataset, partition, model, seed, pool size, FedAsync
+# hyper-parameters).  Only the client_selection strategy changes.
+#
+# Purpose: verify the KL/Δ_div implementation in isolation before combining
+# speed and diversity into the full V_i selector.
+#
+# Run (3 training seeds, fixed partition seed 8888):
+#   for seed in 1 2 3; do
+#     uv run fedasync_kl_greedy.py \
+#       -c configs/fedasync_CIFAR10_resnet18_100client_kl_greedy.toml \
+#       --training-seed $seed
+#   done
+#
+# Grep server log for "[KLGreedy]" to extract per-round KL diagnostics.
+# Look for "Round 1 Sanity Check" to verify balanced vs. skewed split.
+
+[general]
+base_path = "./runs/fedasync_CIFAR10_resnet18_100client_kl_greedy"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# Speed simulation uses the same GPU-tier CSV as SpeedGreedy so wall-time
+# behaviour is identical (only selection, not timing, changes).
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tier_client_sleep_times_generated.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8000
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters — identical to SpeedGreedy Exp 1
+staleness_bound = 11
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.9
+adaptive_mixing = true
+eval_interval = 10
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[server.client_selection]
+strategy = "kl_greedy"
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+
+# 500 base samples per client with Uniform[0, 30] multiplier → heterogeneous sizes.
+# Matches Exp 1 specification exactly.  The KL-greedy CSV generator replicates
+# this distribution so oracle label counts are consistent with actual training data.
+partition_size = 500
+sampler = "noniid"
+concentration = 0.5
+random_seed = 8888
+
+[data.partition_distribution]
+distribution = "uniform"
+low  = 0
+high = 30
+
+[trainer]
+type = "basic"
+rounds = 60000
+max_concurrency = 10
+target_accuracy = 0.52
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.003
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# ---------------------------------------------------------------------------
+# GPU-tier config (same as SpeedGreedy — wall-time simulation is unchanged)
+# ---------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/tiers.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/clients.csv"
+
+# ---------------------------------------------------------------------------
+# Label-distribution oracle (used by KLGreedyClientSelectionStrategy)
+# Re-generate with client_label_distribution.generate_label_distribution_csv()
+# whenever partition_size, concentration, random_seed, or total_clients change.
+# ---------------------------------------------------------------------------
+[label_distribution]
+csv_path = "/workspace/plato/examples/async/fedasync/client_label_distributions.csv"

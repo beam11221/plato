@@ -149,13 +149,26 @@ class CustomCollateFnDataLoaderStrategy(DataLoaderStrategy):
         pin_memory: bool | None = False,
         drop_last: bool = False,
         persistent_workers: bool = False,
+        prefetch_factor: int = 2,
+        timeout: int = 0,
     ):
-        """Initialize custom collate data loader parameters."""
+        """Initialize custom collate data loader parameters.
+
+        Args:
+            prefetch_factor: Batches pre-loaded per worker. Total pinned RAM is
+                roughly (prefetch_factor × num_workers × batch_size × tensor_bytes).
+                Reduce to 1 if RAM is constrained.
+            timeout: Seconds to wait for a batch before raising RuntimeError.
+                0 means wait forever. Set to a positive value (e.g. 300) so a
+                dead worker is detected instead of hanging the training loop.
+        """
         self.collate_fn = collate_fn
         self.num_workers = num_workers
         self.pin_memory = pin_memory
         self.drop_last = drop_last
         self.persistent_workers = persistent_workers
+        self.prefetch_factor = prefetch_factor
+        self.timeout = timeout
 
     def create_train_loader(
         self, trainset, sampler, batch_size: int, context: TrainingContext
@@ -176,6 +189,7 @@ class CustomCollateFnDataLoaderStrategy(DataLoaderStrategy):
             sampler_obj = None
             shuffle = False
 
+        use_workers = self.num_workers > 0
         return torch.utils.data.DataLoader(
             dataset=trainset,
             batch_size=batch_size,
@@ -185,7 +199,9 @@ class CustomCollateFnDataLoaderStrategy(DataLoaderStrategy):
             pin_memory=_resolve_pin_memory(self.pin_memory, context),
             drop_last=self.drop_last,
             collate_fn=self.collate_fn,
-            persistent_workers=self.persistent_workers if self.num_workers > 0 else False,
+            persistent_workers=self.persistent_workers if use_workers else False,
+            prefetch_factor=self.prefetch_factor if use_workers else None,
+            timeout=self.timeout if use_workers else 0,
         )
 
 

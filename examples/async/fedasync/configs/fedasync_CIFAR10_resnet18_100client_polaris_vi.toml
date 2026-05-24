@@ -1,0 +1,107 @@
+# Polaris V_i selection — sanity-check run.
+#
+# Selector: PolarisViClientSelectionStrategy
+#   Scores V_i = G_i / sqrt(1 + tau_i), selects top-10 per round.
+#   G_i is populated by FedAsyncPolarisAggregationStrategy from conv-layer
+#   weight deltas after each aggregation event.
+#
+# Setup matches thesis baseline:
+#   CIFAR-10, ResNet-18+GroupNorm, 100 clients, Dirichlet(alpha=0.5),
+#   FedAsync (async=true, minimum_clients_aggregated=10).
+#
+# This config runs 100 aggregation rounds (= 100 * minimum_clients_aggregated
+# client reports) — enough to verify that G_i evolves from 0.5 and that
+# different clients are selected across rounds.
+#
+# Run:
+#   cd plato/examples/async/fedasync
+#   uv run fedasync_polaris_vi.py -c configs/fedasync_CIFAR10_resnet18_100client_polaris_vi.toml
+#
+# Grep server log for "[PolarisVi]" to extract V_i scores and G_i evolution.
+
+[general]
+base_path = "./runs/fedasync_CIFAR10_resnet18_100client_polaris_vi"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# Speed simulation: GPU-tier CSV gives wall-time heterogeneity across tiers.
+# Regenerate csv if partition_size or epochs change (see README_gpu_tier.md).
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tier_client_sleep_times_generated.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8010
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters
+staleness_bound = 11
+minimum_clients_aggregated = 10
+mixing_hyperparameter = 0.9
+adaptive_mixing = true
+eval_interval = 10
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+# Polaris aggregation hyper-parameters
+# alpha: proxy multiplier for unexplored clients (G_i = alpha * mean_observed_norm)
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+
+# Non-IID Dirichlet(alpha=0.5) — thesis baseline partition
+partition_size = 500
+sampler = "noniid"
+concentration = 0.5
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 100
+max_concurrency = 10
+target_accuracy = 0.9
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.003
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# ---------------------------------------------------------------------------
+# GPU-tier configuration (same as other fedasync experiments)
+# ---------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/tiers.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/clients.csv"

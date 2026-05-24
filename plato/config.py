@@ -6,6 +6,7 @@ to work on than JSON).
 from __future__ import annotations
 
 import argparse
+import csv
 import logging
 import os
 import tomllib
@@ -491,6 +492,22 @@ class Config:
                 low = getattr(distribution, "low", 0.0)
                 high = getattr(distribution, "high", max_sleep_time)
                 sleep_times = np.random.uniform(low, high, size=total_clients)
+            elif dist_name == "custom":
+                csv_path = getattr(distribution, "csv_path", None)
+                if csv_path is None:
+                    raise ValueError(
+                        "simulation_distribution.csv_path must be set when distribution = 'custom'."
+                    )
+                csv_path = os.path.expanduser(csv_path)
+                mapping: dict[int, float] = {}
+                with open(csv_path, newline="") as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        mapping[int(row["client_id"])] = float(row["sleep_time"])
+                sleep_times = np.array(
+                    [mapping.get(cid, 0.0) for cid in range(1, total_clients + 1)],
+                    dtype=float,
+                )
             else:
                 sleep_times = np.random.pareto(1.0, size=total_clients)
 

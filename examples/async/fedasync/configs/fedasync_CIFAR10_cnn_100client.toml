@@ -1,0 +1,76 @@
+[general]
+base_path = "./runs/fedasync_CIFAR10_cnn_100client"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = false
+
+[clients.simulation_distribution]
+distribution = "uniform"
+low = 0
+high = 30
+
+[server]
+address = "127.0.0.1"
+port = 8000
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# Parameters for FedAsync
+staleness_bound = 11
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.5
+adaptive_mixing = true
+eval_interval = 10
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+data_path = "./data"
+partition_size = 500
+sampler = "iid"
+concentration = 0.3
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 5000
+max_concurrency = 10
+target_accuracy = 0.85
+
+# model_type must be set explicitly because model_name contains an underscore,
+# which would otherwise cause the registry to derive type = "fedasync" instead
+# of "fedasync_cnn".
+model_name = "fedasync_cnn"
+model_type = "fedasync_cnn"
+
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.001
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
