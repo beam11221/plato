@@ -221,7 +221,13 @@ def test_plugin_off_reproduces_host(new, host):
     run = RUNS_DIR / new
     if not (run / "dispatch_log.csv").exists():
         pytest.skip("plug-in-off test run not present")
-    a, b = _keys(run, 100), _keys(run_dir(*host), 100)
+    # Compare every dispatch cycle the 100-round run has. Matching on round <= 100
+    # would be wrong in S2: when round 100 is an all-lost cycle, the round number is
+    # held and the longer run dispatches again under round 100 after the short run
+    # has hit its round cap.
+    a = _keys(run, 10**9)
+    last_cycle = max(int(k[0]) for k in a)
+    b = [k for k in _keys(run_dir(*host), 10**9) if int(k[0]) <= last_cycle]
     assert len(a) >= 100 and a == b
 
 
