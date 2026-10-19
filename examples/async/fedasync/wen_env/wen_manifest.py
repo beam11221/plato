@@ -31,6 +31,13 @@ ADDENDUM_V3_2 = FEDASYNC / "docs" / "predictions_v3_2_addendum.md"
 # Prompt H: no wen_fresh run (of any length) before the v3.3 addendum is committed.
 ADDENDUM_V3_3 = FEDASYNC / "docs" / "predictions_v3_3_addendum.md"
 FULL_RUN_ROUNDS = 4000
+REPO = FEDASYNC.parents[2]
+# Prompt I Step 0b.1: the code a run executes, hashed into every manifest.
+SOURCE_GLOBS = ("plato/**/*.py", "examples/async/fedasync/*.py",
+                "examples/async/fedasync/wen_env/*.py",
+                "examples/async/fedasync/gpu_tiers/*.py",
+                "examples/async/fedasync/gpu_tiers_dataset/*.py",
+                "examples/async/fedasync/sumo_close_loop/*.py")
 
 
 class PredictionsNotLockedError(RuntimeError):
@@ -39,6 +46,25 @@ class PredictionsNotLockedError(RuntimeError):
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def source_tree() -> dict:
+    """sha256 over (path, sha256) of every source file in SOURCE_GLOBS, sorted by
+    path, plus the git HEAD and whether any of those files differ from it."""
+    files = sorted({f for g in SOURCE_GLOBS for f in REPO.glob(g) if f.is_file()})
+    h = hashlib.sha256()
+    for f in files:
+        h.update(f"{f.relative_to(REPO).as_posix()}\0{_sha256(f)}\n".encode())
+    try:
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True,
+                              text=True, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", *SOURCE_GLOBS],
+                               cwd=REPO, capture_output=True, text=True,
+                               check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        head, dirty = None, "unknown"
+    return {"source_tree_sha256": h.hexdigest(), "source_files": len(files),
+            "source_commit": head, "source_dirty": bool(dirty)}
 
 
 def predictions_commit(path: Path = PREDICTIONS) -> str | None:
@@ -111,6 +137,7 @@ def write(base_path: Path, config_path: Path, settings: dict, rounds: int,
         "stage0": settings["stage0"],
         "selection": settings["selection"],
         "epsilon": settings["epsilon"],
+        **source_tree(),
     }
     out = Path(base_path) / "results" / "manifest.yaml"
     out.parent.mkdir(parents=True, exist_ok=True)
