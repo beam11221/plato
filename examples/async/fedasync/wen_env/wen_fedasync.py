@@ -134,24 +134,34 @@ def main() -> None:
         "run_id": out_dir.name, "seed": seed, "out_dir": out_dir,
         "selection": settings["selection"], "epsilon": settings["epsilon"],
     }
-    if settings["arm"] in ("wen", "wen_fresh"):
+    if settings["stage0_estimator"] == "gpu":
+        # Study 2 (Prompt I S2-4): Stage 0 always runs our gpu estimator.
+        wen["stage0_estimator"] = wen_estimators.GpuEstimator(K.FLOPS_FWD_PER_IMAGE, bits)
+    host = settings["host"]
+    if host in ("wen", "wen_fresh"):
+        # Wen's F1 / F2: the CPU family (Wen Eq. 4, 7, 8), or the gpu family
+        # (Study 2 GPU plug-in, S2-2a) with its own W5 limits from the config.
+        f12 = (wen_estimators.GpuEstimator(K.FLOPS_FWD_PER_IMAGE, bits)
+               if settings["wen_f12"] == "gpu"
+               else wen_estimators.CpuEstimator(K.FLOPS_FWD_PER_IMAGE, bits))
         selector_args = dict(
-            estimator=wen_estimators.CpuEstimator(K.FLOPS_FWD_PER_IMAGE, bits),
+            estimator=f12,
             t_max=settings["wen_t_max"], e_max=settings["wen_e_max"],
             kl=wen_faithful.label_kl(
                 wen_faithful.cifar10_train_targets(Path(cfg.data.data_path)),
                 int(cfg.data.random_seed)),
             out_dir=out_dir,
         )
-        if settings["arm"] == "wen":
+        if host == "wen":
             wen["selector"] = wen_faithful.WenFaithfulSelection(**selector_args)
         else:
             wen["selector"] = wen_fresh.WenFreshSelection(
                 fresh=wen_fresh.FreshLoss(Path(cfg.data.data_path),
                                           int(cfg.data.random_seed)),
-                stale_f3_test=settings["wen_fresh_stale_f3_test"], **selector_args)
+                stale_f3_test=settings["wen_fresh_stale_f3_test"],
+                stage0_columns=settings["stage0"], **selector_args)
     algorithm = fedasync_algorithm.Algorithm
-    server_class = (WenBaselineServer if settings["arm"] in ("random", "wen", "wen_fresh")
+    server_class = (WenBaselineServer if host in ("random", "wen", "wen_fresh")
                     else WenPolarisServer)
     server = server_class(wen=wen, algorithm=algorithm)
     client = WenClient(algorithm=algorithm,

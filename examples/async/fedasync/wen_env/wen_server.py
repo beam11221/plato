@@ -83,6 +83,9 @@ MERGE_FIELDS = ["cycle", "round", "client_id", "t_finish_clean", "t_plato",
 CYCLE_FIELDS = ["cycle", "round", "t_clean", "idle_advance", "n_dispatched"]
 POOL_FIELDS = ["cycle", "round", "t", "selectable", "eligible",
                "feasible_gpu", "open_slots"]
+STAGE0_FIELDS = ["cycle", "round", "t", "n_eligible", "n_passed", "n_rejected",
+                 "n_rej_time", "n_rej_energy", "n_rej_both",
+                 "n_rej_xavier", "n_rej_orin", "n_rej_thor", "fallback"]
 
 
 class ClockMismatchError(RuntimeError):
@@ -125,7 +128,7 @@ class WenEnvMixin:
                     estimator: Estimator | None, arm: str, scenario: str,
                     stage0: bool, run_id: str, seed: int, out_dir: Path,
                     selection: str = "egreedy", epsilon: float | None = 0.2,
-                    selector=None) -> None:
+                    selector=None, stage0_estimator: Estimator | None = None) -> None:
         self.wen_truth = truth
         self.wen_view = view
         self.wen_estimator = estimator
@@ -169,11 +172,13 @@ class WenEnvMixin:
         inner = self.wen_selector
         self.wen_stage0 = None
         if stage0:
-            if scenario != "S2":
-                raise ValueError("[WenEnv] Stage 0 is an S2 feature.")
-            if estimator is None:
-                raise ValueError("[WenEnv] Stage 0 needs an estimator arm.")
-            self.wen_stage0 = WenStage0Gate(inner, estimator)
+            # Stage 0's estimator: the arm's own (existing arms), or one handed in
+            # (Study 2 plug-in arms always use the gpu estimator, Prompt I S2-4).
+            stage0_estimator = stage0_estimator or estimator
+            if stage0_estimator is None:
+                raise ValueError("[WenEnv] Stage 0 needs an estimator.")
+            self.wen_stage0 = WenStage0Gate(inner, stage0_estimator, scenario=scenario)
+            self._stage0_log = _CsvLog(out_dir / "stage0_log.csv", STAGE0_FIELDS)
             inner = self.wen_stage0
         diagnostic = GpuEstimator(truth.flops_fwd, truth.model_bits)
         self.client_selection_strategy = WenCoverageGate(inner, scenario, diagnostic)
@@ -310,6 +315,20 @@ class WenEnvMixin:
             "selectable": selectable, "eligible": eligible, "feasible_gpu": feasible,
             "open_slots": slots,
         })
+
+    def wen_is_eligible(self, client_id: int, t: float) -> bool:
+        """The environment's eligibility rule: idle (not training, no report
+        awaiting merge), and in S2 inside coverage at time t."""
+        if client_id not in self._selectable():
+            return False
+        if self.wen_scenario == "S1":
+            return True
+        lo, hi = K.S2_COVERAGE_M
+        return lo <= self.wen_report(client_id, t).x <= hi
+
+    def record_stage0(self, t, stats: dict) -> None:
+        self._stage0_log.write({"cycle": self._dispatch_cycles, "round": self.current_round,
+                                "t": repr(t), **stats})
 
     def record_dispatches(self, selected: list[int], context) -> None:
         t = self._online_now

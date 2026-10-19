@@ -1,0 +1,8 @@
+{
+  "family": "gpu",
+  "t_max": 13.564085609369194,
+  "e_max": 113.50862433236982,
+  "quantile": 90,
+  "population": 900000,
+  "qualitative_problems": []
+}

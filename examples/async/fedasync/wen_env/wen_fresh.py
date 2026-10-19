@@ -102,6 +102,11 @@ class FreshLoss:
         return dict(zip(self.client_ids, means))
 
 
+# Study 2 (Prompt I Step 2.5): Stage 0's view of the same selection call, on
+# each decision row of the `_s0` arms.
+STAGE0_DECISION_FIELDS = ["n_eligible", "n_stage0_rejected", "n_stage0_rej_time",
+                          "n_stage0_rej_energy", "n_stage0_rej_both", "n_stage0_rej_xavier",
+                          "n_stage0_rej_orin", "n_stage0_rej_thor", "stage0_fallback"]
 FRESH_EVAL_FIELDS = (["global_version", "round", "t", "fresh_eval_s"]
                      + [f"F3_{c}" for c in range(1, K.N_CLIENTS + 1)])
 
@@ -110,7 +115,12 @@ class WenFreshSelection(WenFaithfulSelection):
     decision_fields = DECISION_FIELDS + ["global_version"]
     candidate_fields = CANDIDATE_FIELDS + ["global_version"]
 
-    def __init__(self, fresh: FreshLoss, stale_f3_test: bool = False, **kwargs) -> None:
+    def __init__(self, fresh: FreshLoss, stale_f3_test: bool = False,
+                 stage0_columns: bool = False, **kwargs) -> None:
+        if stage0_columns:
+            self.decision_fields = self.decision_fields + STAGE0_DECISION_FIELDS
+        self.stage0_columns = stage0_columns
+        self._server = None
         super().__init__(**kwargs)
         self.fresh = fresh
         self.stale_f3_test = stale_f3_test
@@ -149,8 +159,21 @@ class WenFreshSelection(WenFaithfulSelection):
         return self.fresh_f3[client_id]
 
     def select_clients(self, clients_pool, clients_count, context):
+        self._server = context.server
         self.refresh(context.server)
         return super().select_clients(clients_pool, clients_count, context)
 
     def log_extra(self) -> dict:
-        return {"global_version": self.version}
+        extra = {"global_version": self.version}
+        gate = getattr(self._server, "wen_stage0", None)
+        if self.stage0_columns and gate is not None:
+            st = gate.last_stats
+            extra.update(n_eligible=st["n_eligible"], n_stage0_rejected=st["n_rejected"],
+                         n_stage0_rej_time=st["n_rej_time"],
+                         n_stage0_rej_energy=st["n_rej_energy"],
+                         n_stage0_rej_both=st["n_rej_both"],
+                         n_stage0_rej_xavier=st["n_rej_xavier"],
+                         n_stage0_rej_orin=st["n_rej_orin"],
+                         n_stage0_rej_thor=st["n_rej_thor"],
+                         stage0_fallback=st["fallback"])
+        return extra

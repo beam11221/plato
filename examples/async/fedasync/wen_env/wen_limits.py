@@ -16,9 +16,15 @@ x_hat uses.
 T_max = 90th percentile of F1, E_max = 90th percentile of F2 (numpy's default
 linear interpolation), over all (i, t).
 
+Prompt I (Study 2, S2-2b): `--family gpu` applies the same W5 rule to the gpu
+family's F1 / F2 (GpuEstimator: T_hat_train(GPU) + T_hat_up, x_hat from the
+GPU T_hat_train; E = P_tier * T_hat_train + p * T_hat_up) for the GPU plug-in.
+
 Usage:
     python wen_env/wen_limits.py --json wen_env/evidence/wen_limits.json \
         --out wen_env/evidence/wen_limits.md
+    python wen_env/wen_limits.py --family gpu --json wen_env/evidence/wen_limits_gpu.json \
+        --out wen_env/evidence/wen_limits_gpu.md
 """
 
 from __future__ import annotations
@@ -30,7 +36,7 @@ from pathlib import Path
 import numpy as np
 
 import wen_constants as K
-from wen_estimators import CpuEstimator
+from wen_estimators import CpuEstimator, GpuEstimator
 from wen_fleet import Fleet
 from wen_reported import ReportedVehicle
 from wen_trace import TraceIndex, load_speeds, veh_id
@@ -45,12 +51,15 @@ QUANTILE = 90
 TIER_ORDER = ("xavier", "orin", "thor")
 
 
-def population() -> dict[str, np.ndarray]:
+FAMILIES = {"cpu": CpuEstimator, "gpu": GpuEstimator}
+
+
+def population(family: str = "cpu") -> dict[str, np.ndarray]:
     """F1, F2, tier and position at decision time for every (vehicle, sample)."""
     speeds = load_speeds(BUNDLE)
     trace = TraceIndex.from_bundle(BUNDLE, speeds)
     fleet = Fleet.load(FLEET, TIERS)
-    est = CpuEstimator(K.FLOPS_FWD_PER_IMAGE, MODEL_BITS)
+    est = FAMILIES[family](K.FLOPS_FWD_PER_IMAGE, MODEL_BITS)
     f1, f2, tier, xs = [], [], [], []
     for cid in fleet.client_ids:
         vid = veh_id(cid)
@@ -89,12 +98,12 @@ def table(pop, t_max, e_max, mask) -> list[str]:
 
 
 def qualitative_check(pop, t_max, e_max) -> list[str]:
-    """Prompt E stop rule: E_max must not exclude every Thor position, and each
-    limit must cut at least one candidate."""
+    """Prompt E / I stop rule: E_max must not exclude every position of any tier
+    (Prompt E named Thor), and each limit must cut at least one candidate."""
     problems = []
-    thor = pop["tier"] == "thor"
-    if np.all(pop["F2"][thor] > e_max):
-        problems.append("E_max excludes every Thor position")
+    for tier in TIER_ORDER:
+        if np.all(pop["F2"][pop["tier"] == tier] > e_max):
+            problems.append(f"E_max excludes every {tier.capitalize()} position")
     if not np.any(pop["F1"] > t_max):
         problems.append("T_max cuts no candidate")
     if not np.any(pop["F2"] > e_max):
@@ -106,13 +115,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", type=Path, required=True)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--family", choices=sorted(FAMILIES), default="cpu")
     args = parser.parse_args()
-    pop = population()
+    pop = population(args.family)
     t_max, e_max = limits(pop)
     problems = qualitative_check(pop, t_max, e_max)
     inside = (pop["x"] >= K.S2_COVERAGE_M[0]) & (pop["x"] <= K.S2_COVERAGE_M[1])
     text = "\n".join([
-        "# Wen constraint limits (Prompt E Step 1, W5)", "",
+        f"# Wen constraint limits, {args.family} family F1 / F2 (W5 rule; "
+        f"{'Prompt E Step 1' if args.family == 'cpu' else 'Prompt I Step 2.3'})", "",
         f"Population: {len(pop['F1']):,} (vehicle, 1 s trace sample) pairs, t = 1..30,000 s.",
         f"T_max = P{QUANTILE}(F1) = **{t_max!r} s**; E_max = P{QUANTILE}(F2) = **{e_max!r} J**.",
         f"Qualitative check: {'PASS' if not problems else 'FAIL — ' + '; '.join(problems)}.", "",
@@ -120,7 +131,8 @@ def main() -> int:
         "## Positions inside [400, 1600] at decision time", "",
         *table(pop, t_max, e_max, inside), ""])
     print(text)
-    args.json.write_text(json.dumps({"t_max": t_max, "e_max": e_max, "quantile": QUANTILE,
+    args.json.write_text(json.dumps({"family": args.family, "t_max": t_max, "e_max": e_max,
+                                     "quantile": QUANTILE,
                                      "population": int(len(pop["F1"])),
                                      "qualitative_problems": problems}, indent=2) + "\n")
     if args.out:

@@ -81,6 +81,9 @@ class FakeServer:
     def wen_report(self, cid, t):
         return self.reports[cid]
 
+    def wen_is_eligible(self, cid, t):
+        return cid not in self.training_clients
+
 
 def test_selection_path_reads_no_anchor(guarded_config):
     import fedasync_polaris_vi_selection as sel

@@ -49,13 +49,16 @@ RULE_SUFFIXES = {"": None, "eps0": ("egreedy", 0.0), "eps1": ("egreedy", 1.0),
                  # cpu_cal with the locked rho = 1,250: the Prompt D reproduction check
                  "rho1250": None,
                  # wen_fresh deciding on the wen arm's stale F3: Prompt H Step 3 test 1
-                 "stale": None}
+                 "stale": None,
+                 # Study 2 plug-in arm with its plug-in off: Prompt I Step 3 test 1
+                 "pluginoff": None}
+STUDY2_ARMS = ("random_s0", "wen_fresh_s0", "wen_fresh_gpu", "wen_fresh_gpu_s0")
 VARYING = {("general", "base_path"), ("server", "port"), ("wen_env", "scenario"),
            ("wen_env", "arm"), ("wen_env", "stage0"), ("clients", "random_seed"),
            ("wen_env", "selection"), ("wen_env", "epsilon"),
            ("wen_env", "cpu_rho"), ("wen_env", "cpu_rho_test_override"),
            ("wen_env", "wen_t_max"), ("wen_env", "wen_e_max"),
-           ("wen_env", "wen_fresh_stale_f3_test"),
+           ("wen_env", "wen_fresh_stale_f3_test"), ("wen_env", "study2_plugin_off_test"),
            ("server", "random_seed"), ("data", "random_seed")}
 
 TEMPLATE = """\
@@ -187,13 +190,17 @@ def parse_cell(cell: str) -> tuple[str, str, bool, str, str, float | None]:
     rest, _, suffix = rest.partition("@")
     stage0 = rest.endswith("+stage0")
     arm = rest.removesuffix("+stage0")
+    if arm in STUDY2_ARMS:              # the name carries Stage 0 (Prompt I)
+        stage0 = arm.endswith("_s0")
     if suffix not in RULE_SUFFIXES:
         raise SystemExit(f"unknown rule suffix @{suffix}")
-    rule, epsilon = RULE_SUFFIXES[suffix] or ("egreedy", 1.0 if arm == "random" else 0.2)
+    rule, epsilon = RULE_SUFFIXES[suffix] or (
+        "egreedy", 1.0 if arm in ("random", "random_s0") else 0.2)
     return scenario, arm, stage0, suffix, rule, epsilon
 
 
 def cell_name(scenario, arm, stage0, seed, tag="", suffix="") -> str:
+    stage0 = stage0 and arm not in STUDY2_ARMS
     return (f"{scenario}_{arm}{'_stage0' if stage0 else ''}"
             f"{'_' + suffix if suffix else ''}_s{seed}{tag}")
 
@@ -203,10 +210,14 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
     name = cell_name(scenario, arm, stage0, seed, tag, suffix)
     rule_lines = f'selection = "{rule}"\n' + (
         f"epsilon = {epsilon}\n" if epsilon is not None else "")
-    if arm in ("wen", "wen_fresh"):
+    if arm in ("wen", "wen_fresh") or arm.startswith("wen_fresh_"):
         # Wen's own rule (Prompt E): no epsilon; limits from wen_limits.py (Step 1).
+        # The GPU plug-in (Prompt I S2-2b) has its own W5 limits, except with the
+        # plug-in switched off (@pluginoff), which is the CPU host again.
         import json
-        lim = json.loads((HERE / "evidence" / "wen_limits.json").read_text())
+        gpu = arm.startswith("wen_fresh_gpu") and suffix != "pluginoff"
+        lim = json.loads((HERE / "evidence" / ("wen_limits_gpu.json" if gpu else
+                                                "wen_limits.json")).read_text())
         rule, epsilon = "wen", None
         rule_lines = (f'selection = "wen"\nwen_t_max = {lim["t_max"]!r}\n'
                       f'wen_e_max = {lim["e_max"]!r}\n')
@@ -214,6 +225,10 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
             if arm != "wen_fresh":
                 raise SystemExit("@stale is a wen_fresh test configuration")
             rule_lines += "wen_fresh_stale_f3_test = true\n"
+    if suffix == "pluginoff":
+        if arm not in STUDY2_ARMS:
+            raise SystemExit("@pluginoff is a Study 2 test configuration")
+        rule_lines += "study2_plugin_off_test = true\n"
     if arm == "cpu_cal":
         if suffix == "rho1250":
             rule_lines += (f"cpu_rho = {K.CYCLES_PER_BIT_RHO!r}\n"

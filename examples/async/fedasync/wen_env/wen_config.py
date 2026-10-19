@@ -11,8 +11,18 @@ import wen_constants as K
 import wen_estimators
 from wen_egreedy import DEFAULT_EPSILON, SELECTION_RULES
 
-ARMS = ("random", "observed", "wen", "wen_fresh") + wen_estimators.ESTIMATOR_ARMS
+# Prompt I (Study 2): plug-in arms = (host, Wen F1/F2 family). The `_s0` arms
+# run Stage 0 with the gpu estimator in front of an unchanged host.
+STUDY2_ARMS = {"random_s0": ("random", None), "wen_fresh_s0": ("wen_fresh", "cpu"),
+               "wen_fresh_gpu": ("wen_fresh", "gpu"),
+               "wen_fresh_gpu_s0": ("wen_fresh", "gpu")}
+ARMS = (("random", "observed", "wen", "wen_fresh") + wen_estimators.ESTIMATOR_ARMS
+        + tuple(STUDY2_ARMS))
 WEN_ARMS = ("wen", "wen_fresh")
+
+
+def host_of(arm: str) -> str:
+    return STUDY2_ARMS[arm][0] if arm in STUDY2_ARMS else arm
 ALLOWED_GPU_TIER_KEYS = {"t_round_model"}
 
 
@@ -48,25 +58,41 @@ def validate_config(cfg) -> dict:
         raise ValueError("[WenEnv] total_clients / per_round must be 30 / 3.")
     if int(cfg.trainer.epochs) != K.LOCAL_EPOCHS:
         raise ValueError("[WenEnv] trainer.epochs must be 1.")
-    if arm != "random" and float(cfg.server.polaris_alpha) != 1.0:
+    host = host_of(arm)
+    study2 = {"host": host, "wen_f12": STUDY2_ARMS[arm][1] if arm in STUDY2_ARMS else
+              ("cpu" if host in WEN_ARMS else None),
+              "stage0_estimator": "gpu" if arm in STUDY2_ARMS and stage0 else None}
+    if arm in STUDY2_ARMS and stage0 != arm.endswith("_s0"):
+        raise ValueError(f"[WenEnv] arm {arm} needs stage0 = {arm.endswith('_s0')}.")
+    # Prompt I Step 3 test 1: the plug-in arm's code path with its plug-in off
+    # (Stage 0 off; Wen F1/F2 back to the CPU family, with the CPU limits).
+    plugin_off = bool(getattr(wen, "study2_plugin_off_test", False))
+    if plugin_off:
+        if arm not in STUDY2_ARMS:
+            raise ValueError("[WenEnv] study2_plugin_off_test applies to Study 2 arms only.")
+        stage0 = False
+        study2.update(stage0_estimator=None,
+                      wen_f12="cpu" if study2["wen_f12"] else None)
+    study2["study2_plugin_off_test"] = plugin_off
+    if host != "random" and float(cfg.server.polaris_alpha) != 1.0:
         raise ValueError("[WenEnv] polaris_alpha (G_i prior alpha) is locked at 1.")
     stale_test = bool(getattr(wen, "wen_fresh_stale_f3_test", False))
     if stale_test and arm != "wen_fresh":
         raise ValueError("[WenEnv] wen_fresh_stale_f3_test applies to wen_fresh only.")
-    if arm in WEN_ARMS:
+    if host in WEN_ARMS:
         # Prompt E: Wen's own rule (no epsilon), no Stage 0, rescaled limits.
         # Prompt H: wen_fresh is the same rule with F3 = the current global
         # model's loss on each vehicle's partition.
-        if stage0:
+        if stage0 and arm not in STUDY2_ARMS:
             raise ValueError(f"[WenEnv] the {arm} arm runs without Stage 0 (Prompt E W7).")
         if str(getattr(wen, "selection", "wen")) != "wen" or hasattr(wen, "epsilon"):
             raise ValueError(f"[WenEnv] arm {arm} uses selection = 'wen' and no epsilon.")
         if not (hasattr(wen, "wen_t_max") and hasattr(wen, "wen_e_max")):
             raise ValueError(f"[WenEnv] arm {arm} needs [wen_env] wen_t_max and wen_e_max "
                              "(wen_limits.py).")
-        return {"arm": arm, "scenario": scenario, "stage0": False, "selection": "wen",
+        return {"arm": arm, "scenario": scenario, "stage0": stage0, "selection": "wen",
                 "epsilon": None, "cpu_rho": None, "cpu_rho_test_override": False,
-                "wen_fresh_stale_f3_test": stale_test,
+                "wen_fresh_stale_f3_test": stale_test, **study2,
                 "wen_t_max": float(wen.wen_t_max), "wen_e_max": float(wen.wen_e_max),
                 "bundle_dir": Path(wen.bundle_dir),
                 "bundle_zip": Path(wen.bundle_zip) if hasattr(wen, "bundle_zip") else None,
@@ -79,11 +105,11 @@ def validate_config(cfg) -> dict:
         if epsilon is None:
             raise ValueError("[WenEnv] selection = 'egreedy' needs [wen_env] epsilon.")
         epsilon = float(epsilon)
-        if arm == "random" and epsilon != 1.0:
+        if host == "random" and epsilon != 1.0:
             raise ValueError("[WenEnv] the random arm is egreedy with epsilon = 1.")
         # Any epsilon other than 0.2 is an S1 gpu ablation (0 = top-1; 1 = the
         # check that the gpu arm at epsilon 1 reproduces the random arm).
-        if arm != "random" and epsilon != DEFAULT_EPSILON and \
+        if host != "random" and epsilon != DEFAULT_EPSILON and \
                 not (arm == "gpu" and scenario == "S1"):
             raise ValueError("[WenEnv] epsilon other than 0.2 is an S1 gpu ablation only.")
     else:
@@ -102,7 +128,7 @@ def validate_config(cfg) -> dict:
         cpu_rho = float(cpu_rho)
     elif cpu_rho is not None or rho_override:
         raise ValueError("[WenEnv] cpu_rho / cpu_rho_test_override apply to cpu_cal only.")
-    return {"arm": arm, "scenario": scenario, "stage0": stage0,
+    return {"arm": arm, "scenario": scenario, "stage0": stage0, **study2,
             "selection": selection, "epsilon": epsilon,
             "cpu_rho": cpu_rho, "cpu_rho_test_override": rho_override,
             "bundle_dir": Path(wen.bundle_dir),

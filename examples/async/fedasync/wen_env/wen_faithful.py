@@ -205,7 +205,7 @@ class WenFaithfulSelection(ClientSelectionStrategy):
                 "tier": tier[c], "x": repr(xs[c]), "F1": repr(f[0]), "F2": repr(f[1]),
                 "F3": repr(f[2]), "F4": repr(f[3]), "feasible": int(c in feasible),
                 "pareto": int(c in pareto), "picked": int(c == d.pick),
-                **self.log_extra()})
+                **{k: v for k, v in self.log_extra().items() if k in self.candidate_fields}})
         self._cand_fh.flush()
 
     def log_extra(self) -> dict:
