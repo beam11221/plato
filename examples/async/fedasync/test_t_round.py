@@ -21,6 +21,8 @@ from unittest.mock import MagicMock, patch
 _HERE = Path(__file__).parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
+# gpu_tier_sleep.py lives in gpu_tiers/ alongside the CSVs it loads.
+sys.path.insert(0, str(_HERE / "gpu_tiers"))
 
 import numpy as np
 import gpu_tier_sleep
@@ -31,8 +33,8 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 # Shared fixtures
 # ---------------------------------------------------------------------------
 
-_TIERS_CSV = _HERE / "tiers.csv"
-_CLIENTS_CSV = _HERE / "clients.csv"
+_TIERS_CSV = _HERE / "gpu_tiers" / "input" / "tiers.csv"
+_CLIENTS_CSV = _HERE / "gpu_tiers" / "input" / "clients.csv"
 
 _TOTAL = 100
 _PARTITION_SIZE = 500
@@ -82,11 +84,16 @@ def test_t_round_positive_and_sane():
     # Xavier (50 clients): 1.1e9 * 500 / (10.0 * 1e12 * 1.0) = 0.055 s
     # Orin   (35 clients): 1.1e9 * 500 / (78.0 * 1e12 * 1.0) ≈ 0.007051 s
     # Thor   (15 clients): 1.1e9 * 500 / (150.0 * 1e12 * 1.0) ≈ 0.003667 s
-    # Sorted ascending: [15×Thor] [35×Orin] [50×Xavier]
-    # Median of 100 values: (a[49] + a[50]) / 2 = (last_Orin + first_Xavier) / 2
+    #
+    # This call leaves clients_per_round at its default of 1, and BOTH T_round
+    # models reduce to the pool ARITHMETIC MEAN at P=1: "min of 1 draw" is just
+    # that draw, and "queue" divides by min(1, 100) = 1.  (This assertion used to
+    # expect the pool median, from before the function took P into account at
+    # all — it failed for that reason, not because of a defect in the code.)
     t_xavier = gpu_tier_sleep.W_MODEL_FLOPS * 500 / (10.0 * 1e12 * 1.0)
     t_orin = gpu_tier_sleep.W_MODEL_FLOPS * 500 / (78.0 * 1e12 * 1.0)
-    expected = (t_orin + t_xavier) / 2.0
+    t_thor = gpu_tier_sleep.W_MODEL_FLOPS * 500 / (150.0 * 1e12 * 1.0)
+    expected = (50 * t_xavier + 35 * t_orin + 15 * t_thor) / 100.0
     assert abs(t_round - expected) < 1e-12, (
         f"T_round={t_round:.9f} s != expected={expected:.9f} s"
     )
@@ -315,6 +322,208 @@ def test_selector_with_gpu_tops_predictor():
 
 
 # ---------------------------------------------------------------------------
+# Test 6: CPU tiers — lower heterogeneity than GPU tiers
+#
+# tiers_cpu.csv encodes cpu_cores × cpu_freq_ghz / 1000 in gpu_tflops_fp16:
+#   xavier → 0.016  orin → 0.024  thor → 0.0312
+# Heterogeneity ratio (max/min predicted time) must be smaller than GPU's.
+# ---------------------------------------------------------------------------
+
+_TIERS_CPU_CSV = _HERE / "gpu_tiers" / "input" / "tiers_cpu.csv"
+
+
+def test_cpu_tiers_lower_heterogeneity():
+    """CPU tiers load correctly and have lower heterogeneity than GPU tiers."""
+    gpu_computer = gpu_tier_sleep.GpuTierSleepComputer(_TIERS_CSV, _CLIENTS_CSV)
+    cpu_computer = gpu_tier_sleep.GpuTierSleepComputer(_TIERS_CPU_CSV, _CLIENTS_CSV)
+
+    # Noise-free training time for representative clients (500 samples, 1 epoch).
+    def _predict(computer, cid):
+        tier = computer.tier_for(cid)
+        work = gpu_tier_sleep.W_MODEL_FLOPS * _PARTITION_SIZE * _LOCAL_EPOCHS
+        return work / (tier.gpu_tflops_fp16 * 1e12 * tier.eta_nominal)
+
+    gpu_times = {
+        "xavier": _predict(gpu_computer, 1),   # cid 1  → xavier
+        "orin":   _predict(gpu_computer, 51),  # cid 51 → orin
+        "thor":   _predict(gpu_computer, 86),  # cid 86 → thor
+    }
+    cpu_times = {
+        "xavier": _predict(cpu_computer, 1),
+        "orin":   _predict(cpu_computer, 51),
+        "thor":   _predict(cpu_computer, 86),
+    }
+
+    gpu_ratio = max(gpu_times.values()) / min(gpu_times.values())
+    cpu_ratio = max(cpu_times.values()) / min(cpu_times.values())
+
+    logging.info(
+        "[test6] GPU tier times: xavier=%.6f orin=%.6f thor=%.6f  ratio=%.2f",
+        gpu_times["xavier"], gpu_times["orin"], gpu_times["thor"], gpu_ratio,
+    )
+    logging.info(
+        "[test6] CPU tier times: xavier=%.6f orin=%.6f thor=%.6f  ratio=%.2f",
+        cpu_times["xavier"], cpu_times["orin"], cpu_times["thor"], cpu_ratio,
+    )
+
+    assert cpu_ratio < gpu_ratio, (
+        f"CPU heterogeneity ratio {cpu_ratio:.2f} must be lower than GPU's {gpu_ratio:.2f}"
+    )
+
+    # Sanity-check expected values: make_cpu_tiers.py --metric freq writes
+    # cpu_freq_ghz/1000, so Xavier and Orin (both 2.00 GHz) are IDENTICAL and
+    # only Thor (2.60 GHz) is faster.
+    work = gpu_tier_sleep.W_MODEL_FLOPS * _PARTITION_SIZE * _LOCAL_EPOCHS
+    assert abs(cpu_times["xavier"] - work / (0.002 * 1e12)) < 1e-10
+    assert abs(cpu_times["orin"]   - work / (0.002 * 1e12)) < 1e-10
+    assert abs(cpu_times["thor"]   - work / (0.0026 * 1e12)) < 1e-10
+
+    # CPU ratio ~1.30×; GPU ratio ~15× — assert CPU < 5× for a generous bound.
+    assert cpu_ratio < 5.0, f"CPU ratio {cpu_ratio:.2f} unexpectedly large"
+
+    logging.info("[test6] PASS — CPU ratio=%.2f < GPU ratio=%.2f", cpu_ratio, gpu_ratio)
+
+
+def test_cpu_tiers_T_round_positive():
+    """T_round computed from CPU tiers is positive and slower than GPU T_round."""
+    gpu_computer = gpu_tier_sleep.GpuTierSleepComputer(_TIERS_CSV, _CLIENTS_CSV)
+    cpu_computer = gpu_tier_sleep.GpuTierSleepComputer(_TIERS_CPU_CSV, _CLIENTS_CSV)
+
+    gpu_tier_sleep._t_round_logged = False
+    with patch.object(gpu_tier_sleep, "get_computer", return_value=gpu_computer):
+        t_round_gpu = gpu_tier_sleep.compute_pool_T_round_seconds(
+            _CLIENT_IDS, _PARTITION_SIZES, _LOCAL_EPOCHS
+        )
+
+    gpu_tier_sleep._t_round_logged = False
+    with patch.object(gpu_tier_sleep, "get_computer", return_value=cpu_computer):
+        t_round_cpu = gpu_tier_sleep.compute_pool_T_round_seconds(
+            _CLIENT_IDS, _PARTITION_SIZES, _LOCAL_EPOCHS
+        )
+
+    assert t_round_cpu > 0, f"CPU T_round must be positive, got {t_round_cpu}"
+    assert t_round_cpu > t_round_gpu, (
+        f"CPU T_round ({t_round_cpu:.6f} s) should be slower than GPU T_round ({t_round_gpu:.6f} s)"
+    )
+    logging.info(
+        "[test7] PASS — T_round_cpu=%.6f s > T_round_gpu=%.6f s",
+        t_round_cpu, t_round_gpu,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Test 8: t_round_model defaults to "min" and rejects typos
+# ---------------------------------------------------------------------------
+
+def test_t_round_model_default_and_validation():
+    """Absent config -> "min" (historical).  A typo raises instead of falling back."""
+    gpu_tier_sleep._t_round_model = None
+    assert gpu_tier_sleep.t_round_model() == "min", (
+        "t_round_model() must default to 'min' so configs written before the key "
+        "existed keep producing byte-identical runs."
+    )
+
+    def _resolve(raw):
+        gpu_tier_sleep._t_round_model = None
+        cfg = SimpleNamespace(config=SimpleNamespace(
+            gpu_tier=SimpleNamespace(t_round_model=raw)))
+        with patch.dict(sys.modules, {"plato.config": SimpleNamespace(
+                Config=lambda: cfg)}):
+            return gpu_tier_sleep.t_round_model()
+
+    # Case and surrounding whitespace are normalised on purpose — a config is
+    # hand-written and "Queue" is the same intent as "queue".
+    for ok in ("queue", "QUEUE ", " Queue"):
+        assert _resolve(ok) == "queue", f"t_round_model() rejected {ok!r}"
+    assert _resolve("min") == "min"
+
+    # Anything that is not one of the two models must raise.  A silent fallback
+    # would put two arms of a sweep on different staleness scales with nothing in
+    # the log to say so — the `staleness_predictor` typo trap (HANDOFF § 4.10).
+    for bad in ("queue_", "steady-state", "e_min", ""):
+        raised = False
+        try:
+            _resolve(bad)
+        except ValueError:
+            raised = True
+        assert raised, f"t_round_model() silently accepted {bad!r}"
+
+    gpu_tier_sleep._t_round_model = None
+    logging.info("[test8] PASS — default 'min', case-insensitive, typos raise")
+
+
+# ---------------------------------------------------------------------------
+# Test 9: the two models, against the seconds/round the finished runs measured
+# ---------------------------------------------------------------------------
+
+def test_t_round_queue_matches_observed_rate():
+    """"queue" reproduces the observed merge rate; "min" is wrong, gap-dependent.
+
+    Ground truth is d(elapsed_time)/d(round) from the four finished gpu runs of
+    the post-bugfix sweep, with the dispatch-weighted mean sleep of each run and
+    the in-flight concurrency check_run.py measured (9 for all four).
+
+    The point of the test is not just that "queue" is closer.  It is that the
+    error of "min" is a monotone function of the gap — the sweep's own
+    independent variable — so it cannot be treated as a constant that cancels.
+    """
+    # gap -> (per-tier sleep seconds, dispatch-weighted mean, measured s/round)
+    observed = {
+        "01": ((20.0, 20.0, 20.0), 20.000, 2.183),
+        "10": ((20.0, 6.325, 2.000), 11.625, 1.336),
+        "20": ((20.0, 4.472, 1.000), 10.302, 1.205),
+        "30": ((20.0, 3.651, 0.667), 9.564, 1.147),
+    }
+    concurrency = 9  # measured, not configured: one of the 10 slots is mid-refill
+
+    min_errors = []
+    for gap, ((t_x, t_o, t_t), sel_mean, measured) in observed.items():
+        pool = [t_x] * 50 + [t_o] * 35 + [t_t] * 15
+
+        gpu_tier_sleep._t_round_model = "min"
+        t_min = gpu_tier_sleep._t_round_kernel(pool, 10)
+
+        # "queue" is evaluated on the live busy set, which is what the selector
+        # actually passes it — the dispatch-weighted mean over the clients in
+        # flight, divided by how many are in flight.
+        gpu_tier_sleep._t_round_model = "queue"
+        t_queue = gpu_tier_sleep._t_round_kernel([sel_mean] * concurrency, 10)
+
+        err_min = abs(t_min / measured - 1.0)
+        err_queue = abs(t_queue / measured - 1.0)
+        min_errors.append((gap, err_min))
+
+        assert err_queue < 0.10, (
+            f"gap {gap}: 'queue' predicts {t_queue:.3f} s/round vs {measured:.3f} "
+            f"measured ({err_queue:+.1%}) — expected within 10%."
+        )
+        assert err_queue < err_min, (
+            f"gap {gap}: 'queue' ({err_queue:+.1%}) is not closer to the measured "
+            f"{measured:.3f} s/round than 'min' ({err_min:+.1%})."
+        )
+        logging.info(
+            "[test9] gap %s: measured=%.3f  min=%.3f (%+.1f%%)  queue=%.3f (%+.1f%%)",
+            gap, measured, t_min, err_min * 100, t_queue, err_queue * 100,
+        )
+
+    # The error of "min" must shrink monotonically as the gap widens — that is
+    # the confound.  At G=1 every client takes 20 s, so "min of 10" IS 20 s.
+    errs = [e for _, e in min_errors]
+    assert errs == sorted(errs, reverse=True), (
+        f"'min' error is expected to decay monotonically with the gap, got "
+        f"{[(g, f'{e:+.1%}') for g, e in min_errors]}"
+    )
+    assert errs[0] > 5.0, (
+        f"'min' should be off by >500% at gap 01 (all clients identical), "
+        f"got {errs[0]:+.1%}"
+    )
+
+    gpu_tier_sleep._t_round_model = None
+    logging.info("[test9] PASS — queue within 10%% at every gap; min decays %s",
+                 " -> ".join(f"{e:+.0%}" for e in errs))
+
+
+# ---------------------------------------------------------------------------
 # Runner (also works as a plain script without pytest)
 # ---------------------------------------------------------------------------
 
@@ -325,6 +534,10 @@ if __name__ == "__main__":
         test_seconds_to_rounds,
         test_gpu_tops_predict_deterministic,
         test_selector_with_gpu_tops_predictor,
+        test_cpu_tiers_lower_heterogeneity,
+        test_cpu_tiers_T_round_positive,
+        test_t_round_model_default_and_validation,
+        test_t_round_queue_matches_observed_rate,
     ]
     passed = 0
     failed = 0

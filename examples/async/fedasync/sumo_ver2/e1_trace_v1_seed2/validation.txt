@@ -1,0 +1,60 @@
+========================================================================
+E1-A TRACE VALIDATION REPORT
+seed = 2
+scope: RSU is a coverage predicate only; uplink rate is a constant
+       reserved column; no communication term enters selection.
+========================================================================
+
+V1  STEADY-STATE POOL SIZE
+    expected |P| = n*p_fl*(2R/L) = 18.7500
+    measured mean |P| (t>=0) = 19.4125 (std 3.6900)
+    deviation = +3.53%  (tolerance +-20%)
+    --> PASS
+
+V2  RESIDENCE-TIME DISTRIBUTION (vehicles.csv, entered coverage)
+    n = 1513
+    mean = 32.351 s   p5 = 28.000   p50 = 32.000   p95 = 38.000   max = 42.000
+    ideal residence at v_max (2R/v_max) = 25.714 s
+    sanity: max (42.00) should meet/exceed 2R/v_max and the
+            distribution should be right-skewed (mean < p95 spread).
+
+V3  CHURN (entries/exits into coverage per second, t>=0)
+    entries/s: mean = 0.8090  var = 0.8579
+    exits/s  : mean = 0.7951  var = 0.4774
+    entry/exit imbalance = +1.716% (should be ~0 in steady state)
+
+V4  REALISED IN-COVERAGE TIER MIX (unique pool vehicles, t>=0)
+    n pool vehicles = 1090
+    xavier  : configured 50.00%   realised 48.35%   dev -1.65pp
+    orin    : configured 35.00%   realised 34.95%   dev -0.05pp
+    thor    : configured 15.00%   realised 16.70%   dev +1.70pp
+    tiers are hashed from vehicle id with an independent salt, so they cannot correlate with SUMO insertion/direction/time by construction; residual deviation is finite-sample only.
+
+V5  KAPPA ESTIMATE  kappa = C * R_bar / (T_bar_train * |P|)
+    *** PROVISIONAL T_bar_train -- replace with user-supplied per-tier seconds ***
+    T_bar_train (pool-mix weighted) = 22.4661 s   per-tier = {'xavier': 30.0, 'orin': 18.0, 'thor': 10.0}
+    R_bar = 32.3510 s   |P| = 19.4125
+      C |      kappa
+    ----+-----------
+      1 |    0.07418
+      2 |    0.14836
+      4 |    0.29671
+
+    Sensitivity of kappa to coverage_radius_m (analytic re-derivation):
+     R_cov |   |P|_an |  Rbar_an |   k(C=1) |   k(C=2) |   k(C=4)
+    -------+----------+----------+----------+----------+---------
+       150 |   11.250 |   15.429 |  0.06104 |  0.12209 |  0.24418
+       250 |   18.750 |   25.714 |  0.06104 |  0.12209 |  0.24418
+       500 |   37.500 |   51.429 |  0.06104 |  0.12209 |  0.24418
+    NOTE: |P| ~ R and R_bar ~ R both scale linearly with R, so they
+          cancel -- kappa is analytically INVARIANT to coverage_radius.
+
+V6  ASSERTIONS
+    coverage geometry (in_coverage=>|x-rsu|<=R): OK (0 violations)
+    t monotone non-decreasing: OK
+    all trace veh_id in vehicles.csv: OK (0 missing)
+    --> PASS
+
+========================================================================
+SUMMARY: V1 PASS   V6 PASS
+========================================================================

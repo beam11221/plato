@@ -17,6 +17,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+# gpu_tier_sleep.py lives in gpu_tiers/ alongside the CSVs it loads.
+sys.path.insert(0, str(Path(__file__).parent / "gpu_tiers"))
 
 import gpu_tier_sleep as gts
 

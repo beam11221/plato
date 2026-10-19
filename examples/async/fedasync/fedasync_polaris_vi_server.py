@@ -50,6 +50,106 @@ from plato.servers.strategies.base import ServerContext
 
 
 # ---------------------------------------------------------------------------
+# [server] staleness_predictor — the one key that decides which arm this is
+# ---------------------------------------------------------------------------
+
+STALENESS_PREDICTORS = frozenset({"gpu_tops", "cpu", "observed", "gpu_oracle"})
+DEFAULT_STALENESS_PREDICTOR = "observed"
+
+# Predictors that work in SECONDS (a spec- or truth-derived training time, turned
+# into rounds by the selector) rather than in rounds (the observed-tau estimator).
+SECONDS_PREDICTORS = frozenset({"gpu_tops", "cpu", "gpu_oracle"})
+
+# Sentinel for check_oracle_wiring's injectable argument: `None` is a meaningful
+# value there (the key is absent), so it cannot double as "not supplied".
+_UNSET = object()
+
+
+def resolve_staleness_predictor(raw) -> str:
+    """Validate ``[server] staleness_predictor`` and return its canonical name.
+
+    An ABSENT key still resolves to ``"observed"``, so every config written
+    before this key existed produces a byte-identical run.  An unrecognised
+    value RAISES.
+
+    Why it raises rather than falling back (HANDOFF § 4.10 vs § 4.11).  This key
+    used to be read as ``getattr(server_cfg, "staleness_predictor", "observed")``
+    and then tested with ``in ("gpu_tops", "cpu")``, so anything it did not
+    recognise — ``"GPU_TOPS"``, ``"gpu_top"``, a stray space — silently became
+    the observed-τ predictor.  That was already a trap when ``observed`` was
+    merely the default.  It became a much worse one when ``observed`` became a
+    real ARM of a sweep (surgical/BRIEF_surgical.md): a typo in the gpu or cpu
+    config no longer yields a visibly wrong run, it yields a run that is
+    *behaviourally identical to another arm of the same experiment*, with
+    nothing in the results to distinguish the duplicate.  Six hours of GPU time
+    would be spent measuring the same arm twice.
+
+    Case and surrounding whitespace are normalised, following the
+    ``gpu_tier_sleep.t_round_model()`` precedent.  The generator
+    (``gpu_tiers/make_configs.py``) additionally refuses to WRITE a config whose
+    predictor does not match the arm implied by its own filename, so this
+    function is the backstop for hand-written configs, not the only guard.
+    """
+    if raw is None:
+        return DEFAULT_STALENESS_PREDICTOR
+
+    name = str(raw).strip().lower()
+    if name not in STALENESS_PREDICTORS:
+        raise ValueError(
+            f"[PolarisVi] [server] staleness_predictor = {raw!r} is not "
+            f"recognised; expected one of {sorted(STALENESS_PREDICTORS)}. "
+            "Omit the key entirely to get "
+            f"{DEFAULT_STALENESS_PREDICTOR!r}. This is deliberately fatal: an "
+            "unrecognised value used to fall back to the observed-τ predictor "
+            "silently, which would now produce an undetectable duplicate of "
+            "another arm of the sweep."
+        )
+    return name
+
+
+def check_oracle_wiring(predictor_name: str, oracle_csv=_UNSET) -> None:
+    """Fail unless ``[gpu_tier] oracle_sleep_csv`` and the arm agree.
+
+    The key and the arm name are two halves of one switch, written in two
+    different sections of the TOML by a generator, and either half alone produces
+    a run that is silently a DIFFERENT arm of the same sweep:
+
+      * ``gpu_oracle`` without the key -> the predictor falls back to the tier
+        mean, i.e. it becomes a second copy of the ``gpu`` arm.  The results
+        would show the deployable method where the upper bound should be, and
+        the headroom between them would read as zero.
+      * ``gpu_tops`` (the ``gpu`` arm) WITH the key -> the arm the thesis claim
+        rests on quietly regains the oracle it was just split away from, which
+        is the exact defect this stage exists to remove.
+      * ``cpu`` or ``observed`` with the key -> same, for an arm whose whole
+        definition is the belief it holds.
+
+    Neither is visible in an accuracy curve, so both are fatal here.  This is the
+    run-time backstop; ``gpu_tiers_dataset/preflight.py`` catches it before any
+    GPU time is spent, and additionally checks that the oracle file is the same
+    file the clients actually sleep from.
+    """
+    if oracle_csv is _UNSET:
+        gpu_tier_cfg = getattr(Config().config, "gpu_tier", None)
+        oracle_csv = getattr(gpu_tier_cfg, "oracle_sleep_csv", None)
+
+    if predictor_name == "gpu_oracle" and oracle_csv is None:
+        raise ValueError(
+            "[PolarisVi] staleness_predictor = 'gpu_oracle' requires "
+            "[gpu_tier] oracle_sleep_csv, which is absent. Without it this arm "
+            "predicts the tier mean and is an undetectable duplicate of the gpu "
+            "arm."
+        )
+    if predictor_name != "gpu_oracle" and oracle_csv is not None:
+        raise ValueError(
+            f"[PolarisVi] [gpu_tier] oracle_sleep_csv is set but "
+            f"staleness_predictor = {predictor_name!r}. That key gives an arm "
+            f"per-client ground truth; only 'gpu_oracle' may hold it. Remove the "
+            f"key, or set the predictor to 'gpu_oracle'."
+        )
+
+
+# ---------------------------------------------------------------------------
 # Aggregation strategy: FedAsync mixing + Polaris G_i tracking
 # ---------------------------------------------------------------------------
 
@@ -85,6 +185,13 @@ class FedAsyncPolarisAggregationStrategy(
         self._clients_per_round: int = clients_per_round
         self.total_clients: int = 0
         self.unexplored_clients: set[int] | None = None
+        # The proxy G_i most recently given to unexplored clients.  Read by
+        # Stage 7b's recycle reset so a newly arrived identity carries the same
+        # prior as every other never-seen client; nothing here reads it.
+        self.last_proxy: float | None = None
+        # The mean measured norm the proxy was built from (proxy = alpha x this).
+        # Recorded for Stage 9's pre-flight; nothing here reads it.
+        self.last_proxy_basis: float | None = None
 
     def setup(self, context: ServerContext) -> None:
         super().setup(context)
@@ -189,6 +296,8 @@ class FedAsyncPolarisAggregationStrategy(
         if count > 0 and self.unexplored_clients:
             avg_norm = sum_norms / count
             proxy = self.alpha * avg_norm
+            self.last_proxy = proxy
+            self.last_proxy_basis = avg_norm
             for idx in self.unexplored_clients:
                 norm_deltas[idx] = proxy
 
@@ -277,13 +386,26 @@ class Server(fedasync_server.Server):
         )
 
         # Choose staleness predictor from [server] staleness_predictor in the TOML.
-        # Omitting the key (or "observed") keeps the existing observed-τ behaviour
-        # so old configs are unaffected.  Set to "gpu_tops" to activate the
-        # adaptive EMA predictor: per-client training times start from the
-        # GPU-TOPS formula and are updated each round from observed wall-clock
-        # durations; T_round is recomputed from the blended distribution.
-        predictor_name = getattr(server_cfg, "staleness_predictor", "observed")
-        if predictor_name == "gpu_tops":
+        # Omitting the key keeps the existing observed-τ behaviour, so old configs
+        # are unaffected; an unrecognised value now RAISES (see
+        # resolve_staleness_predictor).
+        # "gpu_tops": uses GPU TFLOPS from tiers.csv for proactive staleness prediction.
+        # "cpu": identical code path; tiers_csv in [gpu_tier] should point to
+        #         tiers_cpu.csv whose gpu_tflops_fp16 column holds CPU-based throughput
+        #         (cores × GHz / 1000) — lower heterogeneity than GPU tiers.
+        #         Clients still sleep for the same durations as gpu_tops (same sleep CSV).
+        # "observed": the client's own last measured staleness, in rounds — Polaris's
+        #         reactive estimator.  Never computes T_round or a residual.
+        # "gpu_oracle": identical code path to gpu_tops, but [gpu_tier]
+        #         oracle_sleep_csv makes gpu_tier_sleep return each client's TRUE
+        #         sleep — jitter included — instead of its tier's datasheet mean.
+        #         Not deployable: it is the upper bound that says how much the
+        #         spec-derived gpu arm gives up.  See gpu_tier_sleep.oracle_sleeps().
+        predictor_name = resolve_staleness_predictor(
+            getattr(server_cfg, "staleness_predictor", None)
+        )
+        check_oracle_wiring(predictor_name)
+        if predictor_name in SECONDS_PREDICTORS:
             _local_epochs = local_epochs  # capture for closure
             def _gpu_tops_predictor(cid: int, ctx) -> float:
                 sizes = ctx.state.get("partition_sizes", partition_sizes)
@@ -295,10 +417,11 @@ class Server(fedasync_server.Server):
                 predict_staleness_unit="seconds",
             )
             logging.info(
-                "[PolarisVi] Staleness predictor: gpu_tops"
-                " (proactive, T_round recomputed each round from live busy pool)"
+                "[PolarisVi] Staleness predictor: %s"
+                " (proactive, T_round recomputed each round from live busy pool)",
+                predictor_name,
             )
-        else:
+        else:  # "observed" — the only remaining value resolve_() can return
             client_selection_strategy = fedasync_polaris_vi_selection.PolarisViClientSelectionStrategy()
             logging.info("[PolarisVi] Staleness predictor: observed-τ (rounds, default)")
 

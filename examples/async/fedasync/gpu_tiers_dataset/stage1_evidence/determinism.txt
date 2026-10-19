@@ -1,0 +1,138 @@
+Stage 1 - determinism check
+========================================================================
+
+Two runs of ONE config: N=20, C=4, alpha=0.8, arm gpu, seed 4126,
+200 rounds each, run sequentially and alone on the box.
+
+run A   gpu_a0p8_N20_C4_s4126_det1
+run B   gpu_a0p8_N20_C4_s4126_det2
+
+0. was every process seeded?
+------------------------------------------------------------------------
+run A: 5 processes logged a seed record
+        client_process_1     seed 4127
+        client_process_2     seed 4128
+        client_process_3     seed 4129
+        client_process_4     seed 4130
+        server               seed 4126
+run B: 5 processes logged a seed record
+        client_process_1     seed 4127
+        client_process_2     seed 4128
+        client_process_3     seed 4129
+        client_process_4     seed 4130
+        server               seed 4126
+
+same seeds in both runs: YES
+
+1. are the two accuracy curves identical, row for row?
+------------------------------------------------------------------------
+rows in the results CSV:  A 200, B 200
+rounds where accuracy moved (i.e. real evaluations): A 21, B 21
+
+PLATO writes one row per round and carries the last accuracy forward
+between evaluations, so most rows repeat. Both views are compared.
+
+VERDICT (every row): accuracy is NOT identical.
+         191 of 200 rows differ
+         first    round   10: 0.234200 vs 0.265200
+         largest  round  190: 0.699500 vs 0.639600 (|diff| 0.059900)
+VERDICT (evaluations only): NOT identical.
+
+train_loss (changes every round, so the most sensitive column): NOT identical.
+    first difference at round 3: 1.8184114694595337 vs 1.7988550662994385
+
+2. is sim_time_s at the final round identical?
+------------------------------------------------------------------------
+A   round 200   sim_time_s 283.497356
+B   round 200   sim_time_s 281.243598
+difference          +2.253757 s (+0.8014%)
+
+VERDICT: NOT identical.
+
+Against the unseeded baseline: ../separability/PARALLELISM_CHECK.md ran
+the same comparison -- two runs of one config, 200 rounds, C = 4, gpu
+arm, each alone on this box -- and measured 313.447 s against 293.737 s,
+a spread of 6.29%. Here it is 0.80%.
+
+So seeding removed most of it but not all. (The two are not a perfectly
+controlled pair: that run used the un-jittered fleet, whose E[T] is
+8.3231 s against 7.9180 s here, so the clocks are not directly
+comparable in absolute terms. The SPREAD between two runs of one config
+is, since both sides scale together.)
+
+largest per-round clock difference, over the evaluation rounds:
+    round 62   100.447293 vs 89.864844   |diff| 10.582449 s
+    median |diff| 1.847260 s
+
+3. where does any remaining difference come from?
+------------------------------------------------------------------------
+dispatches:   A 203, B 203
+dispatch sequence identical: NO
+    first difference at dispatch 18: client 4 vs 5
+merges:       A 200, B 200
+merge order identical:       NO
+    first difference at merge 18: client 4 vs 5
+
+THE SOURCE THAT SEEDING CANNOT REMOVE
+
+PLATO builds each report's finish time as
+
+    training_time + processing_time + comm_time + start_time
+                                     (plato/servers/base.py:1025-1030)
+
+and that finish time becomes the simulated clock. Of those four terms:
+
+    training_time     the client's fixed sleep -- deterministic
+    comm_time         0 under comm_simulation = true
+    start_time        derived from the clock itself
+    processing_time   time.perf_counter() measured ON THE HOST
+                      (plato/clients/strategies/defaults.py:252)
+
+`processing_time` is real elapsed time on a shared machine. It is added
+to every report, so it enters the clock on every round, and no seeding
+can make it repeat. `sim_time_s` therefore CANNOT be bit-identical
+between two runs; this is a property of PLATO's clock, not of this
+configuration, and it applies to every cell this project has ever run.
+
+4. WHICH WORKER PROCESS SERVED WHICH CLIENT
+------------------------------------------------------------------------
+PLATO runs a pool of max_concurrency worker processes and gives each
+round's selected client to whichever worker is free
+(plato/servers/base.py:662-682). The first clients each worker served:
+
+process    run A                        run B                       
+1          [18]                         [18]                        
+2          [14]                         [15]                           <-- differs
+3          [20, 4, 13, 8, 19, 16]       [20, 4, 13, 8, 19, 16]      
+4          [15]                         [14]                           <-- differs
+
+THE WORKER ASSIGNMENT DIFFERS, and it differs BEFORE the dispatch
+sequence does. That ordering comes from the order the four client
+processes happened to connect over socket.io, which is a real-time
+race at startup and is not seeded by anything.
+
+
+Why that is enough to diverge the whole run: the torch RNG lives in
+the WORKER PROCESS, not in the logical client. A client trained by
+worker 2 in one run and worker 4 in the other draws a different
+augmentation sequence (RandomHorizontalFlip + RandomCrop), so it
+computes different gradients. From there:
+
+    different gradients -> different G_i
+                        -> different V_i = G_i / sqrt(1 + tau_hat)
+                        -> a different client is selected
+                        -> a different clock
+
+which is exactly the order the sections above observed it in:
+train_loss diverges within a handful of rounds, the dispatch
+sequence some rounds later.
+
+NOT WORKED AROUND. Recording it is the point. What would fix it is
+re-seeding torch at the start of each local training run from
+(base_seed, client_id, round) instead of once per process, which
+would make a client's augmentation a property of the CLIENT rather
+than of the worker that happened to serve it. That is a change to
+what the runs do -- each client's augmentation becomes a
+deterministic function of the round -- so it is reported here as a
+decision rather than applied.
+

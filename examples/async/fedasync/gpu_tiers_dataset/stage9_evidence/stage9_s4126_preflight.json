@@ -1,0 +1,570 @@
+{
+  "baseline_open": {
+    "identity == spec": [
+      112,
+      112
+    ],
+    "one fingerprint per partition": [
+      18,
+      18
+    ],
+    "one partition per fingerprint": [
+      18,
+      18
+    ],
+    "p=0: state_reset == recycles": [
+      1,
+      1
+    ],
+    "partition == occupant partition (client)": [
+      112,
+      112
+    ],
+    "partition == occupant partition (dispatch)": [
+      112,
+      112
+    ],
+    "sampler_id == partition + 1": [
+      112,
+      112
+    ],
+    "seed == identity_seed(identity, round)": [
+      112,
+      112
+    ],
+    "sleep == occupant sleep (report)": [
+      112,
+      112
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      112,
+      112
+    ],
+    "tier == occupant tier": [
+      112,
+      112
+    ]
+  },
+  "gpu_open": {
+    "gpu tau_hat == Stage 3-6 value for occupant tier": [
+      117,
+      117
+    ],
+    "identity == spec": [
+      117,
+      117
+    ],
+    "never-seen G_i == current proxy": [
+      42,
+      42
+    ],
+    "observations == earlier delivered reports": [
+      117,
+      117
+    ],
+    "one fingerprint per partition": [
+      18,
+      18
+    ],
+    "one partition per fingerprint": [
+      18,
+      18
+    ],
+    "p=0: state_reset == recycles": [
+      1,
+      1
+    ],
+    "partition == occupant partition (client)": [
+      117,
+      117
+    ],
+    "partition == occupant partition (dispatch)": [
+      117,
+      117
+    ],
+    "predictor tier == occupant tier": [
+      117,
+      117
+    ],
+    "sampler_id == partition + 1": [
+      117,
+      117
+    ],
+    "seed == identity_seed(identity, round)": [
+      117,
+      117
+    ],
+    "sleep == occupant sleep (report)": [
+      117,
+      117
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      117,
+      117
+    ],
+    "startup T_round == fleet-file value": [
+      1,
+      1
+    ],
+    "tau_hat logged == tau_hat used": [
+      100,
+      100
+    ],
+    "tier == occupant tier": [
+      117,
+      117
+    ],
+    "[9] never-seen G_i == proxy == 1.0 x basis": [
+      42,
+      42
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      117,
+      117
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  },
+  "cpu_open": {
+    "identity == spec": [
+      116,
+      116
+    ],
+    "never-seen G_i == current proxy": [
+      49,
+      49
+    ],
+    "observations == earlier delivered reports": [
+      116,
+      116
+    ],
+    "one fingerprint per partition": [
+      19,
+      19
+    ],
+    "one partition per fingerprint": [
+      19,
+      19
+    ],
+    "p=0: state_reset == recycles": [
+      1,
+      1
+    ],
+    "partition == occupant partition (client)": [
+      116,
+      116
+    ],
+    "partition == occupant partition (dispatch)": [
+      116,
+      116
+    ],
+    "predictor tier == occupant tier": [
+      116,
+      116
+    ],
+    "sampler_id == partition + 1": [
+      116,
+      116
+    ],
+    "seed == identity_seed(identity, round)": [
+      116,
+      116
+    ],
+    "sleep == occupant sleep (report)": [
+      116,
+      116
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      116,
+      116
+    ],
+    "startup T_round == fleet-file value": [
+      1,
+      1
+    ],
+    "tau_hat logged == tau_hat used": [
+      100,
+      100
+    ],
+    "tier == occupant tier": [
+      116,
+      116
+    ],
+    "[9] never-seen G_i == proxy == 1.0 x basis": [
+      49,
+      49
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      116,
+      116
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  },
+  "observed_open": {
+    "identity == spec": [
+      115,
+      115
+    ],
+    "never-seen G_i == current proxy": [
+      42,
+      42
+    ],
+    "observations == earlier delivered reports": [
+      115,
+      115
+    ],
+    "one fingerprint per partition": [
+      18,
+      18
+    ],
+    "one partition per fingerprint": [
+      18,
+      18
+    ],
+    "p=0: state_reset == recycles": [
+      1,
+      1
+    ],
+    "partition == occupant partition (client)": [
+      115,
+      115
+    ],
+    "partition == occupant partition (dispatch)": [
+      115,
+      115
+    ],
+    "sampler_id == partition + 1": [
+      115,
+      115
+    ],
+    "seed == identity_seed(identity, round)": [
+      115,
+      115
+    ],
+    "sleep == occupant sleep (report)": [
+      115,
+      115
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      115,
+      115
+    ],
+    "tau_hat logged == tau_hat used": [
+      100,
+      100
+    ],
+    "tier == occupant tier": [
+      115,
+      115
+    ],
+    "[9] never-seen G_i == proxy == 1.0 x basis": [
+      42,
+      42
+    ],
+    "[9] observed seen: tau_hat == tau_obs": [
+      69,
+      69
+    ],
+    "[9] observed never-seen: tau_hat == tau_unseen logged": [
+      46,
+      46
+    ],
+    "[9] tau_unseen logged == running mean recomputed from log": [
+      115,
+      115
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      115,
+      115
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  },
+  "baseline_closed": {
+    "identity == spec": [
+      117,
+      117
+    ],
+    "one fingerprint per partition": [
+      20,
+      20
+    ],
+    "one partition per fingerprint": [
+      20,
+      20
+    ],
+    "p=1: resets only on first use": [
+      1,
+      1
+    ],
+    "p=1: slot keeps one identity/tier/partition": [
+      20,
+      20
+    ],
+    "partition == occupant partition (client)": [
+      117,
+      117
+    ],
+    "partition == occupant partition (dispatch)": [
+      117,
+      117
+    ],
+    "sampler_id == partition + 1": [
+      117,
+      117
+    ],
+    "seed == identity_seed(identity, round)": [
+      117,
+      117
+    ],
+    "sleep == occupant sleep (report)": [
+      117,
+      117
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      117,
+      117
+    ],
+    "tier == occupant tier": [
+      117,
+      117
+    ]
+  },
+  "gpu_closed": {
+    "gpu tau_hat == Stage 3-6 value for occupant tier": [
+      112,
+      112
+    ],
+    "identity == spec": [
+      112,
+      112
+    ],
+    "observations == earlier delivered reports": [
+      112,
+      112
+    ],
+    "one fingerprint per partition": [
+      20,
+      20
+    ],
+    "one partition per fingerprint": [
+      20,
+      20
+    ],
+    "p=1: resets only on first use": [
+      1,
+      1
+    ],
+    "p=1: slot keeps one identity/tier/partition": [
+      20,
+      20
+    ],
+    "partition == occupant partition (client)": [
+      112,
+      112
+    ],
+    "partition == occupant partition (dispatch)": [
+      112,
+      112
+    ],
+    "predictor tier == occupant tier": [
+      112,
+      112
+    ],
+    "sampler_id == partition + 1": [
+      112,
+      112
+    ],
+    "seed == identity_seed(identity, round)": [
+      112,
+      112
+    ],
+    "sleep == occupant sleep (report)": [
+      112,
+      112
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      112,
+      112
+    ],
+    "startup T_round == fleet-file value": [
+      1,
+      1
+    ],
+    "tau_hat logged == tau_hat used": [
+      100,
+      100
+    ],
+    "tier == occupant tier": [
+      112,
+      112
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      112,
+      112
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  },
+  "cpu_closed": {
+    "identity == spec": [
+      117,
+      117
+    ],
+    "observations == earlier delivered reports": [
+      117,
+      117
+    ],
+    "one fingerprint per partition": [
+      20,
+      20
+    ],
+    "one partition per fingerprint": [
+      20,
+      20
+    ],
+    "p=1: resets only on first use": [
+      1,
+      1
+    ],
+    "p=1: slot keeps one identity/tier/partition": [
+      20,
+      20
+    ],
+    "partition == occupant partition (client)": [
+      117,
+      117
+    ],
+    "partition == occupant partition (dispatch)": [
+      117,
+      117
+    ],
+    "predictor tier == occupant tier": [
+      117,
+      117
+    ],
+    "sampler_id == partition + 1": [
+      117,
+      117
+    ],
+    "seed == identity_seed(identity, round)": [
+      117,
+      117
+    ],
+    "sleep == occupant sleep (report)": [
+      117,
+      117
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      117,
+      117
+    ],
+    "startup T_round == fleet-file value": [
+      1,
+      1
+    ],
+    "tau_hat logged == tau_hat used": [
+      99,
+      99
+    ],
+    "tier == occupant tier": [
+      117,
+      117
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      117,
+      117
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  },
+  "observed_closed": {
+    "identity == spec": [
+      115,
+      115
+    ],
+    "observations == earlier delivered reports": [
+      115,
+      115
+    ],
+    "one fingerprint per partition": [
+      20,
+      20
+    ],
+    "one partition per fingerprint": [
+      20,
+      20
+    ],
+    "p=1: resets only on first use": [
+      1,
+      1
+    ],
+    "p=1: slot keeps one identity/tier/partition": [
+      20,
+      20
+    ],
+    "partition == occupant partition (client)": [
+      115,
+      115
+    ],
+    "partition == occupant partition (dispatch)": [
+      115,
+      115
+    ],
+    "sampler_id == partition + 1": [
+      115,
+      115
+    ],
+    "seed == identity_seed(identity, round)": [
+      115,
+      115
+    ],
+    "sleep == occupant sleep (report)": [
+      115,
+      115
+    ],
+    "sleep_s == occupant sleep (dispatch)": [
+      115,
+      115
+    ],
+    "tau_hat logged == tau_hat used": [
+      100,
+      100
+    ],
+    "tier == occupant tier": [
+      115,
+      115
+    ],
+    "[9] observed seen: tau_hat == tau_obs": [
+      92,
+      92
+    ],
+    "[9] observed never-seen: tau_hat == tau_unseen logged": [
+      23,
+      23
+    ],
+    "[9] tau_unseen logged == running mean recomputed from log": [
+      115,
+      115
+    ],
+    "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+      115,
+      115
+    ],
+    "[9] every selected V_i matched a dispatch line": [
+      1,
+      1
+    ]
+  }
+}

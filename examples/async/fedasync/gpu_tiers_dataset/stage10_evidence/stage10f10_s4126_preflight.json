@@ -1,0 +1,840 @@
+{
+  "gpu_open": {
+    "checks": {
+      "gpu tau_hat == Stage 3-6 value for occupant tier": [
+        104,
+        104
+      ],
+      "identity == spec": [
+        104,
+        104
+      ],
+      "never-seen G_i == current proxy": [
+        42,
+        42
+      ],
+      "observations == earlier delivered reports": [
+        104,
+        104
+      ],
+      "one fingerprint per partition": [
+        17,
+        17
+      ],
+      "one partition per fingerprint": [
+        17,
+        17
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        104,
+        104
+      ],
+      "partition == occupant partition (dispatch)": [
+        104,
+        104
+      ],
+      "predictor tier == occupant tier": [
+        104,
+        104
+      ],
+      "sampler_id == partition + 1": [
+        104,
+        104
+      ],
+      "seed == identity_seed(identity, round)": [
+        104,
+        104
+      ],
+      "sleep == occupant sleep (report)": [
+        104,
+        104
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        104,
+        104
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        104,
+        104
+      ],
+      "[9] never-seen G_i == proxy == 1.0 x basis": [
+        42,
+        42
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        104,
+        104
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1257,
+        1257
+      ],
+      "[10] T_hat == spec value for occupant tier": [
+        1257,
+        1257
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1257,
+        1257
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1257,
+        1257
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        101,
+        101
+      ],
+      "[10] round line: fallback == (no pass)": [
+        101,
+        101
+      ],
+      "[10] selected passed (or round fell back)": [
+        104,
+        104
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        104,
+        104
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        33,
+        33
+      ],
+      "[10] exactly one T_hat per tier": [
+        1,
+        1
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 101,
+      "after_range_gate": {
+        "median": 12,
+        "p10": 11,
+        "p90": 14
+      },
+      "after_stage0": {
+        "median": 10,
+        "p10": 8,
+        "p90": 12
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.213206046141607
+    }
+  },
+  "observed_open": {
+    "checks": {
+      "identity == spec": [
+        103,
+        103
+      ],
+      "never-seen G_i == current proxy": [
+        40,
+        40
+      ],
+      "observations == earlier delivered reports": [
+        103,
+        103
+      ],
+      "one fingerprint per partition": [
+        17,
+        17
+      ],
+      "one partition per fingerprint": [
+        17,
+        17
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        103,
+        103
+      ],
+      "partition == occupant partition (dispatch)": [
+        103,
+        103
+      ],
+      "sampler_id == partition + 1": [
+        103,
+        103
+      ],
+      "seed == identity_seed(identity, round)": [
+        103,
+        103
+      ],
+      "sleep == occupant sleep (report)": [
+        103,
+        103
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        103,
+        103
+      ],
+      "tau_hat == tau_obs (observed arm)": [
+        103,
+        103
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        103,
+        103
+      ],
+      "[9] never-seen G_i == proxy == 1.0 x basis": [
+        40,
+        40
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        103,
+        103
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1230,
+        1230
+      ],
+      "[10] T_hat == observed_per_vehicle recomputed": [
+        1230,
+        1230
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1230,
+        1230
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1230,
+        1230
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        100,
+        100
+      ],
+      "[10] round line: fallback == (no pass)": [
+        100,
+        100
+      ],
+      "[10] selected passed (or round fell back)": [
+        103,
+        103
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        103,
+        103
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        32,
+        32
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 100,
+      "after_range_gate": {
+        "median": 12.0,
+        "p10": 11,
+        "p90": 14
+      },
+      "after_stage0": {
+        "median": 9.0,
+        "p10": 7,
+        "p90": 12
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.2430894308943089
+    }
+  },
+  "cpu_open": {
+    "checks": {
+      "identity == spec": [
+        103,
+        103
+      ],
+      "never-seen G_i == current proxy": [
+        39,
+        39
+      ],
+      "observations == earlier delivered reports": [
+        103,
+        103
+      ],
+      "one fingerprint per partition": [
+        17,
+        17
+      ],
+      "one partition per fingerprint": [
+        17,
+        17
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        103,
+        103
+      ],
+      "partition == occupant partition (dispatch)": [
+        103,
+        103
+      ],
+      "predictor tier == occupant tier": [
+        103,
+        103
+      ],
+      "sampler_id == partition + 1": [
+        103,
+        103
+      ],
+      "seed == identity_seed(identity, round)": [
+        103,
+        103
+      ],
+      "sleep == occupant sleep (report)": [
+        103,
+        103
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        103,
+        103
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        103,
+        103
+      ],
+      "[9] never-seen G_i == proxy == 1.0 x basis": [
+        39,
+        39
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        103,
+        103
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1221,
+        1221
+      ],
+      "[10] T_hat == spec value for occupant tier": [
+        1221,
+        1221
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1221,
+        1221
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1221,
+        1221
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        100,
+        100
+      ],
+      "[10] round line: fallback == (no pass)": [
+        100,
+        100
+      ],
+      "[10] selected passed (or round fell back)": [
+        103,
+        103
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        103,
+        103
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        32,
+        32
+      ],
+      "[10] exactly one T_hat per tier": [
+        1,
+        1
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 100,
+      "after_range_gate": {
+        "median": 12.0,
+        "p10": 10,
+        "p90": 14
+      },
+      "after_stage0": {
+        "median": 7.0,
+        "p10": 5,
+        "p90": 8
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.44635544635544633
+    }
+  },
+  "gpu_closed": {
+    "checks": {
+      "gpu tau_hat == Stage 3-6 value for occupant tier": [
+        103,
+        103
+      ],
+      "identity == spec": [
+        103,
+        103
+      ],
+      "observations == earlier delivered reports": [
+        103,
+        103
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        103,
+        103
+      ],
+      "partition == occupant partition (dispatch)": [
+        103,
+        103
+      ],
+      "predictor tier == occupant tier": [
+        103,
+        103
+      ],
+      "sampler_id == partition + 1": [
+        103,
+        103
+      ],
+      "seed == identity_seed(identity, round)": [
+        103,
+        103
+      ],
+      "sleep == occupant sleep (report)": [
+        103,
+        103
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        103,
+        103
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        103,
+        103
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        103,
+        103
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1205,
+        1205
+      ],
+      "[10] T_hat == spec value for occupant tier": [
+        1205,
+        1205
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1205,
+        1205
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1205,
+        1205
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        100,
+        100
+      ],
+      "[10] round line: fallback == (no pass)": [
+        100,
+        100
+      ],
+      "[10] selected passed (or round fell back)": [
+        103,
+        103
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        103,
+        103
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        41,
+        41
+      ],
+      "[10] exactly one T_hat per tier": [
+        1,
+        1
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 100,
+      "after_range_gate": {
+        "median": 12.0,
+        "p10": 10,
+        "p90": 14
+      },
+      "after_stage0": {
+        "median": 10.0,
+        "p10": 7,
+        "p90": 12
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.2132780082987552
+    }
+  },
+  "observed_closed": {
+    "checks": {
+      "identity == spec": [
+        105,
+        105
+      ],
+      "observations == earlier delivered reports": [
+        105,
+        105
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        105,
+        105
+      ],
+      "partition == occupant partition (dispatch)": [
+        105,
+        105
+      ],
+      "sampler_id == partition + 1": [
+        105,
+        105
+      ],
+      "seed == identity_seed(identity, round)": [
+        105,
+        105
+      ],
+      "sleep == occupant sleep (report)": [
+        105,
+        105
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        105,
+        105
+      ],
+      "tau_hat == tau_obs (observed arm)": [
+        105,
+        105
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        105,
+        105
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        105,
+        105
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1227,
+        1227
+      ],
+      "[10] T_hat == observed_per_vehicle recomputed": [
+        1227,
+        1227
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1227,
+        1227
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1227,
+        1227
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        102,
+        102
+      ],
+      "[10] round line: fallback == (no pass)": [
+        102,
+        102
+      ],
+      "[10] selected passed (or round fell back)": [
+        105,
+        105
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        105,
+        105
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        33,
+        33
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 102,
+      "after_range_gate": {
+        "median": 12.0,
+        "p10": 10,
+        "p90": 14
+      },
+      "after_stage0": {
+        "median": 10.0,
+        "p10": 8,
+        "p90": 11
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.2078239608801956
+    }
+  },
+  "cpu_closed": {
+    "checks": {
+      "identity == spec": [
+        103,
+        103
+      ],
+      "observations == earlier delivered reports": [
+        103,
+        103
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        103,
+        103
+      ],
+      "partition == occupant partition (dispatch)": [
+        103,
+        103
+      ],
+      "predictor tier == occupant tier": [
+        103,
+        103
+      ],
+      "sampler_id == partition + 1": [
+        103,
+        103
+      ],
+      "seed == identity_seed(identity, round)": [
+        103,
+        103
+      ],
+      "sleep == occupant sleep (report)": [
+        103,
+        103
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        103,
+        103
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        100,
+        100
+      ],
+      "tier == occupant tier": [
+        103,
+        103
+      ],
+      "[9] logged V_i == G_i / sqrt(1 + tau_hat)": [
+        103,
+        103
+      ],
+      "[9] every selected V_i matched a dispatch line": [
+        1,
+        1
+      ],
+      "[10] filter tier == occupant tier": [
+        1213,
+        1213
+      ],
+      "[10] T_hat == spec value for occupant tier": [
+        1213,
+        1213
+      ],
+      "[10] R_i == vmax_distance from trace position": [
+        1213,
+        1213
+      ],
+      "[10] pass == (R_i >= T_hat)": [
+        1213,
+        1213
+      ],
+      "[10] round line: eligible_after_stage0 == passes": [
+        100,
+        100
+      ],
+      "[10] round line: fallback == (no pass)": [
+        100,
+        100
+      ],
+      "[10] selected passed (or round fell back)": [
+        103,
+        103
+      ],
+      "[10] selected T_hat / R_i == candidate line": [
+        103,
+        103
+      ],
+      "[10] undefined R_i only in a window's last second": [
+        38,
+        38
+      ],
+      "[10] exactly one T_hat per tier": [
+        1,
+        1
+      ],
+      "[10] fallback < 10% of rounds": [
+        1,
+        1
+      ],
+      "[10] median eligible_after_stage0 >= C": [
+        1,
+        1
+      ]
+    },
+    "pools": {
+      "rounds": 100,
+      "after_range_gate": {
+        "median": 12.0,
+        "p10": 10,
+        "p90": 15
+      },
+      "after_stage0": {
+        "median": 7.0,
+        "p10": 5,
+        "p90": 9
+      },
+      "fallback_rate": 0.0,
+      "reject_rate": 0.43363561417971974
+    }
+  }
+}

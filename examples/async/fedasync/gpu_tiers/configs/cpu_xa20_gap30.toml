@@ -1,0 +1,263 @@
+# =============================================================================
+# BLUEPRINT — CPU arm (staleness_predictor = "cpu")
+# =============================================================================
+# The treatment arm.  Byte-identical to fedasync_polaris_vi_gpu_arm.toml.tmpl
+# except for base_path, port, staleness_predictor, and [gpu_tier] tiers_csv.
+#
+#     reality (clients sleep)  ->  output/client_sleep_times_xa20_gap30.csv
+#                                  ^ SAME FILE as the GPU arm at this G
+#     belief  (predictor)      ->  input/tiers_cpu.csv
+#                                  ^ ONE file shared by all nine gaps
+#
+# The question this arm answers: what happens when the server estimates training
+# latency from CPU specs while training really runs on the GPU?  Because the
+# clients sleep by the GPU file, actual training times are identical to the GPU
+# arm at the same G — the only thing that changes is what the selector believes.
+#
+# -----------------------------------------------------------------------------
+# CPU metric: "freq" (DECIDED — do not change without regenerating this arm)
+# -----------------------------------------------------------------------------
+# tiers_cpu.csv holds cpu_freq_ghz / 1000 in the gpu_tflops_fp16 column, written
+# by make_gap_sweep.sh's bare `python3 make_cpu_tiers.py` (--metric defaults to
+# "freq").  Values: xavier 0.002 / orin 0.002 / thor 0.0026 — a fixed 1.30x
+# spread.  Note the consequence, it is intentional: xavier and orin both clock at
+# 2.00 GHz, so THE PREDICTOR CANNOT TELL THEM APART.  Its per-client estimates
+# collapse to two values (20.0 s for xavier+orin, 15.38 s for thor) while reality
+# has three tiers — that mis-ranking is part of what this arm measures, on top of
+# the spread error.
+#
+# make_cpu_tiers.py can also emit --metric cores_x_freq (1.95x, three distinct
+# tiers) and tiers_cpu_gap20pct.csv (forced 1.2x).  Neither is used here.
+#
+# tiers_cpu.csv is hardware spec, so it does NOT move with G — the GPU gap moves
+# underneath it.  Mismatch = effective_gap / 1.30, per summarize_sweep.py at
+# anchor 20 s and floor c = 2.0 s:
+#
+#     G      1     5    10    15    20    25    30    35    40
+#     eff  1.0   3.7   5.5   6.6   7.3   7.9   8.2   8.6   8.8
+#     mis  0.77  2.82  4.23  5.08  5.64  6.04  6.35  6.58  6.77
+#
+# The sweep crosses mismatch = 1 between G=1 and G=5, so it covers BOTH
+# directions of predictor error — over-estimating the spread at G=1, then
+# under-estimating it by up to 6.8x at G=40.  Absolute scale cancels in
+# τ̂ = T_pred / T_round, so only this ratio drives the difference from the GPU arm.
+#
+# -----------------------------------------------------------------------------
+# Placeholders (substituted by the config generator)
+# -----------------------------------------------------------------------------
+#   30     two-digit gap, zero-padded: 01 05 10 15 20 25 30 35 40
+#   20  anchor sleep in seconds for the straggler tier (xavier), e.g. 20
+#   8230    unique TCP port for this run — CPU arm uses 8200 + G
+#               (G=01 -> 8201, 05 -> 8205, ... 40 -> 8240)
+#
+# -----------------------------------------------------------------------------
+# Run
+# -----------------------------------------------------------------------------
+#   cd /workspace/plato/examples/async/fedasync
+#   PYTHONPATH=gpu_tiers uv run fedasync_gpu_tier_polaris_vi.py \
+#       -c gpu_tiers/configs/cpu_xa20_gap30.toml
+# =============================================================================
+
+[general]
+base_path = "./runs/gap_sweep/cpu_xa20_gap30"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# sleep_simulation = true: the tier sleep is reported to the server but never
+# actually slept.  Must match the GPU arm exactly — see the long note there.
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = true
+
+# REQUIRED whenever sleep_simulation = true (defaults.py:356 reads it unguarded).
+avg_training_time = 1.5
+
+# Config.simulate_client_speed() silently clips every sleep at max_sleep_time
+# (default 60 s, plato/config.py).  Keep this comfortably above 20.
+max_sleep_time = 120
+
+# REALITY — unchanged from the GPU arm.  Clients still sleep by GPU tiers; only
+# the predictor's view below is swapped.
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tiers/output/client_sleep_times_xa20_gap30.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8230
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters
+# Raised from 11 to 25 on 2026-08-10, after the base.py flush-accounting fix
+# (HANDOFF § 4.9) restored the client pipeline to its configured depth.
+#
+# 11 was calibrated against a drained pipeline: with only 1-3 clients in flight,
+# nothing was ever stale and the bound fired 3 times in 2710 rounds.  With the
+# pipeline back at 9-10, a client's staleness in rounds is roughly
+#
+#     staleness_i  ~  (C / M) * (T_i / T_mean_selected)
+#
+# for C clients in flight and M merges per round, so the bound started firing on
+# 13 % of rounds and censored the slowest tier: measured on gpu G=40, 67 % of
+# xavier dispatches exceeded 11 while orin and thor never did.
+#
+# That is not neutral between the arms, which is why it had to change.  The
+# divisor is the mean duration of the clients an arm actually selects, so an arm
+# that steers harder toward fast clients lowers it and inflates the staleness of
+# every straggler it still picks — penalising exactly the behaviour the sweep
+# exists to measure.  At G=40: gpu predicts ~12.9 rounds for a xavier client and
+# cpu ~9.2, for the identical client.
+#
+# 25 comes from the worst case rather than taste.  Once the bound stops firing,
+# flushes stop lifting M, so C/M rises from 6.2 toward 9, and the widest gap has
+# T_xavier / T_mean ~ 2.4 -> ~21 rounds.  25 clears that with headroom while
+# staying a real bound.  Re-derive it if max_concurrency, the tier spread or
+# minimum_clients_aggregated change.
+staleness_bound = 25
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.5
+adaptive_mixing = true
+eval_interval = 10
+
+# BELIEF — same code path as "gpu_tops" (fedasync_polaris_vi_server.py treats the
+# two names identically); the difference is entirely in [gpu_tier] tiers_csv.
+# Kept as a distinct name so the run log records which arm this was.
+staleness_predictor = "cpu"
+
+# Polaris aggregation hyper-parameters.
+# KEEP THESE ABOVE the [server.staleness_weighting_function] header — see the
+# same note in fedasync_polaris_vi_gpu_arm.toml.tmpl.  Below it, TOML nests them
+# into that sub-table and the server silently uses its built-in defaults.
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+# data_path is always joined onto base_path (plato/config.py:360-367), so without
+# an ABSOLUTE path here every run in the sweep re-downloads CIFAR-10 into its own
+# directory — 170 MB x 27 runs.  Point all of them at the copy already unpacked
+# in the example directory.
+data_path = "/workspace/plato/examples/async/fedasync/data"
+
+# Must equal --dataset-size passed to make_gap_sweep.sh.
+partition_size = 500
+
+sampler = "noniid"
+concentration = 0.9
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 10000
+max_concurrency = 10
+# 0.6, lowered from 0.7 on 2026-08-09 — see the long note in
+# fedasync_polaris_vi_gpu_arm.toml.tmpl.  Shared key: keep all three in step.
+# RENDERED (make_configs.py --target-accuracy), default 0.6 so the gap sweep's
+# configs stay byte-identical.  It acts as an EARLY STOP, read off a single raw
+# evaluation, so a run trips it on a noise spike and stops at a random moment
+# rather than a comparable one: cpu_xa20_gap20 crossed 0.60 at round 3770 while
+# its own trend was declining, and its gpu twin paid the full 10 000 rounds — a
+# 2.7x difference in run length caused by neither selector (HANDOFF § 4.13).
+# The mix sweep therefore renders it at 1.01, above any reachable accuracy, so
+# every cell runs exactly `rounds` rounds and the curves stay comparable;
+# time-to-55 % is then read off the smoothed curve afterwards.
+target_accuracy = 0.6
+model_name = "resnet_18"
+# Must equal --epochs passed to make_gap_sweep.sh.
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.01
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# -----------------------------------------------------------------------------
+# GPU-tier configuration — the ONLY line that differs from the GPU arm.
+#
+# CPU arm: tiers_cpu.csv, with no 30 in the name.  Absolute magnitudes here
+# are irrelevant: τ̂ = T_pred / T_round divides them out, so only the spread ratio
+# between tiers reaches the selector.
+# -----------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/gpu_tiers/input/tiers_cpu.csv"
+# The client -> tier map, i.e. the fleet's COMPOSITION.  The mix suffix below is
+# empty for the historical 50/35/15 fleet and "_m<xavier>_<orin>_<thor>" for a
+# mix-sweep cell (make_mixes.py).  It must move together with the sleep CSV above: those
+# two files are one fleet seen from its two sides — who is in which tier, and how
+# long each client therefore sleeps.  A config that mixes a 70/20/10 clients file
+# with the 50/35/15 sleep file is not an error anything would catch; the clients
+# would simply sleep by one fleet while the predictor believed another.
+clients_csv = "/workspace/plato/examples/async/fedasync/gpu_tiers/input/clients.csv"
+
+# Same anchor as the GPU arm — this is what makes the two arms comparable.
+# Without it this arm is off in the OPPOSITE direction from the GPU arm: the raw
+# formula reads tiers_cpu.csv's 0.002 as TFLOPS and predicts 275 s per client
+# against 20 s of reality, so residuals saturate instead of collapsing, and the
+# τ̂ magnitudes (hence the strength of the 1/sqrt(1+τ̂) discount) stop being
+# comparable between arms.  Anchored, this arm predicts 20 / 20 / 15.38 s —
+# matching output/client_predicted_times_cpu_xa20.csv exactly.
+anchor_tier  = "xavier"
+anchor_sleep = 20
+
+# Which model converts a training time into a staleness in rounds:
+#     tau_hat_i = T_i / T_round
+#
+#   "min"   E[min of P i.i.d. draws] — the historical behaviour, and WRONG.
+#           It is the time to the first completion when all P clients start at
+#           the same instant, i.e. a cold start.  In steady state the in-flight
+#           jobs have staggered start times, so the next merge arrives far sooner.
+#   "queue" E[T] / C — a closed queue of C slots, each refilled with a freshly
+#           drawn client, so each slot completes one job per E[T] and the C slots
+#           merge at C/E[T].  This is the correct one.
+#
+# Measured against d(elapsed_time)/d(round) in the four finished gpu runs:
+#
+#     G    measured      "min"      "queue"
+#     1     2.183 s    +816.1 %      +1.8 %
+#    10     1.336 s    +114.5 %      -3.3 %
+#    20     1.205 s     +40.9 %      -5.0 %
+#    30     1.147 s     +10.8 %      -7.4 %
+#
+# The error of "min" is not a constant that cancels in tau_hat — it decays with
+# the gap, which is the sweep's own independent variable.  Since
+# V_i = G_i / sqrt(1 + tau_hat_i), it weakens the speed term hardest at the
+# narrow-gap end, i.e. it damps the very mechanism the sweep measures, by an
+# amount that varies along the x-axis.  (HANDOFF § 4.11.)
+#
+# Left at "min" ON PURPOSE: the sweep in flight since 2026-08-10 started under it,
+# and switching mid-sweep would make the arms incomparable.  Flipping to "queue"
+# means discarding every run and restarting all 15.  Shared key — make_configs.py
+# checks it matches across the three arms (SHARED_GPU_TIER_KEYS).
+#
+# RENDERED, not fixed: make_configs.py --t-round-model writes it, defaulting to
+# "min" so the gap sweep's configs stay byte-identical.  The mix sweep is
+# generated with "queue" — the "min" error depends on the pool's composition, so
+# on THAT sweep's x-axis it varies from ~0 % at 50/35/15 to +194 % at 85/10/5,
+# which is the § 4.11 confound again on a different axis (HANDOFF § 4.14).
+t_round_model = "min"

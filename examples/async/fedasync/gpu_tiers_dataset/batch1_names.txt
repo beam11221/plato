@@ -1,0 +1,19 @@
+# Batch 1 (Machine 1): C in {1,2,4,8} sweep at N=20, 4 arms + gpu_rep2 at C=4.
+# Used by both run_sweep.sh --from-file and watchdog.sh --names-file.
+baseline_a0p8_N20_C1_s4126
+gpu_a0p8_N20_C1_s4126
+cpu_a0p8_N20_C1_s4126
+observed_a0p8_N20_C1_s4126
+baseline_a0p8_N20_C2_s4126
+gpu_a0p8_N20_C2_s4126
+cpu_a0p8_N20_C2_s4126
+observed_a0p8_N20_C2_s4126
+baseline_a0p8_N20_C4_s4126
+gpu_a0p8_N20_C4_s4126
+gpu_a0p8_N20_C4_s4126_rep2
+cpu_a0p8_N20_C4_s4126
+observed_a0p8_N20_C4_s4126
+baseline_a0p8_N20_C8_s4126
+gpu_a0p8_N20_C8_s4126
+cpu_a0p8_N20_C8_s4126
+observed_a0p8_N20_C8_s4126

@@ -1,0 +1,116 @@
+Stage 2 - Change A: jitter lowered to a nominal CV of 15%
+==============================================================================
+
+sigma = 0.149166  =  sqrt(ln(1 + 0.15^2))
+nominal CV = sqrt(exp(sigma^2) - 1) = 15.0000%
+
+Stage 1 used sigma = 0.18 (nominal CV 18.15%). At that value the orin
+and thor sleep ranges cleared each other by only 5% in the seed-4126
+draw, and orin/thor is exactly the pair the cpu arm already cannot
+separate -- an overlap there would shrink the gpu advantage under
+measurement rather than reveal it.
+
+SIGMA IS CHOSEN HERE ON THE SEPARATION MARGIN, a property of the fleet,
+before any accuracy result exists. It is locked and must not be
+revisited once results arrive, whatever they show.
+
+1. SEPARATION MARGIN  (slower.min / faster.max; > 1 means no overlap)
+------------------------------------------------------------------------------
+
+xavier / orin
+            seed 4126    seed 4127    seed 4128
+N = 20         5.337x       5.316x       4.638x
+N = 40         4.709x       4.997x       4.202x
+
+orin / thor
+            seed 4126    seed 4127    seed 4128
+N = 20         1.166x       1.539x       1.382x
+N = 40         1.363x       1.317x       1.121x
+
+worst orin/thor margin over all six fleets: 1.121x (N = 40, seed 4128)
+floor the brief sets:                       1.10x
+VERDICT: all six clear the floor, by 0.021 at worst.
+
+No fleet overlaps on either pair, at either size, at any of the three
+seeds. For comparison, the Stage-1 sigma of 0.18 gave orin/thor margins
+of 1.051x (N=20, seed 4126) and 1.269x (N=40, seed 4126).
+
+2. REALISED CV PER TIER
+------------------------------------------------------------------------------
+
+fleet                                    tier       n   CV(pop)   CV(smp)
+n20_x10-o7-t3_xa15_p2500_j0p149_s4126    xavier    10    13.69%    14.43%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4126    orin       7    12.34%    13.32%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4126    thor       3    14.20%    17.39%
+
+n20_x10-o7-t3_xa15_p2500_j0p149_s4127    xavier    10    14.57%    15.36%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4127    orin       7    15.20%    16.42%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4127    thor       3    10.95%    13.41%
+
+n20_x10-o7-t3_xa15_p2500_j0p149_s4128    xavier    10    14.25%    15.02%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4128    orin       7    12.73%    13.76%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4128    thor       3     8.52%    10.44%
+
+n40_x20-o14-t6_xa15_p1250_j0p149_s4126   xavier    20    14.28%    14.65%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4126   orin      14    13.59%    14.10%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4126   thor       6    11.39%    12.47%
+
+n40_x20-o14-t6_xa15_p1250_j0p149_s4127   xavier    20    14.60%    14.98%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4127   orin      14    13.85%    14.37%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4127   thor       6    15.44%    16.92%
+
+n40_x20-o14-t6_xa15_p1250_j0p149_s4128   xavier    20    13.89%    14.25%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4128   orin      14    12.73%    13.21%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4128   thor       6    13.12%    14.37%
+
+Both conventions, as at Stage 1: the tiers are small (3-6 thor clients)
+and the two estimators differ by sqrt(n/(n-1)), which is 22% at n = 3.
+The realised values scatter several points either side of the nominal
+15.0% -- that is sampling error at these fleet sizes, not a
+property of sigma, and sigma was not adjusted to move them.
+
+3. TIER MEAN RATIO xavier : thor
+------------------------------------------------------------------------------
+
+fleet                                     before jitter      after
+n20_x10-o7-t3_xa15_p2500_j0p149_s4126            15.00x     13.40x
+n20_x10-o7-t3_xa15_p2500_j0p149_s4127            15.00x     16.19x
+n20_x10-o7-t3_xa15_p2500_j0p149_s4128            15.00x     14.23x
+n40_x20-o14-t6_xa15_p1250_j0p149_s4126           15.00x     14.28x
+n40_x20-o14-t6_xa15_p1250_j0p149_s4127           15.00x     15.75x
+n40_x20-o14-t6_xa15_p1250_j0p149_s4128           15.00x     12.91x
+
+The gap the fleet is built around is still an order of magnitude in
+every fleet. The movement is the draw, not the jitter model.
+
+4. BELIEF-VS-REALITY GAP ON E[T]
+------------------------------------------------------------------------------
+
+E[T] over the datasheet tier times is what the `gpu` arm believes;
+E[T] over the realised sleeps is what happens. T_round = E[T]/C, so
+this is the error in the gpu arm's DENOMINATOR, on top of its
+per-client numerator error.
+
+fleet                                      believed   realised       gap
+n20_x10-o7-t3_xa15_p2500_j0p149_s4126       8.3231s    7.9706s    -4.23%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4127       8.3231s    8.3894s    +0.80%
+n20_x10-o7-t3_xa15_p2500_j0p149_s4128       8.3231s    7.7308s    -7.12%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4126      8.3231s    8.0539s    -3.23%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4127      8.3231s    8.2531s    -0.84%
+n40_x20-o14-t6_xa15_p1250_j0p149_s4128      8.3231s    8.0690s    -3.05%
+
+At Stage 1 (sigma 0.18, N=20, seed 4126) this gap was -4.87%.
+
+5. N = 30 IS DROPPED
+------------------------------------------------------------------------------
+
+50/35/15 does not divide into 30 (15 / 10.5 / 4.5). The realised
+15/10/5 puts thor -- the FASTEST tier -- at 16.7% instead of 15%, so a
+sweep along N would move fleet size and tier mix together at that one
+point. The fleet-size sweep is N in {20, 40}, both of which divide
+exactly (10/7/3 and 20/14/6).
+
+make_configs.py no longer accepts N = 30: its partition_size entry is
+removed and its port slot is left unused rather than reassigned, so an
+old N=30 config cannot silently collide with a new run.
+

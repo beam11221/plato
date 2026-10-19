@@ -1,0 +1,788 @@
+{
+  "baseline_open": {
+    "dispatches": 115,
+    "recycles": 55,
+    "state_resets": 55,
+    "startup_t_round": null,
+    "partitions_seen": 18,
+    "checks": {
+      "identity == spec": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 18,
+        "total": 18,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 18,
+        "total": 18,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 115,
+        "total": 115,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "gpu_open": {
+    "dispatches": 112,
+    "recycles": 58,
+    "state_resets": 58,
+    "startup_t_round": [
+      1.742308,
+      15
+    ],
+    "partitions_seen": 19,
+    "checks": {
+      "identity == spec": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "never-seen G_i == current proxy": {
+        "ok": 52,
+        "total": 52,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round from initial occupants logged": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 112,
+        "total": 112,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "cpu_open": {
+    "dispatches": 109,
+    "recycles": 60,
+    "state_resets": 60,
+    "startup_t_round": [
+      3.576923,
+      15
+    ],
+    "partitions_seen": 19,
+    "checks": {
+      "identity == spec": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "never-seen G_i == current proxy": {
+        "ok": 54,
+        "total": 54,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round from initial occupants logged": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "observed_open": {
+    "dispatches": 109,
+    "recycles": 54,
+    "state_resets": 54,
+    "startup_t_round": null,
+    "partitions_seen": 18,
+    "checks": {
+      "identity == spec": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "never-seen G_i == current proxy": {
+        "ok": 46,
+        "total": 46,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 18,
+        "total": 18,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 18,
+        "total": 18,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat == tau_obs (observed arm)": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 109,
+        "total": 109,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "baseline_closed": {
+    "dispatches": 117,
+    "recycles": 79,
+    "state_resets": 20,
+    "startup_t_round": null,
+    "partitions_seen": 20,
+    "checks": {
+      "identity == spec": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: resets only on first use": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: slot keeps one identity/tier/partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 117,
+        "total": 117,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "gpu_closed": {
+    "dispatches": 120,
+    "recycles": 67,
+    "state_resets": 20,
+    "startup_t_round": [
+      2.660256,
+      15
+    ],
+    "partitions_seen": 20,
+    "checks": {
+      "identity == spec": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: resets only on first use": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: slot keeps one identity/tier/partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round from initial occupants logged": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 120,
+        "total": 120,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "cpu_closed": {
+    "dispatches": 118,
+    "recycles": 77,
+    "state_resets": 20,
+    "startup_t_round": [
+      3.75,
+      15
+    ],
+    "partitions_seen": 20,
+    "checks": {
+      "identity == spec": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: resets only on first use": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: slot keeps one identity/tier/partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round from initial occupants logged": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 118,
+        "total": 118,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "observed_closed": {
+    "dispatches": 114,
+    "recycles": 69,
+    "state_resets": 20,
+    "startup_t_round": null,
+    "partitions_seen": 20,
+    "checks": {
+      "identity == spec": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: resets only on first use": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=1: slot keeps one identity/tier/partition": {
+        "ok": 20,
+        "total": 20,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat == tau_obs (observed arm)": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 114,
+        "total": 114,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  }
+}

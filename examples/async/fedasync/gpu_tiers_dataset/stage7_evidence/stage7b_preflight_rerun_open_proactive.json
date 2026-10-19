@@ -1,0 +1,218 @@
+{
+  "gpu_open": {
+    "dispatches": 110,
+    "recycles": 55,
+    "state_resets": 55,
+    "startup_t_round": 2.080769,
+    "partitions_seen": 19,
+    "checks": {
+      "gpu tau_hat == Stage 3-6 value for occupant tier": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "identity == spec": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "never-seen G_i == current proxy": {
+        "ok": 48,
+        "total": 48,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round == fleet-file value": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 110,
+        "total": 110,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  },
+  "cpu_open": {
+    "dispatches": 111,
+    "recycles": 63,
+    "state_resets": 63,
+    "startup_t_round": 3.620192,
+    "partitions_seen": 19,
+    "checks": {
+      "identity == spec": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "never-seen G_i == current proxy": {
+        "ok": 56,
+        "total": 56,
+        "pct": 100.0,
+        "examples": []
+      },
+      "observations == earlier delivered reports": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one fingerprint per partition": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "one partition per fingerprint": {
+        "ok": 19,
+        "total": 19,
+        "pct": 100.0,
+        "examples": []
+      },
+      "p=0: state_reset == recycles": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (client)": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "partition == occupant partition (dispatch)": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "predictor tier == occupant tier": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sampler_id == partition + 1": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "seed == identity_seed(identity, round)": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep == occupant sleep (report)": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "sleep_s == occupant sleep (dispatch)": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      },
+      "startup T_round == fleet-file value": {
+        "ok": 1,
+        "total": 1,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tau_hat logged == tau_hat used": {
+        "ok": 100,
+        "total": 100,
+        "pct": 100.0,
+        "examples": []
+      },
+      "tier == occupant tier": {
+        "ok": 111,
+        "total": 111,
+        "pct": 100.0,
+        "examples": []
+      }
+    }
+  }
+}

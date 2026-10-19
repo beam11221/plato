@@ -1,0 +1,222 @@
+# =============================================================================
+# BLUEPRINT — plain FedAsync baseline (entry point: fedasync_gpu_tier.py)
+# =============================================================================
+# The reference arm your proposal is measured against.  Same 100 clients, same
+# tier sleeps, same FedAsync hyper-parameters as the Polaris blueprints — the
+# ONLY thing that differs is the algorithm doing the selecting and aggregating:
+#
+#     fedasync_gpu_tier.py            -> fedasync_server.Server
+#         aggregation : SequentialFedAsyncAggregationStrategy
+#         selection   : FedAsyncClientSelectionStrategy (random, skips busy)
+#         no V_i, no G_i, no staleness predictor
+#
+#     fedasync_gpu_tier_polaris_vi.py -> fedasync_polaris_vi_server.Server
+#         selection   : V_i = G_i / sqrt(1 + τ̂_i), τ̂ from gpu_tops / cpu tiers
+#
+# There is no predictor here, so there is no gpu/cpu split: ONE config per gap G,
+# nine runs total.  [gpu_tier] tiers_csv is still required, but it only feeds the
+# tier_id label in the [GpuTierSleep] log lines and the speed_greedy tier filter —
+# no TFLOPS value from it reaches the selector.
+#
+#     reality (clients sleep)  ->  output/client_sleep_times_xa20_gap40.csv
+#     tier labels / filtering  ->  input/tiers_geo_gap40.csv
+#
+# -----------------------------------------------------------------------------
+# Comparability — read before changing anything below
+# -----------------------------------------------------------------------------
+# These values are deliberately copied from the Polaris blueprints rather than
+# from the older configs_backup/..._gpu_tier.toml, which used lr = 0.003,
+# sampler = "iid", rounds = 60000, target_accuracy = 0.52.  A baseline trained
+# under different data/optimizer settings is not a baseline.  If you change any
+# of the following, change it in all three templates in this directory:
+#
+#     partition_size, sampler, concentration, random_seed,
+#     lr, momentum, weight_decay, batch_size, epochs,
+#     rounds, target_accuracy, eval_interval,
+#     staleness_bound, minimum_clients_aggregated,
+#     mixing_hyperparameter, adaptive_mixing, staleness_weighting_function
+#
+# -----------------------------------------------------------------------------
+# Placeholders (substituted by the config generator)
+# -----------------------------------------------------------------------------
+#   40     two-digit gap, zero-padded: 01 05 10 15 20 25 30 35 40
+#   20  anchor sleep in seconds for the straggler tier (xavier), e.g. 20
+#   8340    unique TCP port — baseline arm uses 8300 + G
+#               (G=01 -> 8301, 05 -> 8305, ... 40 -> 8340)
+#
+# Full port plan across the three arms:
+#   baseline (fedasync_gpu_tier.py)      8300 + G
+#   polaris gpu_tops                     8100 + G
+#   polaris cpu                          8200 + G
+#
+# -----------------------------------------------------------------------------
+# Prerequisites
+# -----------------------------------------------------------------------------
+#   cd gpu_tiers && ./make_gap_sweep.sh 500 1 20
+# partition_size and epochs below MUST match the arguments given there.
+#
+# -----------------------------------------------------------------------------
+# Run
+# -----------------------------------------------------------------------------
+#   cd /workspace/plato/examples/async/fedasync
+#   PYTHONPATH=gpu_tiers uv run fedasync_gpu_tier.py \
+#       -c gpu_tiers/configs/baseline_xa20_gap40.toml
+#
+# PYTHONPATH is required: gpu_tier_sleep.py lives in gpu_tiers/, but
+# fedasync_gpu_tier.py does a bare `import gpu_tier_sleep`.
+# =============================================================================
+
+[general]
+base_path = "./runs/gap_sweep_ms/baseline_xa20_gap40_s8888"
+
+[clients]
+type = "simple"
+total_clients = 100
+per_round = 10
+do_test = false
+
+# sleep_simulation = true: the tier sleep is reported to the server but never
+# actually slept.  See the long note in the GPU arm blueprint.
+#
+# This is NOT optional here even though the baseline has no predictor.  With
+# sleep_simulation = false the client reports a MEASURED training_time (real
+# compute + real sleep); with it true the client reports a SYNTHETIC one
+# (avg_training_time + sleep).  Mixing the two across arms would change
+# finish_time = training_time + processing_time + comm_time and make the
+# baseline's simulated clock incomparable with the Polaris arms'.
+speed_simulation = true
+comm_simulation = false
+sleep_simulation = true
+
+# REQUIRED whenever sleep_simulation = true (defaults.py:356 reads it unguarded).
+avg_training_time = 1.5
+
+# Config.simulate_client_speed() silently clips every sleep at max_sleep_time
+# (default 60 s, plato/config.py).  Keep this comfortably above 20.
+max_sleep_time = 120
+
+# REALITY — the same sleep file the Polaris arms use at this G.
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tiers/output/client_sleep_times_xa20_gap40.csv"
+
+[server]
+address = "127.0.0.1"
+port = 8340
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+
+# FedAsync parameters — identical to the Polaris blueprints.
+# Raised from 11 to 25 on 2026-08-10, after the base.py flush-accounting fix
+# (HANDOFF § 4.9) restored the client pipeline to its configured depth.
+#
+# 11 was calibrated against a drained pipeline: with only 1-3 clients in flight,
+# nothing was ever stale and the bound fired 3 times in 2710 rounds.  With the
+# pipeline back at 9-10, a client's staleness in rounds is roughly
+#
+#     staleness_i  ~  (C / M) * (T_i / T_mean_selected)
+#
+# for C clients in flight and M merges per round, so the bound started firing on
+# 13 % of rounds and censored the slowest tier: measured on gpu G=40, 67 % of
+# xavier dispatches exceeded 11 while orin and thor never did.
+#
+# That is not neutral between the arms, which is why it had to change.  The
+# divisor is the mean duration of the clients an arm actually selects, so an arm
+# that steers harder toward fast clients lowers it and inflates the staleness of
+# every straggler it still picks — penalising exactly the behaviour the sweep
+# exists to measure.  At G=40: gpu predicts ~12.9 rounds for a xavier client and
+# cpu ~9.2, for the identical client.
+#
+# 25 comes from the worst case rather than taste.  Once the bound stops firing,
+# flushes stop lifting M, so C/M rises from 6.2 toward 9, and the widest gap has
+# T_xavier / T_mean ~ 2.4 -> ~21 rounds.  25 clears that with headroom while
+# staying a real bound.  Re-derive it if max_concurrency, the tier spread or
+# minimum_clients_aggregated change.
+staleness_bound = 25
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.5
+adaptive_mixing = true
+eval_interval = 10
+
+# NOTE: no staleness_predictor and no polaris_* keys here.  fedasync_server.Server
+# never reads them; leaving them in would suggest an effect that does not exist.
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+# Client selection.  Omitted = fedasync_selection.FedAsyncClientSelectionStrategy:
+# random over the pool, skipping clients still training.  That is the fair
+# baseline — keep it unless you specifically want the ablation below.
+#
+# Uncommenting switches to fedasync_speed_greedy_selection: deterministic
+# top-speed selection restricted to allowed_tiers.  It reads tier_ids from
+# [gpu_tier] clients_csv, and defaults to ["orin", "thor"] if allowed_tiers is
+# omitted — i.e. it never selects xavier, which removes the straggler entirely
+# and makes the gap sweep measure something different.  Treat it as a separate
+# experiment, not a drop-in variant.
+#
+# [server.client_selection]
+# strategy      = "speed_greedy"
+# allowed_tiers = ["orin", "thor"]
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+# data_path is always joined onto base_path (plato/config.py:360-367), so without
+# an ABSOLUTE path here every run in the sweep re-downloads CIFAR-10 into its own
+# directory — 170 MB x 27 runs.  Point all of them at the copy already unpacked
+# in the example directory.
+data_path = "/workspace/plato/examples/async/fedasync/data"
+
+# Must equal --dataset-size passed to make_gap_sweep.sh.
+partition_size = 500
+
+sampler = "noniid"
+concentration = 0.9
+random_seed = 8888
+
+[trainer]
+type = "basic"
+rounds = 5000
+max_concurrency = 10
+# 0.6, lowered from 0.7 on 2026-08-09 — see the long note in
+# fedasync_polaris_vi_gpu_arm.toml.tmpl.  Shared key: keep all three in step.
+target_accuracy = 0.6
+model_name = "resnet_18"
+# Must equal --epochs passed to make_gap_sweep.sh.
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.01
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+# -----------------------------------------------------------------------------
+# GPU-tier configuration — read by gpu_tier_sleep.get_computer().
+#
+# Required even though nothing here predicts anything: gpu_tier_sleep defaults to
+# <module dir>/tiers.csv and <module dir>/clients.csv, which do not exist (the
+# CSVs live in gpu_tiers/input/), so GpuTierLogCallback would log tier_id=unknown.
+#
+# tiers_geo_gap40.csv is the file that generated the sleep CSV above, so the
+# logged tier labels describe the run that actually happened.
+# -----------------------------------------------------------------------------
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/gpu_tiers/input/tiers_geo_gap40.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/gpu_tiers/input/clients.csv"

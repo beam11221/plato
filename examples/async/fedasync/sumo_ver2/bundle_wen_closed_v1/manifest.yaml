@@ -1,0 +1,60 @@
+bundle: bundle_wen_closed_v1
+created_utc: '2026-10-14T18:17:49+00:00'
+spec: Wen et al., Information Sciences 664 (2024), 5.3.4 highway setting
+sumo_version: SUMO 1.21.0
+netconvert_version: Eclipse SUMO netconvert Version 1.21.0
+python_version: 3.12.8
+platform: macOS-26.5.1-arm64-arm-64bit
+speed_rng: numpy.random.default_rng (PCG64)
+speed_rng_seed: 20261015
+step_length_s: 0.1
+sample_interval_s: 1.0
+warmup_s: 300.0
+duration_s: 30000.0
+road_length_m: 2000.0
+lanes: 2
+lane_speed_mps: 34.0
+n_vehicles: 30
+desired_speed_dist: U[17.0, 34.0] m/s, one draw per vehicle ID
+motion_model: kinematic
+car_follow_model: 'bypassed: TraCI setSpeedMode(0) + setSpeed(V_k), constant speed'
+lane_change_model: LC2013 (SUMO default)
+closed_loop: wrap
+adr: docs/adr/ADR-0001-wen-closed-environment.md
+rsu_modelled_in_sumo: false
+rsu_downstream:
+  x_m: 1000.0
+  lateral_offset_m: 10.0
+  s1_coverage: 100%
+  s2_coverage_m:
+  - 400.0
+  - 1600.0
+trace_schema:
+- t
+- veh_id
+- x_m
+- lane
+- speed_mps
+- lap
+trace_time_base: t = 0 at end of warm-up
+lap_counting: cumulative re-entries since simulation start (warm-up included)
+sha256:
+  dwell_log.csv: ac063720de5f36e317055e039e38504203172298cf80b6d9fd8e6035586051e2
+  fleet_speeds.csv: f69d4b916f9eb3f82ff8871b12a0a6a23b85a40b3e3a61a5eb325aa4f5791ed8
+  g1_speed_scatter.png: b69d1514a06693726037981c916879293189214f8d66b82fbc1d508935e936c7
+  g5_dwell_hist.png: 6a0ceda66f72e970799e1fc4744ea6c7ea0c9727d1a903c6542690e9de4b4abe
+  g6_incoverage_timeseries.png: 488759c7e1f207097c03314ab0a37d1a873d132a7df67c13f0d99f1c813624a8
+  gate_report.md: 79dd1198b651a75a20b3cc2896001018cb3b8b515ab86e227e1074784bb8c880
+  lane_stats.csv: 1742791c78724adb8b4dbb517351cbca18473306f4c8e390b968df5ea04f6807
+  lap_log.csv: 1b3d01dfa6fd66d2e332f69fb372093f4f43707dc4edda15a06046ebe62cb276
+  reentry_log.csv: fba57378c74097622bac12146717574735ff7ae3ded19deed645f4c649e1f2b7
+  sim_meta.yaml: a465a78186b176ba23648eb021c1277cbdef355d4e0fb9ac8a3dd461f2a4a6d2
+  trace.csv.gz: 386b51f6c1e98cdc3ae30d3f07bdf74842b55b5d59c5237ac7f0cb8620fb8ad3
+  wen.edg.xml: 3c3f877a4149812e97df61aa4f0ea5646544d2e675c8a27e2046c343e78058df
+  wen.net.xml: b0a20f7d140a164ccffa742e6ac5bb5da63b9c762a6eecf06f5304e3760f217e
+  wen.nod.xml: 43e72288440573012b5f937c4b48ff5fca2577d30d72c2b8618f143a15704971
+  wen.rou.xml: 936c321637e36868a4cee9a653083499ed8a31a23df79eaab361962b60dd883a
+  wen.sumocfg: da1689a67e5bcd7d8037a975ddb6682b3603b8d425939fb76129607af844542a
+  wen_bundle.py: c60a62d66a97da56faededa2c12ea6d5faeef8f253f4306fb1046098b7027810
+  wen_closed.py: c5292293319d1b7c73aaddcc28b044712b79bcf00a295fea3eba2024877204cf
+  wen_gate.py: 89af4b472e629164cc522cd22fde46b6173e1e4699f4bf81536c205e18112ff0

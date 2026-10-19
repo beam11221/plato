@@ -92,6 +92,14 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
         )
         self._predict_staleness_unit: Literal["seconds", "rounds"] = predict_staleness_unit
         self._total_clients: int = 0
+        # Predicted full training time (s) of a BUSY client, for the live
+        # T_round and the residuals.  None -> gpu_tops_predict_seconds(cid, ...),
+        # the historical behaviour.  Stage 7b sets it so the busy terms read the
+        # identity frozen at dispatch rather than the slot's fleet-file row.
+        self.busy_predict_seconds: Optional[Callable[[int, ServerContext], float]] = None
+        # tau_hat (rounds) each candidate was scored with in the last call — the
+        # value V_i actually used, exposed so it can be logged per dispatch.
+        self.last_tau_hats: dict[int, float] = {}
 
     # ------------------------------------------------------------------
     # Lifecycle
@@ -189,6 +197,56 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
                 effective_count, clients_count,
             )
 
+        scores, tau_hats, G, total = self.score_candidates(eligible, context)
+        polaris_state = context.state.setdefault("polaris", {})
+
+        # Stochastic V_i-weighted sampling (without replacement).
+        # Sampling proportional to V_i avoids the tier-clustering that arises
+        # when all G_i are equal and deterministic top-K always fills every slot
+        # with the fastest tier (Thor).  High-scoring clients are still selected
+        # with higher probability, preserving the Polaris intent.
+        scores_arr = np.array(
+            [max(scores[cid], 0.0) for cid in eligible], dtype=float
+        )
+        total_weight = float(scores_arr.sum())
+        if total_weight > 0 and effective_count < len(eligible):
+            probs = scores_arr / total_weight
+            chosen = np.random.choice(
+                len(eligible), size=effective_count, replace=False, p=probs
+            )
+            selected = [eligible[int(i)] for i in chosen]
+        else:
+            # All scores zero, or selecting the entire pool: fall back to top-K.
+            sorted_eligible = sorted(eligible, key=lambda c: scores[c], reverse=True)
+            selected = sorted_eligible[:effective_count]
+
+        # Persist predicted staleness for each selected client so that
+        # on_reports_received() can compare it against actual staleness.
+        # Only selected clients are stored — they immediately enter the busy
+        # set and cannot be re-scored until they report, so there is no risk
+        # of overwriting an unconsumed prediction.
+        predictions: dict[int, float] = polaris_state.setdefault("staleness_predictions", {})
+        for cid in selected:
+            predictions[cid] = tau_hats[cid]
+
+        current_round = getattr(server, "current_round", context.current_round)
+        self._log_round(current_round, scores, selected, G, total)
+
+        return selected
+
+    # ------------------------------------------------------------------
+    # Scoring (shared by select_clients and the Wen e-greedy rule)
+    # ------------------------------------------------------------------
+
+    def score_candidates(self, eligible: list[int], context: ServerContext):
+        """V_i and tau_hat for every eligible client; no sampling.
+
+        Returns (scores, tau_hats, G, total). Extracted unchanged from
+        select_clients so another selection rule (wen_env's e-greedy) can rank
+        by the same V_i without consuming the sampling RNG.
+        """
+        server = context.server
+        busy = set(getattr(server, "training_clients", {}) or {})
         polaris_state = context.state.setdefault("polaris", {})
         total = self._total_clients
         G = polaris_state.get(
@@ -210,6 +268,13 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
             clients_per_round = int(context.state.get("clients_per_round", max(1, len(busy) or 1)))
             default_size = next(iter(sizes.values()), 500) if sizes else 500
 
+            def _busy_seconds(busy_cid: int) -> float:
+                if self.busy_predict_seconds is not None:
+                    return float(self.busy_predict_seconds(busy_cid, context))
+                return gpu_tops_predict_seconds(
+                    busy_cid, sizes.get(busy_cid, default_size), local_epochs
+                )
+
             if busy and sizes:
                 # Recompute T_round from the current busy pool's GPU-TOPS speeds.
                 # This is the proactive signal: the denominator is derived purely
@@ -218,21 +283,14 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
                 # slower clients cycle in and out of the busy set (IoV dynamic
                 # environment), T_round shifts accordingly — with no reliance on
                 # historical observations.
-                busy_full_times = [
-                    gpu_tops_predict_seconds(cid, sizes.get(cid, default_size), local_epochs)
-                    for cid in busy
-                ]
+                busy_full_times = [_busy_seconds(cid) for cid in busy]
                 t_round_live = compute_t_round_from_times(busy_full_times, clients_per_round)
                 if t_round_live > 0.0:
                     t_round = t_round_live
 
             if wall_now > 0.0 and training_clients and sizes:
                 for busy_cid in busy:
-                    t_full = gpu_tops_predict_seconds(
-                        busy_cid,
-                        sizes.get(busy_cid, default_size),
-                        local_epochs,
-                    )
+                    t_full = _busy_seconds(busy_cid)
                     start_t = float(
                         (training_clients.get(busy_cid) or {}).get("start_time", wall_now)
                     )
@@ -273,39 +331,8 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
                 tau_hat_rounds, v_i,
             )
 
-        # Stochastic V_i-weighted sampling (without replacement).
-        # Sampling proportional to V_i avoids the tier-clustering that arises
-        # when all G_i are equal and deterministic top-K always fills every slot
-        # with the fastest tier (Thor).  High-scoring clients are still selected
-        # with higher probability, preserving the Polaris intent.
-        scores_arr = np.array(
-            [max(scores[cid], 0.0) for cid in eligible], dtype=float
-        )
-        total_weight = float(scores_arr.sum())
-        if total_weight > 0 and effective_count < len(eligible):
-            probs = scores_arr / total_weight
-            chosen = np.random.choice(
-                len(eligible), size=effective_count, replace=False, p=probs
-            )
-            selected = [eligible[int(i)] for i in chosen]
-        else:
-            # All scores zero, or selecting the entire pool: fall back to top-K.
-            sorted_eligible = sorted(eligible, key=lambda c: scores[c], reverse=True)
-            selected = sorted_eligible[:effective_count]
-
-        # Persist predicted staleness for each selected client so that
-        # on_reports_received() can compare it against actual staleness.
-        # Only selected clients are stored — they immediately enter the busy
-        # set and cannot be re-scored until they report, so there is no risk
-        # of overwriting an unconsumed prediction.
-        predictions: dict[int, float] = polaris_state.setdefault("staleness_predictions", {})
-        for cid in selected:
-            predictions[cid] = tau_hats[cid]
-
-        current_round = getattr(server, "current_round", context.current_round)
-        self._log_round(current_round, scores, selected, G, total)
-
-        return selected
+        self.last_tau_hats = dict(tau_hats)
+        return scores, tau_hats, G, total
 
     # ------------------------------------------------------------------
     # Logging

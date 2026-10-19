@@ -1,0 +1,157 @@
+Stage 1 - determinism check
+========================================================================
+
+Two runs of ONE config: N=20, C=4, alpha=0.8, arm gpu, seed 4126,
+200 rounds each, run sequentially and alone on the box.
+
+run A   gpu_a0p8_N20_C4_s4126_det3
+run B   gpu_a0p8_N20_C4_s4126_det4
+
+0. was every process seeded?
+------------------------------------------------------------------------
+run A: 5 processes logged a seed record
+        client_process_1     seed 4127
+        client_process_2     seed 4128
+        client_process_3     seed 4129
+        client_process_4     seed 4130
+        server               seed 4126
+run B: 5 processes logged a seed record
+        client_process_1     seed 4127
+        client_process_2     seed 4128
+        client_process_3     seed 4129
+        client_process_4     seed 4130
+        server               seed 4126
+
+same seeds in both runs: YES
+
+1. are the two accuracy curves identical, row for row?
+------------------------------------------------------------------------
+rows in the results CSV:  A 200, B 200
+rounds where accuracy moved (i.e. real evaluations): A 20, B 21
+
+PLATO writes one row per round and carries the last accuracy forward
+between evaluations, so most rows repeat. Both views are compared.
+
+VERDICT (every row): accuracy is NOT identical.
+         161 of 200 rows differ
+         first    round   40: 0.394500 vs 0.423200
+         largest  round   70: 0.469700 vs 0.516100 (|diff| 0.046400)
+VERDICT (evaluations only): NOT identical.
+
+train_loss (changes every round, so the most sensitive column): NOT identical.
+    first difference at round 39: 1.2356349229812622 vs 1.0815917253494263
+
+2. is sim_time_s at the final round identical?
+------------------------------------------------------------------------
+A   round 200   sim_time_s 291.995469
+B   round 200   sim_time_s 285.828121
+difference          +6.167348 s (+2.1577%)
+
+VERDICT: NOT identical.
+
+Against the unseeded baseline: ../separability/PARALLELISM_CHECK.md ran
+the same comparison -- two runs of one config, 200 rounds, C = 4, gpu
+arm, each alone on this box -- and measured 313.447 s against 293.737 s,
+a spread of 6.29%. Here it is 2.16%.
+
+So seeding removed most of it but not all. (The two are not a perfectly
+controlled pair: that run used the un-jittered fleet, whose E[T] is
+8.3231 s against 7.9180 s here, so the clocks are not directly
+comparable in absolute terms. The SPREAD between two runs of one config
+is, since both sides scale together.)
+
+largest per-round clock difference, over the evaluation rounds:
+    round 129   185.300129 vs 175.865736   |diff| 9.434392 s
+    median |diff| 1.613893 s
+
+3. where does any remaining difference come from?
+------------------------------------------------------------------------
+dispatches:   A 203, B 203
+dispatch sequence identical: NO
+    first difference at dispatch 43: client 16 vs 17
+merges:       A 200, B 200
+merge order identical:       NO
+    first difference at merge 38: client 10 vs 20
+
+THE SOURCE THAT SEEDING CANNOT REMOVE
+
+PLATO builds each report's finish time as
+
+    training_time + processing_time + comm_time + start_time
+                                     (plato/servers/base.py:1025-1030)
+
+and that finish time becomes the simulated clock. Of those four terms:
+
+    training_time     the client's fixed sleep -- deterministic
+    comm_time         0 under comm_simulation = true
+    start_time        derived from the clock itself
+    processing_time   time.perf_counter() measured ON THE HOST
+                      (plato/clients/strategies/defaults.py:252)
+
+`processing_time` is real elapsed time on a shared machine. It is added
+to every report, so it enters the clock on every round, and no seeding
+can make it repeat. `sim_time_s` therefore CANNOT be bit-identical
+between two runs; this is a property of PLATO's clock, not of this
+configuration, and it applies to every cell this project has ever run.
+
+4. WHICH WORKER PROCESS SERVED WHICH CLIENT
+------------------------------------------------------------------------
+PLATO runs a pool of max_concurrency worker processes and gives each
+round's selected client to whichever worker is free
+(plato/servers/base.py:662-682). The first clients each worker served:
+
+process    run A                        run B                       
+1          [15]                         [14]                           <-- differs
+2          [18]                         [20, 4, 13, 8, 19, 16]         <-- differs
+3          [20, 4, 13, 8, 19, 16]       [15]                           <-- differs
+4          [14]                         [18]                           <-- differs
+
+The worker assignment still differs -- Change B does not stop the
+socket.io connection race, it makes the race HARMLESS. With
+ClientSeededTrainer active, torch is re-seeded from
+(base_seed, client_id, round) at the top of every local training
+run, so a client trained by worker 2 in one run and worker 4 in the
+other draws the SAME augmentation sequence.
+
+That it no longer propagates is visible in the sections above:
+training stayed bit-identical for far longer than before, and the
+divergence, when it came, did not start at the worker assignment.
+Section 6 locates what it did start at.
+
+
+5. THE RECONSTRUCTED CLOCK (Change C)
+------------------------------------------------------------------------
+A   round 200   plato 291.995469   reconstructed 288.097866
+B   round 200   plato 285.828121   reconstructed 282.052213
+plato          difference +6.167348 s (+2.1577%)   not identical
+reconstructed  difference +6.045653 s (+2.1435%)   not identical
+
+
+6. WAS THE MERGE ORDER FLIPPED BY A NEAR-TIE?
+------------------------------------------------------------------------
+PLATO merges the smallest (finish_time, client_id) off a heap each
+round, and finish_time carries the host's accumulated processing_time.
+Below, 'finish' is the RECONSTRUCTED finish -- the same quantity with
+the host overhead removed.
+
+ merge                         run A                         run B
+    35  round   36 client   6  69.88310  round   36 client   6  69.88310
+    36  round   37 client  13  70.76480  round   37 client  13  70.76480
+    37  round   38 client  15  71.57752  round   38 client  15  71.57752
+    38  round   39 client  10  71.98687  round   39 client  20  71.74551  <-- differs
+    39  round   40 client   7  72.33739  round   40 client  10  71.98687  <-- differs
+    40  round   41 client  20  71.74551  round   41 client   7  72.33739  <-- differs
+    41  round   42 client  18  72.69544  round   42 client  18  72.69544
+    42  round   43 client  16  73.48787  round   43 client  15  74.03181  <-- differs
+
+in the window above, run A merges in ascending reconstructed time: NO
+                     run B: yes
+the 3 clients that swapped (#7, #10, #20) finish within 0.592 s of each other
+
+The per-report processing_time measured on this box is ~0.065 s, and
+it accumulates PER SLOT, so two slots can differ by several tenths of
+a second by this point in a run (stage2_evidence/clock_reconstruction.md
+C1). A gap of that size between two clients' simulated finishes is
+therefore inside the noise the host adds, and which of them the server
+merges first is decided by the machine rather than by the experiment.
+

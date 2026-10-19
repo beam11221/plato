@@ -1,0 +1,36 @@
+road_length_m: 1200.0
+lanes_per_direction: 1
+rsu_x_m: 600.0
+coverage_radius_m: 300.0
+v_max_kmh: 70.0
+p_fl_capable: 1.0
+tier_names:
+- xavier
+- orin
+- thor
+tier_mix:
+- 0.5
+- 0.35
+- 0.15
+n_vehicles_target: 100
+warmup_s: 150.0
+sim_duration_s: 36000.0
+trace_dt_s: 1.0
+step_length_s: 1.0
+veh_length_m: 5.0
+veh_min_gap_m: 2.5
+veh_accel: 2.6
+veh_decel: 4.5
+uplink_rate_bps: 10000000.0
+signal_mode: disk
+flow_calibrated_veh_h_per_dir: null
+flow_calibration: null
+t_bar_train_s:
+  xavier: 30.0
+  orin: 18.0
+  thor: 10.0
+t_bar_train_provisional: true
+v_max_mps: 19.444444
+seed: 1
+n_vehicles_closed_loop: 20
+sim_mode: closed_loop

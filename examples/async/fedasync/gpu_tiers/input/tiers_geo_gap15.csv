@@ -1,0 +1,4 @@
+tier_id,year,gpu_arch,gpu_tflops_fp16,cpu_arch,cpu_cores,cpu_freq_ghz,eta_nominal,noise_sigma,schema_version
+xavier,2021,volta,10,carmel,8,2.00,1.0,0.0,1
+orin,2023,ampere,38.7298,cortex_a78ae,12,2.00,1.0,0.0,1
+thor,2025,blackwell,150,neoverse_v3ae,12,2.60,1.0,0.0,1

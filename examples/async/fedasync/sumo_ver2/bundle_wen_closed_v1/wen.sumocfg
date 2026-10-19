@@ -1,0 +1,20 @@
+<configuration>
+    <input>
+        <net-file value="wen.net.xml"/>
+        <route-files value="wen.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="30300.0"/>
+        <step-length value="0.1"/>
+    </time>
+    <processing>
+        <time-to-teleport value="-1"/>
+        <collision.action value="none"/>
+        <default.speeddev value="0"/>
+    </processing>
+    <report>
+        <no-step-log value="true"/>
+        <duration-log.statistics value="false"/>
+    </report>
+</configuration>

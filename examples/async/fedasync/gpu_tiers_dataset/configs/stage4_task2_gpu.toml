@@ -1,0 +1,100 @@
+# =============================================================================
+# Stage 4 Task 2 -- gpu arm, N=20, C=4, seed 4126, 4000 rounds.
+# =============================================================================
+# Byte-identical to configs/gpu_a0p8_N20_C4_s4126.toml (the Stage 3 cell)
+# except base_path and port, so this run does not collide with the finished
+# Stage 3 results. Launched with STAGE4_VI_LOG_PATH set so vi_term_logger.py
+# attaches (see fedasync_seeded.py:build_server).
+#
+# Run:
+#   cd examples/async/fedasync
+#   STAGE4_VI_LOG_PATH=gpu_tiers_dataset/stage4_evidence/vi_terms_raw_gpu.csv \
+#   PYTHONPATH=<repo root>:gpu_tiers:. python3 gpu_tiers_dataset/fedasync_seeded.py --arm gpu -c gpu_tiers_dataset/configs/stage4_task2_gpu.toml
+# =============================================================================
+
+[general]
+base_path = "./runs/gpu_tiers_dataset/stage4_task2_gpu"
+
+[clients]
+type = "simple"
+total_clients = 20
+per_round = 4
+do_test = false
+
+speed_simulation = true
+comm_simulation = true
+sleep_simulation = true
+avg_training_time = 0.0
+max_sleep_time = 300
+random_seed = 4126
+
+[clients.simulation_distribution]
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/fleets/n20_x10-o7-t3_xa15_p2500_j0p149_s4126/sleep_times.csv"
+
+[server]
+address = "127.0.0.1"
+port = 52241
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+random_seed = 4126
+
+staleness_bound = 25
+exclude_processing_time_from_clock = true
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.5
+adaptive_mixing = true
+eval_interval = 10
+
+staleness_predictor = "gpu_tops"
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+data_path = "/workspace/plato/examples/async/fedasync/data"
+partition_size = 2500
+sampler = "noniid"
+concentration = 0.8
+random_seed = 4126
+
+[trainer]
+type = "basic"
+rounds = 4000
+max_concurrency = 4
+target_accuracy = 0.9
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.optimizer]
+lr = 0.01
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false
+
+[gpu_tier]
+tiers_csv   = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/tiers/tiers_estimated_15x.csv"
+clients_csv = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/fleets/n20_x10-o7-t3_xa15_p2500_j0p149_s4126/clients.csv"
+anchor_tier  = "xavier"
+anchor_sleep = 15
+t_round_model = "queue"

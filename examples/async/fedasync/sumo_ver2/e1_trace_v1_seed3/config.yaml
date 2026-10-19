@@ -1,0 +1,59 @@
+road_length_m: 2000.0
+lanes_per_direction: 1
+rsu_x_m: 1000.0
+coverage_radius_m: 250.0
+v_max_kmh: 70.0
+p_fl_capable: 0.75
+tier_names:
+- xavier
+- orin
+- thor
+tier_mix:
+- 0.5
+- 0.35
+- 0.15
+n_vehicles_target: 100
+warmup_s: 150.0
+sim_duration_s: 1800.0
+trace_dt_s: 1.0
+step_length_s: 1.0
+veh_length_m: 5.0
+veh_min_gap_m: 2.5
+veh_accel: 2.6
+veh_decel: 4.5
+uplink_rate_bps: 10000000.0
+signal_mode: disk
+flow_calibrated_veh_h_per_dir: 1428.795178632323
+flow_calibration:
+  flow_veh_h_per_dir: 1428.795178632323
+  target_N: 100
+  tol: 0.02
+  converged: true
+  history:
+  - iter: 0
+    flow_veh_h: 1750.0
+    N_measured: 125.299
+    rel_err: 0.253
+  - iter: 1
+    flow_veh_h: 1396.659
+    N_measured: 97.751
+    rel_err: -0.0225
+  - iter: 2
+    flow_veh_h: 1428.795
+    N_measured: 100.206
+    rel_err: 0.0021
+t_bar_train_s:
+  xavier: 30.0
+  orin: 18.0
+  thor: 10.0
+t_bar_train_provisional: true
+v_max_mps: 19.444444
+seed: 3
+derived_flow_naive:
+  v_mean_mps: 19.444444444444443
+  travel_time_s: 102.85714285714286
+  n_per_direction: 50.0
+  flow_per_direction_veh_s: 0.4861111111111111
+  flow_per_direction_veh_h: 1750.0
+  total_flow_veh_h: 3500.0
+effective_flow_veh_h_per_dir: 1428.795178632323

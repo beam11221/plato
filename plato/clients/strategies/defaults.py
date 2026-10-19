@@ -354,6 +354,20 @@ class DefaultTrainingStrategy(TrainingStrategy):
             index = max(context.client_id - 1, 0)
             sleep_seconds = float(sleep_times[index])
             avg_training_time = Config().clients.avg_training_time
+            # Preserve the real, measured compute before it is discarded.  Under
+            # sleep_simulation the reported training_time is synthetic, so this
+            # is the ONLY place the host's actual per-round cost is still known;
+            # without this line it is unrecoverable after the run.
+            LOGGER.info(
+                "[%s] [SleepSimulation] measured_training_time=%.6f s  "
+                "reported_training_time=%.6f s  (sleep=%.6f avg=%.6f epochs=%d)",
+                context,
+                training_time,
+                (avg_training_time + sleep_seconds) * Config().trainer.epochs,
+                sleep_seconds,
+                avg_training_time,
+                Config().trainer.epochs,
+            )
             training_time = (
                 avg_training_time + sleep_seconds
             ) * Config().trainer.epochs

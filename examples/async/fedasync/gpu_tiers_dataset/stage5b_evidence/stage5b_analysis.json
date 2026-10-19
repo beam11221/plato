@@ -1,0 +1,553 @@
+{
+  "_reference": {
+    "baseline_none": {
+      "T": 7525.226086991038,
+      "waste": 0.13169885007593837,
+      "xavier_share": 0.3903232805380777
+    },
+    "baseline_tier_spec_vmax_elapsed": {
+      "T": 4388.200612203007,
+      "waste": 0.0032346354814630504,
+      "xavier_share": 0.2226922119930331
+    }
+  },
+  "_eligibility_window": {
+    "vmax_elapsed": {
+      "xavier": 0.5870756290426243,
+      "orin": 0.8723518898394291,
+      "thor": 0.8938497511078879
+    },
+    "vmax_distance": {
+      "xavier": 0.6325813959062474,
+      "orin": 0.9526748772542056,
+      "thor": 0.9751681421851266
+    },
+    "oracle_exit": {
+      "xavier": 0.6955156843284396,
+      "orin": 0.9781478103970137,
+      "thor": 1.0
+    }
+  },
+  "baseline_tier_spec_vmax_distance": {
+    "r_i_mode": "vmax_distance",
+    "conservation": {
+      "rounds": 4000,
+      "measured": 4529.5778721180095,
+      "predicted": 4555.774152506009,
+      "rel_error": 0.005783382277022294
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4019,
+        "wasted": 8,
+        "wasted_frac": 0.0019905449116695696
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 943,
+          "wasted": 5,
+          "wasted_frac": 0.005302226935312832
+        },
+        "orin": {
+          "dispatches": 2007,
+          "wasted": 2,
+          "wasted_frac": 0.000996512207274539
+        },
+        "thor": {
+          "dispatches": 1069,
+          "wasted": 1,
+          "wasted_frac": 0.0009354536950420954
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 253,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        },
+        "250-500": {
+          "dispatches": 250,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        },
+        "500-1000": {
+          "dispatches": 500,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        },
+        "1000-2000": {
+          "dispatches": 1008,
+          "wasted": 6,
+          "wasted_frac": 0.005952380952380952
+        },
+        "2000-4000": {
+          "dispatches": 2008,
+          "wasted": 2,
+          "wasted_frac": 0.00099601593625498
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.23463548146305052,
+      "orin": 0.49937795471510327,
+      "thor": 0.2659865638218462
+    },
+    "useful_work_rate_last_window": {
+      "useful": 2006,
+      "seconds": 2133.0183760700093,
+      "rate": 0.9404513446789732
+    },
+    "curve": {
+      "plateau": 0.83055,
+      "best": 0.8415,
+      "noise_sd": 0.05126039189082911,
+      "rounds_to_70": 200,
+      "tta_h_70": 0.07561213402555557,
+      "rounds_to_75": 300,
+      "tta_h_75": 0.10900595848333336,
+      "rounds_to_78": 590,
+      "tta_h_78": 0.22653406647222243,
+      "rounds_to_80": 840,
+      "tta_h_80": 0.3062692019425
+    },
+    "clock_at": {
+      "100": 145.34163154,
+      "250": 347.08869778400003,
+      "500": 678.5874881450006,
+      "1000": 1321.6707286800004,
+      "2000": 2396.5594960480003,
+      "4000": 4529.5778721180095
+    },
+    "stage0_pool_sizes": {
+      "1-250": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 7.0,
+          "p90": 14.0
+        },
+        "eligible_after_stage0": {
+          "median": 7.0,
+          "p10": 4.0,
+          "p90": 11.0
+        }
+      },
+      "250-500": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 11.0,
+          "p10": 6.0,
+          "p90": 13.099999999999994
+        },
+        "eligible_after_stage0": {
+          "median": 8.0,
+          "p10": 5.0,
+          "p90": 11.0
+        }
+      },
+      "500-1000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 7.0,
+          "p90": 13.0
+        },
+        "eligible_after_stage0": {
+          "median": 7.0,
+          "p10": 5.0,
+          "p90": 10.0
+        }
+      },
+      "1000-2000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 9.0,
+          "p10": 5.0,
+          "p90": 14.0
+        },
+        "eligible_after_stage0": {
+          "median": 6.0,
+          "p10": 3.0,
+          "p90": 12.0
+        }
+      },
+      "2000-4000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 5.0,
+          "p90": 14.0
+        },
+        "eligible_after_stage0": {
+          "median": 7.0,
+          "p10": 3.0,
+          "p90": 11.0
+        }
+      }
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 6,
+      "fallback_frac": 0.0015,
+      "per_window": {
+        "1-250": {
+          "rounds": 250,
+          "fallback_frac": 0.0
+        },
+        "250-500": {
+          "rounds": 250,
+          "fallback_frac": 0.0
+        },
+        "500-1000": {
+          "rounds": 500,
+          "fallback_frac": 0.0
+        },
+        "1000-2000": {
+          "rounds": 1000,
+          "fallback_frac": 0.005
+        },
+        "2000-4000": {
+          "rounds": 2000,
+          "fallback_frac": 0.0005
+        }
+      }
+    },
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 7516,
+        "killed_viable": 1100,
+        "passed_useful": 938,
+        "missed_waste": 5
+      },
+      "orin": {
+        "killed_viable": 357,
+        "killed_waste": 741,
+        "passed_useful": 2005,
+        "missed_waste": 2
+      },
+      "thor": {
+        "killed_waste": 191,
+        "killed_viable": 108,
+        "passed_useful": 1068,
+        "missed_waste": 1
+      }
+    },
+    "fairness": {
+      "per_client": {
+        "18": 384,
+        "6": 82,
+        "7": 93,
+        "11": 285,
+        "12": 275,
+        "19": 311,
+        "2": 102,
+        "9": 102,
+        "17": 289,
+        "14": 303,
+        "5": 106,
+        "10": 81,
+        "20": 374,
+        "3": 101,
+        "16": 301,
+        "13": 291,
+        "4": 89,
+        "1": 87,
+        "8": 100,
+        "15": 263
+      },
+      "mean_per_tier": {
+        "xavier": 94.3,
+        "orin": 286.7142857142857,
+        "thor": 356.3333333333333
+      },
+      "thor_to_xavier_ratio": 3.778720395899611,
+      "jain_index": 0.7689015502407286
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.99670103353768,
+      "mix_channel_pct": -30.41639683799826,
+      "run_mean_sleep": 4.5467056794480225
+    }
+  },
+  "baseline_tier_spec_oracle_exit": {
+    "r_i_mode": "oracle_exit",
+    "conservation": {
+      "rounds": 4000,
+      "measured": 4821.716848744003,
+      "predicted": 4841.314368827088,
+      "rel_error": 0.004064427816450947
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4044,
+        "wasted": 36,
+        "wasted_frac": 0.008902077151335312
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1026,
+          "wasted": 24,
+          "wasted_frac": 0.023391812865497075
+        },
+        "orin": {
+          "dispatches": 2007,
+          "wasted": 3,
+          "wasted_frac": 0.0014947683109118087
+        },
+        "thor": {
+          "dispatches": 1011,
+          "wasted": 9,
+          "wasted_frac": 0.008902077151335312
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 255,
+          "wasted": 2,
+          "wasted_frac": 0.00784313725490196
+        },
+        "250-500": {
+          "dispatches": 254,
+          "wasted": 4,
+          "wasted_frac": 0.015748031496062992
+        },
+        "500-1000": {
+          "dispatches": 506,
+          "wasted": 6,
+          "wasted_frac": 0.011857707509881422
+        },
+        "1000-2000": {
+          "dispatches": 1013,
+          "wasted": 8,
+          "wasted_frac": 0.007897334649555774
+        },
+        "2000-4000": {
+          "dispatches": 2016,
+          "wasted": 16,
+          "wasted_frac": 0.007936507936507936
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.25370919881305637,
+      "orin": 0.49629080118694363,
+      "thor": 0.25
+    },
+    "useful_work_rate_last_window": {
+      "useful": 2000,
+      "seconds": 2381.6794310090054,
+      "rate": 0.8397435750422105
+    },
+    "curve": {
+      "plateau": 0.82805,
+      "best": 0.8422,
+      "noise_sd": 0.05089624452518002,
+      "rounds_to_70": 210,
+      "tta_h_70": 0.08221498572222224,
+      "rounds_to_75": 400,
+      "tta_h_75": 0.154179762408889,
+      "rounds_to_78": 550,
+      "tta_h_78": 0.20737473564833336,
+      "rounds_to_80": 900,
+      "tta_h_80": 0.3236929461094447
+    },
+    "clock_at": {
+      "100": 147.173914422,
+      "250": 351.34036094900006,
+      "500": 683.5687246010004,
+      "1000": 1311.7407832120005,
+      "2000": 2440.0374177349977,
+      "4000": 4821.716848744003
+    },
+    "stage0_pool_sizes": {
+      "1-250": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 7.0,
+          "p90": 13.0
+        },
+        "eligible_after_stage0": {
+          "median": 8.0,
+          "p10": 5.0,
+          "p90": 11.0
+        }
+      },
+      "250-500": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 11.0,
+          "p10": 6.900000000000002,
+          "p90": 14.0
+        },
+        "eligible_after_stage0": {
+          "median": 9.0,
+          "p10": 5.0,
+          "p90": 12.0
+        }
+      },
+      "500-1000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 7.0,
+          "p90": 13.0
+        },
+        "eligible_after_stage0": {
+          "median": 8.0,
+          "p10": 6.0,
+          "p90": 11.0
+        }
+      },
+      "1000-2000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 9.0,
+          "p10": 5.0,
+          "p90": 15.0
+        },
+        "eligible_after_stage0": {
+          "median": 7.0,
+          "p10": 3.0,
+          "p90": 13.0
+        }
+      },
+      "2000-4000": {
+        "eligible_after_busy": {
+          "median": 17.0,
+          "p10": 17.0,
+          "p90": 17.0
+        },
+        "eligible_after_range_gate": {
+          "median": 10.0,
+          "p10": 5.0,
+          "p90": 14.0
+        },
+        "eligible_after_stage0": {
+          "median": 8.0,
+          "p10": 4.0,
+          "p90": 12.0
+        }
+      }
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 1,
+      "fallback_frac": 0.00025,
+      "per_window": {
+        "1-250": {
+          "rounds": 250,
+          "fallback_frac": 0.0
+        },
+        "250-500": {
+          "rounds": 250,
+          "fallback_frac": 0.0
+        },
+        "500-1000": {
+          "rounds": 500,
+          "fallback_frac": 0.0
+        },
+        "1000-2000": {
+          "rounds": 1000,
+          "fallback_frac": 0.0
+        },
+        "2000-4000": {
+          "rounds": 2000,
+          "fallback_frac": 0.0005
+        }
+      }
+    },
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 6467,
+        "killed_viable": 392,
+        "passed_useful": 1002,
+        "missed_waste": 24
+      },
+      "orin": {
+        "killed_viable": 72,
+        "killed_waste": 659,
+        "passed_useful": 2004,
+        "missed_waste": 3
+      },
+      "thor": {
+        "killed_waste": 154,
+        "killed_viable": 6,
+        "passed_useful": 1002,
+        "missed_waste": 9
+      }
+    },
+    "fairness": {
+      "per_client": {
+        "8": 111,
+        "1": 100,
+        "16": 269,
+        "14": 305,
+        "11": 278,
+        "9": 102,
+        "6": 102,
+        "18": 367,
+        "12": 282,
+        "15": 281,
+        "17": 290,
+        "19": 299,
+        "7": 97,
+        "20": 345,
+        "10": 90,
+        "3": 115,
+        "5": 102,
+        "4": 104,
+        "13": 302,
+        "2": 103
+      },
+      "mean_per_tier": {
+        "xavier": 102.6,
+        "orin": 286.7142857142857,
+        "thor": 337
+      },
+      "thor_to_xavier_ratio": 3.284600389863548,
+      "jain_index": 0.7975460026958857
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.389973795087199,
+      "mix_channel_pct": -26.56722815402611,
+      "run_mean_sleep": 4.798216614801921
+    }
+  }
+}

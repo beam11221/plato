@@ -1,0 +1,15 @@
+run,cell,seed,T_at_4000_s,waste_pct,xavier_share_pct,plateau_pct,conservation_error_pct,stage0_fallback_pct
+baseline_fleet_mean_s4126,baseline_fleet_mean_vmax_distance,4126,6116.2,3.913,34.01,83.01,0.65,0.325
+baseline_fleet_mean_vmax_distance_s4127,baseline_fleet_mean_vmax_distance,4127,6249.7,4.143,34.91,83.445,0.628,0.3
+baseline_fleet_mean_vmax_distance_s4128,baseline_fleet_mean_vmax_distance,4128,6246.6,4.075,34.92,83.905,0.679,0.125
+"baseline_none_s4126 (Task4, reused)",baseline_none,4126,7525.2,13.17,39.03,82.88,0.32,
+baseline_none_s4127,baseline_none,4127,7485.8,12.886,39.01,83.11,0.466,0.0
+baseline_none_s4128,baseline_none,4128,7593.7,13.342,39.46,83.86,0.643,0.0
+"baseline_tier_spec_vmax_distance_s4126 (Stage5b, reused)",baseline_tier_spec_vmax_distance,4126,4529.6,0.199,23.46,83.055,0.578,0.15
+baseline_tier_spec_vmax_distance_s4127,baseline_tier_spec_vmax_distance,4127,4586.4,0.249,23.89,82.865,0.666,0.125
+baseline_tier_spec_vmax_distance_s4128,baseline_tier_spec_vmax_distance,4128,4590.7,0.274,23.66,84.06,0.052,0.125
+cpu_tier_spec_s4126,cpu_tier_spec_vmax_distance,4126,6606.5,0.916,39.47,82.235,0.678,1.1
+gpu_tier_spec_s4126,gpu_tier_spec_vmax_distance,4126,5007.4,0.324,27.04,81.655,0.516,0.125
+gpu_tier_spec_vmax_distance_s4127,gpu_tier_spec_vmax_distance,4127,5260.5,0.348,28.87,83.255,0.084,0.225
+gpu_tier_spec_vmax_distance_s4128,gpu_tier_spec_vmax_distance,4128,4771.3,0.248,24.75,83.185,-0.533,0.075
+observed_fleet_mean_s4126,observed_fleet_mean_vmax_distance,4126,6578.5,4.167,37.38,82.515,0.737,0.15

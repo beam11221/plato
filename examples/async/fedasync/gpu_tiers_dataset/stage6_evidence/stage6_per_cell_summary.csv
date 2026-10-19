@@ -1,0 +1,7 @@
+cell,n_seeds,T_mean_s,T_sd_s,T_spread_pct,waste_mean_pct,waste_sd_pct,xavier_share_mean_pct,xavier_share_sd_pct
+baseline_fleet_mean_vmax_distance,3,6204.2,76.2,1.23,4.044,0.118,34.61,0.52
+baseline_none,3,7534.9,54.6,0.72,13.133,0.23,39.17,0.25
+baseline_tier_spec_vmax_distance,3,4568.9,34.1,0.75,0.241,0.038,23.67,0.22
+gpu_tier_spec_vmax_distance,3,5013.1,244.6,4.88,0.307,0.052,26.89,2.06
+cpu_tier_spec_vmax_distance,1,6606.5,,,0.916,,39.47,
+observed_fleet_mean_vmax_distance,1,6578.5,,,4.167,,37.38,

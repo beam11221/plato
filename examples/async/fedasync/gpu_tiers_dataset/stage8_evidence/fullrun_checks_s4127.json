@@ -1,0 +1,524 @@
+{
+  "baseline_open": {
+    "rows": {
+      "identity == spec": [
+        4603,
+        4603
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        4603,
+        4603
+      ],
+      "partition == occupant partition (dispatch)": [
+        4603,
+        4603
+      ],
+      "sampler_id == partition + 1": [
+        4603,
+        4603
+      ],
+      "sleep == occupant sleep (report)": [
+        4603,
+        4603
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4603,
+        4603
+      ],
+      "tier == occupant tier": [
+        4603,
+        4603
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4603,
+        4603
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4603,
+        4603
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4603,
+        4603
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.7460931539535522,
+      1.7175589799880981
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": null
+  },
+  "gpu_open": {
+    "rows": {
+      "gpu tau_hat == Stage 3-6 value for occupant tier": [
+        4373,
+        4373
+      ],
+      "identity == spec": [
+        4373,
+        4373
+      ],
+      "never-seen G_i == current proxy": [
+        1881,
+        1881
+      ],
+      "observations == earlier delivered reports": [
+        4373,
+        4373
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        4373,
+        4373
+      ],
+      "partition == occupant partition (dispatch)": [
+        4373,
+        4373
+      ],
+      "predictor tier == occupant tier": [
+        4373,
+        4373
+      ],
+      "sampler_id == partition + 1": [
+        4373,
+        4373
+      ],
+      "sleep == occupant sleep (report)": [
+        4373,
+        4373
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4373,
+        4373
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        4000,
+        4000
+      ],
+      "tier == occupant tier": [
+        4373,
+        4373
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4373,
+        4373
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4373,
+        4373
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4373,
+        4373
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.762783169746399,
+      1.8104931116104126
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": 2.080769
+  },
+  "observed_open": {
+    "rows": {
+      "identity == spec": [
+        4369,
+        4369
+      ],
+      "never-seen G_i == current proxy": [
+        1890,
+        1890
+      ],
+      "observations == earlier delivered reports": [
+        4369,
+        4369
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=0: state_reset == recycles": [
+        1,
+        1
+      ],
+      "partition == occupant partition (client)": [
+        4369,
+        4369
+      ],
+      "partition == occupant partition (dispatch)": [
+        4369,
+        4369
+      ],
+      "sampler_id == partition + 1": [
+        4369,
+        4369
+      ],
+      "sleep == occupant sleep (report)": [
+        4369,
+        4369
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4369,
+        4369
+      ],
+      "tau_hat == tau_obs (observed arm)": [
+        4369,
+        4369
+      ],
+      "tau_hat logged == tau_hat used": [
+        4000,
+        4000
+      ],
+      "tier == occupant tier": [
+        4369,
+        4369
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4369,
+        4369
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4369,
+        4369
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4369,
+        4369
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.7460931539535522,
+      1.7241700887680054
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": null
+  },
+  "baseline_closed": {
+    "rows": {
+      "identity == spec": [
+        4623,
+        4623
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        4623,
+        4623
+      ],
+      "partition == occupant partition (dispatch)": [
+        4623,
+        4623
+      ],
+      "sampler_id == partition + 1": [
+        4623,
+        4623
+      ],
+      "sleep == occupant sleep (report)": [
+        4623,
+        4623
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4623,
+        4623
+      ],
+      "tier == occupant tier": [
+        4623,
+        4623
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4623,
+        4623
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4623,
+        4623
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4623,
+        4623
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.7798688411712646,
+      1.8253374099731445
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": null
+  },
+  "gpu_closed": {
+    "rows": {
+      "gpu tau_hat == Stage 3-6 value for occupant tier": [
+        4657,
+        4657
+      ],
+      "identity == spec": [
+        4657,
+        4657
+      ],
+      "observations == earlier delivered reports": [
+        4657,
+        4657
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        4657,
+        4657
+      ],
+      "partition == occupant partition (dispatch)": [
+        4657,
+        4657
+      ],
+      "predictor tier == occupant tier": [
+        4657,
+        4657
+      ],
+      "sampler_id == partition + 1": [
+        4657,
+        4657
+      ],
+      "sleep == occupant sleep (report)": [
+        4657,
+        4657
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4657,
+        4657
+      ],
+      "startup T_round == fleet-file value": [
+        1,
+        1
+      ],
+      "tau_hat logged == tau_hat used": [
+        4000,
+        4000
+      ],
+      "tier == occupant tier": [
+        4657,
+        4657
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4657,
+        4657
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4657,
+        4657
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4657,
+        4657
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.6731735467910767,
+      2.0065999031066895
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": 2.080769
+  },
+  "observed_closed": {
+    "rows": {
+      "identity == spec": [
+        4669,
+        4669
+      ],
+      "observations == earlier delivered reports": [
+        4669,
+        4669
+      ],
+      "one fingerprint per partition": [
+        20,
+        20
+      ],
+      "one partition per fingerprint": [
+        20,
+        20
+      ],
+      "p=1: resets only on first use": [
+        1,
+        1
+      ],
+      "p=1: slot keeps one identity/tier/partition": [
+        20,
+        20
+      ],
+      "partition == occupant partition (client)": [
+        4669,
+        4669
+      ],
+      "partition == occupant partition (dispatch)": [
+        4669,
+        4669
+      ],
+      "sampler_id == partition + 1": [
+        4669,
+        4669
+      ],
+      "sleep == occupant sleep (report)": [
+        4669,
+        4669
+      ],
+      "sleep_s == occupant sleep (dispatch)": [
+        4669,
+        4669
+      ],
+      "tau_hat == tau_obs (observed arm)": [
+        4669,
+        4669
+      ],
+      "tau_hat logged == tau_hat used": [
+        4000,
+        4000
+      ],
+      "tier == occupant tier": [
+        4669,
+        4669
+      ],
+      "[8] seed == identity_seed(RUN seed, identity, round)": [
+        4669,
+        4669
+      ],
+      "[8] seed != Stage 7b seed for same (identity, round)": [
+        4669,
+        4669
+      ],
+      "[8] (7b row, must be 0) seed == identity_seed(4126, ...)": [
+        4669,
+        4669
+      ],
+      "[8] logged seeds: run=4127 physics=4126": [
+        1,
+        1
+      ],
+      "[8] first-round train_loss differs from 7b": [
+        1,
+        1
+      ]
+    },
+    "first_loss": [
+      1.7798688411712646,
+      1.7057219743728638
+    ],
+    "fingerprints_equal_to_7b": [
+      0,
+      20
+    ],
+    "startup_t_round": null
+  }
+}

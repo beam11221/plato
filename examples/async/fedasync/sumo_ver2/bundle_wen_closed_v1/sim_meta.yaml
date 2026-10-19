@@ -1,0 +1,32 @@
+sumo_version: SUMO 1.21.0
+python_version: 3.12.8
+platform: macOS-26.5.1-arm64-arm-64bit
+speed_rng: numpy.random.default_rng (PCG64)
+speed_rng_seed: 20261015
+road_length_m: 2000.0
+lanes: 2
+lane_speed_mps: 34.0
+n_vehicles: 30
+desired_speed_dist: U[17.0, 34.0] m/s, one draw per vehicle ID
+sigma: 0
+speed_dev: 0
+step_length_s: 0.1
+sample_interval_s: 1.0
+warmup_s: 300.0
+duration_s: 30000.0
+veh_length_m: 5.0
+veh_min_gap_m: 2.5
+motion_model: kinematic
+closed_loop: wrap
+car_follow_model: 'bypassed: TraCI setSpeedMode(0) + setSpeed(V_k), constant speed'
+lane_change_model: LC2013 (SUMO default)
+insertion_checks: none
+s2_coverage_window_m:
+- 400.0
+- 1600.0
+rsu_modelled_in_sumo: false
+lap_counting: cumulative re-entries since simulation start (warm-up included)
+trace_time_base: t = 0 at end of warm-up
+n_reentries_total: 11995
+missing_vehicle_samples: 0
+wall_clock_s: 77.5

@@ -1,0 +1,2790 @@
+{
+  "_mix_decomposition": {
+    "coverage_gated": {
+      "pooled_tier_rate": {
+        "xavier": 0.2931746417294146,
+        "orin": 0.03598431811817418,
+        "thor": 0.023929098966026588
+      },
+      "arms": {
+        "baseline": {
+          "measured": 0.13169885007593837,
+          "predicted_from_mix": 0.13397843108246282,
+          "residual": -0.0022795810065244504,
+          "se": 0.005017396749568302,
+          "z": -0.45433540943729156
+        },
+        "gpu": {
+          "measured": 0.1476038338658147,
+          "predicted_from_mix": 0.13989880286848702,
+          "residual": 0.0077050309973276665,
+          "se": 0.005062487651270414,
+          "z": 1.521985144081115
+        },
+        "cpu": {
+          "measured": 0.16711758584807493,
+          "predicted_from_mix": 0.1671998119750755,
+          "residual": -8.222612700056753e-05,
+          "se": 0.005383213490277852,
+          "z": -0.01527454319786293
+        },
+        "observed": {
+          "measured": 0.13950988822012036,
+          "predicted_from_mix": 0.1449426988678298,
+          "residual": -0.005432810647709424,
+          "se": 0.005161499964303042,
+          "z": -1.0525643098484487
+        }
+      }
+    },
+    "always_accept": {
+      "pooled_tier_rate": {
+        "xavier": 0.2921762192426698,
+        "orin": 0.04264426125554851,
+        "thor": 0.03051079876585533
+      },
+      "arms": {
+        "baseline": {
+          "measured": 0.13964526605046215,
+          "predicted_from_mix": 0.13631115674532934,
+          "residual": 0.0033341093051328097,
+          "se": 0.005423149307525205,
+          "z": 0.6147920914709785
+        },
+        "gpu": {
+          "measured": 0.13315013739695228,
+          "predicted_from_mix": 0.14102880983648344,
+          "residual": -0.007878672439531165,
+          "se": 0.005501111205000292,
+          "z": -1.4321965410133435
+        },
+        "cpu": {
+          "measured": 0.1676242817886585,
+          "predicted_from_mix": 0.16615083479659154,
+          "residual": 0.0014734469920669735,
+          "se": 0.0058830456443670865,
+          "z": 0.2504564950091409
+        },
+        "observed": {
+          "measured": 0.14439170622033476,
+          "predicted_from_mix": 0.14132059007800335,
+          "residual": 0.0030711161423314093,
+          "se": 0.0055058636310536474,
+          "z": 0.5577900849214631
+        }
+      }
+    }
+  },
+  "baseline|coverage_gated": {
+    "arm": "baseline",
+    "policy": "coverage_gated",
+    "crossover_round": null,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7525.226086991038,
+      "predicted": 7549.300463187576,
+      "rel_error": 0.0031991565327393217,
+      "packing": 1.000721219303703
+    },
+    "redispatch_gap": {
+      "after_waste": 30.62126245847176,
+      "after_useful": 18.303235515425133,
+      "ratio": 1.6729972377105435,
+      "n_waste": 602
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4609,
+        "wasted": 607,
+        "useful": 4002,
+        "wasted_frac": 0.13169885007593837,
+        "physical_wasted": 607,
+        "physical_wasted_frac": 0.13169885007593837
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1799,
+          "wasted": 521,
+          "useful": 1278,
+          "wasted_frac": 0.2896053362979433,
+          "physical_wasted": 521,
+          "physical_wasted_frac": 0.2896053362979433
+        },
+        "orin": {
+          "dispatches": 1895,
+          "wasted": 59,
+          "useful": 1836,
+          "wasted_frac": 0.031134564643799472,
+          "physical_wasted": 59,
+          "physical_wasted_frac": 0.031134564643799472
+        },
+        "thor": {
+          "dispatches": 915,
+          "wasted": 27,
+          "useful": 888,
+          "wasted_frac": 0.029508196721311476,
+          "physical_wasted": 27,
+          "physical_wasted_frac": 0.029508196721311476
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 291,
+          "wasted": 38,
+          "useful": 253,
+          "wasted_frac": 0.13058419243986255,
+          "physical_wasted": 38,
+          "physical_wasted_frac": 0.13058419243986255
+        },
+        "250-500": {
+          "dispatches": 286,
+          "wasted": 38,
+          "useful": 248,
+          "wasted_frac": 0.13286713286713286,
+          "physical_wasted": 38,
+          "physical_wasted_frac": 0.13286713286713286
+        },
+        "500-1000": {
+          "dispatches": 579,
+          "wasted": 78,
+          "useful": 501,
+          "wasted_frac": 0.13471502590673576,
+          "physical_wasted": 78,
+          "physical_wasted_frac": 0.13471502590673576
+        },
+        "1000-2000": {
+          "dispatches": 1154,
+          "wasted": 156,
+          "useful": 998,
+          "wasted_frac": 0.13518197573656845,
+          "physical_wasted": 156,
+          "physical_wasted_frac": 0.13518197573656845
+        },
+        "2000-4000": {
+          "dispatches": 2299,
+          "wasted": 297,
+          "useful": 2002,
+          "wasted_frac": 0.1291866028708134,
+          "physical_wasted": 297,
+          "physical_wasted_frac": 0.1291866028708134
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 118,
+          "wasted": 33,
+          "useful": 85,
+          "wasted_frac": 0.2796610169491525,
+          "physical_wasted": 33,
+          "physical_wasted_frac": 0.2796610169491525
+        },
+        "orin|1-250": {
+          "dispatches": 121,
+          "wasted": 4,
+          "useful": 117,
+          "wasted_frac": 0.03305785123966942,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.03305785123966942
+        },
+        "thor|1-250": {
+          "dispatches": 52,
+          "wasted": 1,
+          "useful": 51,
+          "wasted_frac": 0.019230769230769232,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.019230769230769232
+        },
+        "xavier|250-500": {
+          "dispatches": 111,
+          "wasted": 36,
+          "useful": 75,
+          "wasted_frac": 0.32432432432432434,
+          "physical_wasted": 36,
+          "physical_wasted_frac": 0.32432432432432434
+        },
+        "orin|250-500": {
+          "dispatches": 115,
+          "wasted": 1,
+          "useful": 114,
+          "wasted_frac": 0.008695652173913044,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.008695652173913044
+        },
+        "thor|250-500": {
+          "dispatches": 60,
+          "wasted": 1,
+          "useful": 59,
+          "wasted_frac": 0.016666666666666666,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.016666666666666666
+        },
+        "xavier|500-1000": {
+          "dispatches": 219,
+          "wasted": 62,
+          "useful": 157,
+          "wasted_frac": 0.2831050228310502,
+          "physical_wasted": 62,
+          "physical_wasted_frac": 0.2831050228310502
+        },
+        "orin|500-1000": {
+          "dispatches": 240,
+          "wasted": 13,
+          "useful": 227,
+          "wasted_frac": 0.05416666666666667,
+          "physical_wasted": 13,
+          "physical_wasted_frac": 0.05416666666666667
+        },
+        "thor|500-1000": {
+          "dispatches": 120,
+          "wasted": 3,
+          "useful": 117,
+          "wasted_frac": 0.025,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.025
+        },
+        "xavier|1000-2000": {
+          "dispatches": 436,
+          "wasted": 134,
+          "useful": 302,
+          "wasted_frac": 0.3073394495412844,
+          "physical_wasted": 134,
+          "physical_wasted_frac": 0.3073394495412844
+        },
+        "orin|1000-2000": {
+          "dispatches": 484,
+          "wasted": 12,
+          "useful": 472,
+          "wasted_frac": 0.024793388429752067,
+          "physical_wasted": 12,
+          "physical_wasted_frac": 0.024793388429752067
+        },
+        "thor|1000-2000": {
+          "dispatches": 234,
+          "wasted": 10,
+          "useful": 224,
+          "wasted_frac": 0.042735042735042736,
+          "physical_wasted": 10,
+          "physical_wasted_frac": 0.042735042735042736
+        },
+        "xavier|2000-4000": {
+          "dispatches": 915,
+          "wasted": 256,
+          "useful": 659,
+          "wasted_frac": 0.2797814207650273,
+          "physical_wasted": 256,
+          "physical_wasted_frac": 0.2797814207650273
+        },
+        "orin|2000-4000": {
+          "dispatches": 935,
+          "wasted": 29,
+          "useful": 906,
+          "wasted_frac": 0.031016042780748664,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.031016042780748664
+        },
+        "thor|2000-4000": {
+          "dispatches": 449,
+          "wasted": 12,
+          "useful": 437,
+          "wasted_frac": 0.026726057906458798,
+          "physical_wasted": 12,
+          "physical_wasted_frac": 0.026726057906458798
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.3903232805380777,
+        "orin": 0.4111520937296594,
+        "thor": 0.19852462573226295
+      },
+      "1-250": {
+        "xavier": 0.4054982817869416,
+        "orin": 0.41580756013745707,
+        "thor": 0.17869415807560138
+      },
+      "250-500": {
+        "xavier": 0.3881118881118881,
+        "orin": 0.4020979020979021,
+        "thor": 0.2097902097902098
+      },
+      "500-1000": {
+        "xavier": 0.37823834196891193,
+        "orin": 0.41450777202072536,
+        "thor": 0.20725388601036268
+      },
+      "1000-2000": {
+        "xavier": 0.3778162911611785,
+        "orin": 0.4194107452339688,
+        "thor": 0.2027729636048527
+      },
+      "2000-4000": {
+        "xavier": 0.3979991300565463,
+        "orin": 0.40669856459330145,
+        "thor": 0.19530230535015225
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 479.9714293889999,
+        "rate": 0.5271147083110075,
+        "dispatch_rate": 0.6062860874249137
+      },
+      "250-500": {
+        "useful": 248,
+        "seconds": 466.7116421049998,
+        "rate": 0.5313773594364408,
+        "dispatch_rate": 0.612798083866218
+      },
+      "500-1000": {
+        "useful": 501,
+        "seconds": 923.7743843569992,
+        "rate": 0.5423402169229072,
+        "dispatch_rate": 0.6267764183600065
+      },
+      "1000-2000": {
+        "useful": 998,
+        "seconds": 1838.3480449589995,
+        "rate": 0.5428787017434766,
+        "dispatch_rate": 0.6277374968055832
+      },
+      "2000-4000": {
+        "useful": 2002,
+        "seconds": 3815.4706561810394,
+        "rate": 0.5247059092845524,
+        "dispatch_rate": 0.6025468958267662
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 563,
+        "killed_viable": 43,
+        "missed_waste": 44,
+        "passed_useful": 3959,
+        "waste_caught_frac": 0.9275123558484349,
+        "viable_killed_frac": 0.01074462768615692,
+        "waste_remaining_frac": 0.00954653937947494,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 589,
+        "killed_viable": 0,
+        "missed_waste": 18,
+        "passed_useful": 4002,
+        "waste_caught_frac": 0.9703459637561779,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.0039054024734215664,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.2335,
+      "max": 19,
+      "n": 4000,
+      "rebuilt_mean": 2.2335,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.8288,
+      "best": 0.8428,
+      "noise_sd": 0.04767874421305273,
+      "rounds_to_70": 210,
+      "tta_h_70": 0.11419018121916666,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.18873417969194456,
+      "rounds_to_78": 690,
+      "tta_h_78": 0.3680255405233331,
+      "rounds_to_80": 940,
+      "tta_h_80": 0.49129994237694397
+    },
+    "clock_at": {
+      "100": 226.35202432800003,
+      "250": 480.9213593889999,
+      "500": 947.6330014939997,
+      "1000": 1871.407385850999,
+      "2000": 3709.7554308099984,
+      "4000": 7525.226086991038
+    },
+    "plato_clock_final": 7735.030916213989,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4609,
+    "idle_events": 1,
+    "idle_seconds": 3.7,
+    "empty_rounds": 606
+  },
+  "gpu|coverage_gated": {
+    "arm": "gpu",
+    "policy": "coverage_gated",
+    "crossover_round": 1577,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7992.092490356027,
+      "predicted": 8031.282062008735,
+      "rel_error": 0.00490354330858877,
+      "packing": 1.0010369055060548
+    },
+    "redispatch_gap": {
+      "after_waste": 30.39912917271408,
+      "after_useful": 18.17185148018063,
+      "ratio": 1.6728691188054938,
+      "n_waste": 689
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4695,
+        "wasted": 693,
+        "useful": 4002,
+        "wasted_frac": 0.1476038338658147,
+        "physical_wasted": 693,
+        "physical_wasted_frac": 0.1476038338658147
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1939,
+          "wasted": 592,
+          "useful": 1347,
+          "wasted_frac": 0.30531201650335227,
+          "physical_wasted": 592,
+          "physical_wasted_frac": 0.30531201650335227
+        },
+        "orin": {
+          "dispatches": 1859,
+          "wasted": 80,
+          "useful": 1779,
+          "wasted_frac": 0.04303388918773534,
+          "physical_wasted": 80,
+          "physical_wasted_frac": 0.04303388918773534
+        },
+        "thor": {
+          "dispatches": 897,
+          "wasted": 21,
+          "useful": 876,
+          "wasted_frac": 0.023411371237458192,
+          "physical_wasted": 21,
+          "physical_wasted_frac": 0.023411371237458192
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 282,
+          "wasted": 29,
+          "useful": 253,
+          "wasted_frac": 0.10283687943262411,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.10283687943262411
+        },
+        "250-500": {
+          "dispatches": 292,
+          "wasted": 42,
+          "useful": 250,
+          "wasted_frac": 0.14383561643835616,
+          "physical_wasted": 42,
+          "physical_wasted_frac": 0.14383561643835616
+        },
+        "500-1000": {
+          "dispatches": 588,
+          "wasted": 88,
+          "useful": 500,
+          "wasted_frac": 0.14965986394557823,
+          "physical_wasted": 88,
+          "physical_wasted_frac": 0.14965986394557823
+        },
+        "1000-2000": {
+          "dispatches": 1179,
+          "wasted": 180,
+          "useful": 999,
+          "wasted_frac": 0.15267175572519084,
+          "physical_wasted": 180,
+          "physical_wasted_frac": 0.15267175572519084
+        },
+        "2000-4000": {
+          "dispatches": 2354,
+          "wasted": 354,
+          "useful": 2000,
+          "wasted_frac": 0.1503823279524214,
+          "physical_wasted": 354,
+          "physical_wasted_frac": 0.1503823279524214
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 87,
+          "wasted": 25,
+          "useful": 62,
+          "wasted_frac": 0.28735632183908044,
+          "physical_wasted": 25,
+          "physical_wasted_frac": 0.28735632183908044
+        },
+        "orin|1-250": {
+          "dispatches": 128,
+          "wasted": 3,
+          "useful": 125,
+          "wasted_frac": 0.0234375,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.0234375
+        },
+        "thor|1-250": {
+          "dispatches": 67,
+          "wasted": 1,
+          "useful": 66,
+          "wasted_frac": 0.014925373134328358,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.014925373134328358
+        },
+        "xavier|250-500": {
+          "dispatches": 97,
+          "wasted": 33,
+          "useful": 64,
+          "wasted_frac": 0.3402061855670103,
+          "physical_wasted": 33,
+          "physical_wasted_frac": 0.3402061855670103
+        },
+        "orin|250-500": {
+          "dispatches": 130,
+          "wasted": 6,
+          "useful": 124,
+          "wasted_frac": 0.046153846153846156,
+          "physical_wasted": 6,
+          "physical_wasted_frac": 0.046153846153846156
+        },
+        "thor|250-500": {
+          "dispatches": 65,
+          "wasted": 3,
+          "useful": 62,
+          "wasted_frac": 0.046153846153846156,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.046153846153846156
+        },
+        "xavier|500-1000": {
+          "dispatches": 226,
+          "wasted": 71,
+          "useful": 155,
+          "wasted_frac": 0.3141592920353982,
+          "physical_wasted": 71,
+          "physical_wasted_frac": 0.3141592920353982
+        },
+        "orin|500-1000": {
+          "dispatches": 258,
+          "wasted": 16,
+          "useful": 242,
+          "wasted_frac": 0.06201550387596899,
+          "physical_wasted": 16,
+          "physical_wasted_frac": 0.06201550387596899
+        },
+        "thor|500-1000": {
+          "dispatches": 104,
+          "wasted": 1,
+          "useful": 103,
+          "wasted_frac": 0.009615384615384616,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.009615384615384616
+        },
+        "xavier|1000-2000": {
+          "dispatches": 498,
+          "wasted": 153,
+          "useful": 345,
+          "wasted_frac": 0.3072289156626506,
+          "physical_wasted": 153,
+          "physical_wasted_frac": 0.3072289156626506
+        },
+        "orin|1000-2000": {
+          "dispatches": 470,
+          "wasted": 20,
+          "useful": 450,
+          "wasted_frac": 0.0425531914893617,
+          "physical_wasted": 20,
+          "physical_wasted_frac": 0.0425531914893617
+        },
+        "thor|1000-2000": {
+          "dispatches": 211,
+          "wasted": 7,
+          "useful": 204,
+          "wasted_frac": 0.03317535545023697,
+          "physical_wasted": 7,
+          "physical_wasted_frac": 0.03317535545023697
+        },
+        "xavier|2000-4000": {
+          "dispatches": 1031,
+          "wasted": 310,
+          "useful": 721,
+          "wasted_frac": 0.3006789524733269,
+          "physical_wasted": 310,
+          "physical_wasted_frac": 0.3006789524733269
+        },
+        "orin|2000-4000": {
+          "dispatches": 873,
+          "wasted": 35,
+          "useful": 838,
+          "wasted_frac": 0.04009163802978236,
+          "physical_wasted": 35,
+          "physical_wasted_frac": 0.04009163802978236
+        },
+        "thor|2000-4000": {
+          "dispatches": 450,
+          "wasted": 9,
+          "useful": 441,
+          "wasted_frac": 0.02,
+          "physical_wasted": 9,
+          "physical_wasted_frac": 0.02
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.4129925452609159,
+        "orin": 0.3959531416400426,
+        "thor": 0.19105431309904153
+      },
+      "1-250": {
+        "xavier": 0.30851063829787234,
+        "orin": 0.45390070921985815,
+        "thor": 0.2375886524822695
+      },
+      "250-500": {
+        "xavier": 0.3321917808219178,
+        "orin": 0.4452054794520548,
+        "thor": 0.2226027397260274
+      },
+      "500-1000": {
+        "xavier": 0.3843537414965986,
+        "orin": 0.4387755102040816,
+        "thor": 0.17687074829931973
+      },
+      "1000-2000": {
+        "xavier": 0.4223918575063613,
+        "orin": 0.3986429177268872,
+        "thor": 0.17896522476675147
+      },
+      "2000-4000": {
+        "xavier": 0.43797790994052677,
+        "orin": 0.37085811384876805,
+        "thor": 0.1911639762107052
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 378.4030500790001,
+        "rate": 0.6685992619435298,
+        "dispatch_rate": 0.7452371220082031
+      },
+      "250-500": {
+        "useful": 250,
+        "seconds": 427.7819883380001,
+        "rate": 0.5844098321467183,
+        "dispatch_rate": 0.6825906839473669
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 942.0224548819984,
+        "rate": 0.5307729103576752,
+        "dispatch_rate": 0.624188942580626
+      },
+      "1000-2000": {
+        "useful": 999,
+        "seconds": 2052.082421718005,
+        "rate": 0.4868225512909157,
+        "dispatch_rate": 0.5745383262982878
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 4190.301581216023,
+        "rate": 0.4772926151581675,
+        "dispatch_rate": 0.5617734080411632
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 659,
+        "killed_viable": 46,
+        "missed_waste": 34,
+        "passed_useful": 3956,
+        "waste_caught_frac": 0.950937950937951,
+        "viable_killed_frac": 0.011494252873563218,
+        "waste_remaining_frac": 0.00724174653887114,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 676,
+        "killed_viable": 0,
+        "missed_waste": 17,
+        "passed_useful": 4002,
+        "waste_caught_frac": 0.9754689754689755,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.00362087326943557,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.18575,
+      "max": 16,
+      "n": 4000,
+      "rebuilt_mean": 2.18575,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.82975,
+      "best": 0.8433,
+      "noise_sd": 0.053153377099692645,
+      "rounds_to_70": 200,
+      "tta_h_70": 0.09250427175861113,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.14821687869444444,
+      "rounds_to_78": 530,
+      "tta_h_78": 0.2417009746391668,
+      "rounds_to_80": 840,
+      "tta_h_80": 0.40596881239194443
+    },
+    "clock_at": {
+      "100": 158.64414213299997,
+      "250": 379.9040442020001,
+      "500": 807.6860325400002,
+      "1000": 1749.7084874219986,
+      "2000": 3801.790909140004,
+      "4000": 7992.092490356027
+    },
+    "plato_clock_final": 8205.342368125916,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4695,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 692
+  },
+  "cpu|coverage_gated": {
+    "arm": "cpu",
+    "policy": "coverage_gated",
+    "crossover_round": 325,
+    "conservation": {
+      "rounds": 3999,
+      "measured": 9758.533758136993,
+      "predicted": 9827.319371112279,
+      "rel_error": 0.007048765181339835,
+      "packing": 1.0011529392992449
+    },
+    "redispatch_gap": {
+      "after_waste": 25.031328320802004,
+      "after_useful": 18.943064961123653,
+      "ratio": 1.3213980088318935,
+      "n_waste": 798
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4805,
+        "wasted": 803,
+        "useful": 4002,
+        "wasted_frac": 0.16711758584807493,
+        "physical_wasted": 803,
+        "physical_wasted_frac": 0.16711758584807493
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 2486,
+          "wasted": 729,
+          "useful": 1757,
+          "wasted_frac": 0.2932421560740145,
+          "physical_wasted": 729,
+          "physical_wasted_frac": 0.2932421560740145
+        },
+        "orin": {
+          "dispatches": 1582,
+          "wasted": 57,
+          "useful": 1525,
+          "wasted_frac": 0.03603034134007586,
+          "physical_wasted": 57,
+          "physical_wasted_frac": 0.03603034134007586
+        },
+        "thor": {
+          "dispatches": 737,
+          "wasted": 17,
+          "useful": 720,
+          "wasted_frac": 0.023066485753052916,
+          "physical_wasted": 17,
+          "physical_wasted_frac": 0.023066485753052916
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 290,
+          "wasted": 37,
+          "useful": 253,
+          "wasted_frac": 0.12758620689655173,
+          "physical_wasted": 37,
+          "physical_wasted_frac": 0.12758620689655173
+        },
+        "250-500": {
+          "dispatches": 301,
+          "wasted": 52,
+          "useful": 249,
+          "wasted_frac": 0.17275747508305647,
+          "physical_wasted": 52,
+          "physical_wasted_frac": 0.17275747508305647
+        },
+        "500-1000": {
+          "dispatches": 593,
+          "wasted": 93,
+          "useful": 500,
+          "wasted_frac": 0.15682967959527824,
+          "physical_wasted": 93,
+          "physical_wasted_frac": 0.15682967959527824
+        },
+        "1000-2000": {
+          "dispatches": 1203,
+          "wasted": 203,
+          "useful": 1000,
+          "wasted_frac": 0.16874480465502908,
+          "physical_wasted": 203,
+          "physical_wasted_frac": 0.16874480465502908
+        },
+        "2000-4000": {
+          "dispatches": 2418,
+          "wasted": 418,
+          "useful": 2000,
+          "wasted_frac": 0.1728701406120761,
+          "physical_wasted": 418,
+          "physical_wasted_frac": 0.1728701406120761
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 120,
+          "wasted": 33,
+          "useful": 87,
+          "wasted_frac": 0.275,
+          "physical_wasted": 33,
+          "physical_wasted_frac": 0.275
+        },
+        "orin|1-250": {
+          "dispatches": 109,
+          "wasted": 3,
+          "useful": 106,
+          "wasted_frac": 0.027522935779816515,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.027522935779816515
+        },
+        "thor|1-250": {
+          "dispatches": 61,
+          "wasted": 1,
+          "useful": 60,
+          "wasted_frac": 0.01639344262295082,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.01639344262295082
+        },
+        "xavier|250-500": {
+          "dispatches": 138,
+          "wasted": 46,
+          "useful": 92,
+          "wasted_frac": 0.3333333333333333,
+          "physical_wasted": 46,
+          "physical_wasted_frac": 0.3333333333333333
+        },
+        "orin|250-500": {
+          "dispatches": 115,
+          "wasted": 6,
+          "useful": 109,
+          "wasted_frac": 0.05217391304347826,
+          "physical_wasted": 6,
+          "physical_wasted_frac": 0.05217391304347826
+        },
+        "thor|250-500": {
+          "dispatches": 48,
+          "wasted": 0,
+          "useful": 48,
+          "wasted_frac": 0.0,
+          "physical_wasted": 0,
+          "physical_wasted_frac": 0.0
+        },
+        "xavier|500-1000": {
+          "dispatches": 283,
+          "wasted": 81,
+          "useful": 202,
+          "wasted_frac": 0.2862190812720848,
+          "physical_wasted": 81,
+          "physical_wasted_frac": 0.2862190812720848
+        },
+        "orin|500-1000": {
+          "dispatches": 218,
+          "wasted": 9,
+          "useful": 209,
+          "wasted_frac": 0.04128440366972477,
+          "physical_wasted": 9,
+          "physical_wasted_frac": 0.04128440366972477
+        },
+        "thor|500-1000": {
+          "dispatches": 92,
+          "wasted": 3,
+          "useful": 89,
+          "wasted_frac": 0.03260869565217391,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.03260869565217391
+        },
+        "xavier|1000-2000": {
+          "dispatches": 622,
+          "wasted": 185,
+          "useful": 437,
+          "wasted_frac": 0.297427652733119,
+          "physical_wasted": 185,
+          "physical_wasted_frac": 0.297427652733119
+        },
+        "orin|1000-2000": {
+          "dispatches": 393,
+          "wasted": 14,
+          "useful": 379,
+          "wasted_frac": 0.035623409669211195,
+          "physical_wasted": 14,
+          "physical_wasted_frac": 0.035623409669211195
+        },
+        "thor|1000-2000": {
+          "dispatches": 188,
+          "wasted": 4,
+          "useful": 184,
+          "wasted_frac": 0.02127659574468085,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.02127659574468085
+        },
+        "xavier|2000-4000": {
+          "dispatches": 1323,
+          "wasted": 384,
+          "useful": 939,
+          "wasted_frac": 0.29024943310657597,
+          "physical_wasted": 384,
+          "physical_wasted_frac": 0.29024943310657597
+        },
+        "orin|2000-4000": {
+          "dispatches": 747,
+          "wasted": 25,
+          "useful": 722,
+          "wasted_frac": 0.03346720214190094,
+          "physical_wasted": 25,
+          "physical_wasted_frac": 0.03346720214190094
+        },
+        "thor|2000-4000": {
+          "dispatches": 348,
+          "wasted": 9,
+          "useful": 339,
+          "wasted_frac": 0.02586206896551724,
+          "physical_wasted": 9,
+          "physical_wasted_frac": 0.02586206896551724
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.5173777315296566,
+        "orin": 0.3292403746097815,
+        "thor": 0.15338189386056192
+      },
+      "1-250": {
+        "xavier": 0.41379310344827586,
+        "orin": 0.3758620689655172,
+        "thor": 0.2103448275862069
+      },
+      "250-500": {
+        "xavier": 0.4584717607973422,
+        "orin": 0.38205980066445183,
+        "thor": 0.15946843853820597
+      },
+      "500-1000": {
+        "xavier": 0.4772344013490725,
+        "orin": 0.3676222596964587,
+        "thor": 0.1551433389544688
+      },
+      "1000-2000": {
+        "xavier": 0.5170407315045719,
+        "orin": 0.3266832917705736,
+        "thor": 0.15627597672485452
+      },
+      "2000-4000": {
+        "xavier": 0.5471464019851117,
+        "orin": 0.30893300248138955,
+        "thor": 0.14392059553349876
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 489.9092310970001,
+        "rate": 0.5164221940327289,
+        "dispatch_rate": 0.591946388416962
+      },
+      "250-500": {
+        "useful": 249,
+        "seconds": 558.7925054910006,
+        "rate": 0.44560368572088904,
+        "dispatch_rate": 0.5386614835421188
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 1135.918098086,
+        "rate": 0.4401725800852106,
+        "dispatch_rate": 0.5220446799810597
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 2439.7208351200084,
+        "rate": 0.4098829610359132,
+        "dispatch_rate": 0.4930892021262036
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 5132.309974119984,
+        "rate": 0.38968807614604994,
+        "dispatch_rate": 0.4711328840605744
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 757,
+        "killed_viable": 71,
+        "missed_waste": 46,
+        "passed_useful": 3931,
+        "waste_caught_frac": 0.9427148194271482,
+        "viable_killed_frac": 0.01774112943528236,
+        "waste_remaining_frac": 0.009573361082206036,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 786,
+        "killed_viable": 0,
+        "missed_waste": 17,
+        "passed_useful": 4002,
+        "waste_caught_frac": 0.9788293897882939,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.003537981269510926,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.218804701175294,
+      "max": 15,
+      "n": 3999,
+      "rebuilt_mean": 2.218804701175294,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 399,
+      "plateau": 0.8268,
+      "best": 0.8463,
+      "noise_sd": 0.04785958404984958,
+      "rounds_to_70": 170,
+      "tta_h_70": 0.09901098931611113,
+      "rounds_to_75": 390,
+      "tta_h_75": 0.2257047844572224,
+      "rounds_to_78": 640,
+      "tta_h_78": 0.38397041515611124,
+      "rounds_to_80": 990,
+      "tta_h_80": 0.6028112476455555
+    },
+    "clock_at": {
+      "100": 210.76597498500007,
+      "250": 491.7923453200001,
+      "500": 1050.5848508110007,
+      "1000": 2186.502948897001,
+      "2000": 4626.223784017009,
+      "4000": 9758.533758136993
+    },
+    "plato_clock_final": 9972.39096045494,
+    "rounds_done": 3999,
+    "dispatch_cycles": 4805,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 803
+  },
+  "observed|coverage_gated": {
+    "arm": "observed",
+    "policy": "coverage_gated",
+    "crossover_round": 1322,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 8169.361005834034,
+      "predicted": 8244.299634957697,
+      "rel_error": 0.009173132276826418,
+      "packing": 1.0006692150386354
+    },
+    "redispatch_gap": {
+      "after_waste": 28.475232198142415,
+      "after_useful": 18.588309081786253,
+      "ratio": 1.5318893220924468,
+      "n_waste": 646
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4652,
+        "wasted": 649,
+        "useful": 4003,
+        "wasted_frac": 0.13950988822012036,
+        "physical_wasted": 649,
+        "physical_wasted_frac": 0.13950988822012036
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 2010,
+          "wasted": 572,
+          "useful": 1438,
+          "wasted_frac": 0.2845771144278607,
+          "physical_wasted": 572,
+          "physical_wasted_frac": 0.2845771144278607
+        },
+        "orin": {
+          "dispatches": 1806,
+          "wasted": 61,
+          "useful": 1745,
+          "wasted_frac": 0.033776301218161685,
+          "physical_wasted": 61,
+          "physical_wasted_frac": 0.033776301218161685
+        },
+        "thor": {
+          "dispatches": 836,
+          "wasted": 16,
+          "useful": 820,
+          "wasted_frac": 0.019138755980861243,
+          "physical_wasted": 16,
+          "physical_wasted_frac": 0.019138755980861243
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 281,
+          "wasted": 29,
+          "useful": 252,
+          "wasted_frac": 0.10320284697508897,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.10320284697508897
+        },
+        "250-500": {
+          "dispatches": 283,
+          "wasted": 32,
+          "useful": 251,
+          "wasted_frac": 0.11307420494699646,
+          "physical_wasted": 32,
+          "physical_wasted_frac": 0.11307420494699646
+        },
+        "500-1000": {
+          "dispatches": 580,
+          "wasted": 80,
+          "useful": 500,
+          "wasted_frac": 0.13793103448275862,
+          "physical_wasted": 80,
+          "physical_wasted_frac": 0.13793103448275862
+        },
+        "1000-2000": {
+          "dispatches": 1154,
+          "wasted": 154,
+          "useful": 1000,
+          "wasted_frac": 0.13344887348353554,
+          "physical_wasted": 154,
+          "physical_wasted_frac": 0.13344887348353554
+        },
+        "2000-4000": {
+          "dispatches": 2354,
+          "wasted": 354,
+          "useful": 2000,
+          "wasted_frac": 0.1503823279524214,
+          "physical_wasted": 354,
+          "physical_wasted_frac": 0.1503823279524214
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 93,
+          "wasted": 22,
+          "useful": 71,
+          "wasted_frac": 0.23655913978494625,
+          "physical_wasted": 22,
+          "physical_wasted_frac": 0.23655913978494625
+        },
+        "orin|1-250": {
+          "dispatches": 127,
+          "wasted": 6,
+          "useful": 121,
+          "wasted_frac": 0.047244094488188976,
+          "physical_wasted": 6,
+          "physical_wasted_frac": 0.047244094488188976
+        },
+        "thor|1-250": {
+          "dispatches": 61,
+          "wasted": 1,
+          "useful": 60,
+          "wasted_frac": 0.01639344262295082,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.01639344262295082
+        },
+        "xavier|250-500": {
+          "dispatches": 104,
+          "wasted": 29,
+          "useful": 75,
+          "wasted_frac": 0.27884615384615385,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.27884615384615385
+        },
+        "orin|250-500": {
+          "dispatches": 125,
+          "wasted": 2,
+          "useful": 123,
+          "wasted_frac": 0.016,
+          "physical_wasted": 2,
+          "physical_wasted_frac": 0.016
+        },
+        "thor|250-500": {
+          "dispatches": 54,
+          "wasted": 1,
+          "useful": 53,
+          "wasted_frac": 0.018518518518518517,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.018518518518518517
+        },
+        "xavier|500-1000": {
+          "dispatches": 231,
+          "wasted": 66,
+          "useful": 165,
+          "wasted_frac": 0.2857142857142857,
+          "physical_wasted": 66,
+          "physical_wasted_frac": 0.2857142857142857
+        },
+        "orin|500-1000": {
+          "dispatches": 245,
+          "wasted": 10,
+          "useful": 235,
+          "wasted_frac": 0.04081632653061224,
+          "physical_wasted": 10,
+          "physical_wasted_frac": 0.04081632653061224
+        },
+        "thor|500-1000": {
+          "dispatches": 104,
+          "wasted": 4,
+          "useful": 100,
+          "wasted_frac": 0.038461538461538464,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.038461538461538464
+        },
+        "xavier|1000-2000": {
+          "dispatches": 501,
+          "wasted": 135,
+          "useful": 366,
+          "wasted_frac": 0.2694610778443114,
+          "physical_wasted": 135,
+          "physical_wasted_frac": 0.2694610778443114
+        },
+        "orin|1000-2000": {
+          "dispatches": 452,
+          "wasted": 17,
+          "useful": 435,
+          "wasted_frac": 0.03761061946902655,
+          "physical_wasted": 17,
+          "physical_wasted_frac": 0.03761061946902655
+        },
+        "thor|1000-2000": {
+          "dispatches": 201,
+          "wasted": 2,
+          "useful": 199,
+          "wasted_frac": 0.009950248756218905,
+          "physical_wasted": 2,
+          "physical_wasted_frac": 0.009950248756218905
+        },
+        "xavier|2000-4000": {
+          "dispatches": 1081,
+          "wasted": 320,
+          "useful": 761,
+          "wasted_frac": 0.2960222016651249,
+          "physical_wasted": 320,
+          "physical_wasted_frac": 0.2960222016651249
+        },
+        "orin|2000-4000": {
+          "dispatches": 857,
+          "wasted": 26,
+          "useful": 831,
+          "wasted_frac": 0.030338389731621937,
+          "physical_wasted": 26,
+          "physical_wasted_frac": 0.030338389731621937
+        },
+        "thor|2000-4000": {
+          "dispatches": 416,
+          "wasted": 8,
+          "useful": 408,
+          "wasted_frac": 0.019230769230769232,
+          "physical_wasted": 8,
+          "physical_wasted_frac": 0.019230769230769232
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.43207222699914016,
+        "orin": 0.3882201203783319,
+        "thor": 0.17970765262252794
+      },
+      "1-250": {
+        "xavier": 0.3309608540925267,
+        "orin": 0.45195729537366547,
+        "thor": 0.21708185053380782
+      },
+      "250-500": {
+        "xavier": 0.3674911660777385,
+        "orin": 0.4416961130742049,
+        "thor": 0.19081272084805653
+      },
+      "500-1000": {
+        "xavier": 0.39827586206896554,
+        "orin": 0.4224137931034483,
+        "thor": 0.1793103448275862
+      },
+      "1000-2000": {
+        "xavier": 0.4341421143847487,
+        "orin": 0.39168110918544197,
+        "thor": 0.17417677642980936
+      },
+      "2000-4000": {
+        "xavier": 0.4592183517417162,
+        "orin": 0.36406117247238745,
+        "thor": 0.17672047578589634
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 252,
+        "seconds": 392.5252471950002,
+        "rate": 0.6419969207096899,
+        "dispatch_rate": 0.7158775187278686
+      },
+      "250-500": {
+        "useful": 251,
+        "seconds": 438.99540577100055,
+        "rate": 0.5717599699230855,
+        "dispatch_rate": 0.6446536712678613
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 966.624147380998,
+        "rate": 0.5172641314152101,
+        "dispatch_rate": 0.6000263924416438
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 2042.5907267310072,
+        "rate": 0.48957433660751754,
+        "dispatch_rate": 0.5649687844450753
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 4326.742364533027,
+        "rate": 0.46224152757379494,
+        "dispatch_rate": 0.5440582779543567
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 623,
+        "killed_viable": 62,
+        "missed_waste": 26,
+        "passed_useful": 3941,
+        "waste_caught_frac": 0.9599383667180277,
+        "viable_killed_frac": 0.015488383712215838,
+        "waste_remaining_frac": 0.005588993981083405,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 638,
+        "killed_viable": 0,
+        "missed_waste": 11,
+        "passed_useful": 4003,
+        "waste_caught_frac": 0.9830508474576272,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.0023645743766122097,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.24725,
+      "max": 16,
+      "n": 4000,
+      "rebuilt_mean": 2.24725,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.8351,
+      "best": 0.8425,
+      "noise_sd": 0.0470417523511832,
+      "rounds_to_70": 180,
+      "tta_h_70": 0.08097835745055555,
+      "rounds_to_75": 360,
+      "tta_h_75": 0.15964545206833342,
+      "rounds_to_78": 540,
+      "tta_h_78": 0.2534080977377779,
+      "rounds_to_80": 850,
+      "tta_h_80": 0.4178045149588888
+    },
+    "clock_at": {
+      "100": 150.212411882,
+      "250": 394.4083614180002,
+      "500": 833.4037671890007,
+      "1000": 1800.0279145699988,
+      "2000": 3842.618641301006,
+      "4000": 8169.361005834034
+    },
+    "plato_clock_final": 8382.493812322617,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4652,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 649
+  },
+  "baseline|always_accept": {
+    "arm": "baseline",
+    "policy": "always_accept",
+    "crossover_round": null,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6440.6196795340165,
+      "predicted": 6488.934125194687,
+      "rel_error": 0.0075015212921509065,
+      "packing": 1.000470322720316
+    },
+    "redispatch_gap": {
+      "after_waste": 29.33213644524237,
+      "after_useful": 18.446293053123174,
+      "ratio": 1.5901371815339393,
+      "n_waste": 557
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4003,
+        "wasted": 0,
+        "useful": 4003,
+        "wasted_frac": 0.0,
+        "physical_wasted": 559,
+        "physical_wasted_frac": 0.13964526605046215
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1540,
+          "wasted": 0,
+          "useful": 1540,
+          "wasted_frac": 0.0,
+          "physical_wasted": 458,
+          "physical_wasted_frac": 0.2974025974025974
+        },
+        "orin": {
+          "dispatches": 1694,
+          "wasted": 0,
+          "useful": 1694,
+          "wasted_frac": 0.0,
+          "physical_wasted": 77,
+          "physical_wasted_frac": 0.045454545454545456
+        },
+        "thor": {
+          "dispatches": 769,
+          "wasted": 0,
+          "useful": 769,
+          "wasted_frac": 0.0,
+          "physical_wasted": 24,
+          "physical_wasted_frac": 0.031209362808842653
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 253,
+          "wasted": 0,
+          "useful": 253,
+          "wasted_frac": 0.0,
+          "physical_wasted": 44,
+          "physical_wasted_frac": 0.17391304347826086
+        },
+        "250-500": {
+          "dispatches": 250,
+          "wasted": 0,
+          "useful": 250,
+          "wasted_frac": 0.0,
+          "physical_wasted": 34,
+          "physical_wasted_frac": 0.136
+        },
+        "500-1000": {
+          "dispatches": 500,
+          "wasted": 0,
+          "useful": 500,
+          "wasted_frac": 0.0,
+          "physical_wasted": 79,
+          "physical_wasted_frac": 0.158
+        },
+        "1000-2000": {
+          "dispatches": 1000,
+          "wasted": 0,
+          "useful": 1000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 134,
+          "physical_wasted_frac": 0.134
+        },
+        "2000-4000": {
+          "dispatches": 2000,
+          "wasted": 0,
+          "useful": 2000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 268,
+          "physical_wasted_frac": 0.134
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 113,
+          "wasted": 0,
+          "useful": 113,
+          "wasted_frac": 0.0,
+          "physical_wasted": 38,
+          "physical_wasted_frac": 0.336283185840708
+        },
+        "orin|1-250": {
+          "dispatches": 97,
+          "wasted": 0,
+          "useful": 97,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.041237113402061855
+        },
+        "thor|1-250": {
+          "dispatches": 43,
+          "wasted": 0,
+          "useful": 43,
+          "wasted_frac": 0.0,
+          "physical_wasted": 2,
+          "physical_wasted_frac": 0.046511627906976744
+        },
+        "xavier|250-500": {
+          "dispatches": 91,
+          "wasted": 0,
+          "useful": 91,
+          "wasted_frac": 0.0,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.31868131868131866
+        },
+        "orin|250-500": {
+          "dispatches": 114,
+          "wasted": 0,
+          "useful": 114,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.03508771929824561
+        },
+        "thor|250-500": {
+          "dispatches": 45,
+          "wasted": 0,
+          "useful": 45,
+          "wasted_frac": 0.0,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.022222222222222223
+        },
+        "xavier|500-1000": {
+          "dispatches": 202,
+          "wasted": 0,
+          "useful": 202,
+          "wasted_frac": 0.0,
+          "physical_wasted": 69,
+          "physical_wasted_frac": 0.3415841584158416
+        },
+        "orin|500-1000": {
+          "dispatches": 218,
+          "wasted": 0,
+          "useful": 218,
+          "wasted_frac": 0.0,
+          "physical_wasted": 9,
+          "physical_wasted_frac": 0.04128440366972477
+        },
+        "thor|500-1000": {
+          "dispatches": 80,
+          "wasted": 0,
+          "useful": 80,
+          "wasted_frac": 0.0,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.0125
+        },
+        "xavier|1000-2000": {
+          "dispatches": 383,
+          "wasted": 0,
+          "useful": 383,
+          "wasted_frac": 0.0,
+          "physical_wasted": 110,
+          "physical_wasted_frac": 0.28720626631853785
+        },
+        "orin|1000-2000": {
+          "dispatches": 412,
+          "wasted": 0,
+          "useful": 412,
+          "wasted_frac": 0.0,
+          "physical_wasted": 16,
+          "physical_wasted_frac": 0.038834951456310676
+        },
+        "thor|1000-2000": {
+          "dispatches": 205,
+          "wasted": 0,
+          "useful": 205,
+          "wasted_frac": 0.0,
+          "physical_wasted": 8,
+          "physical_wasted_frac": 0.03902439024390244
+        },
+        "xavier|2000-4000": {
+          "dispatches": 751,
+          "wasted": 0,
+          "useful": 751,
+          "wasted_frac": 0.0,
+          "physical_wasted": 212,
+          "physical_wasted_frac": 0.2822902796271638
+        },
+        "orin|2000-4000": {
+          "dispatches": 853,
+          "wasted": 0,
+          "useful": 853,
+          "wasted_frac": 0.0,
+          "physical_wasted": 44,
+          "physical_wasted_frac": 0.05158264947245018
+        },
+        "thor|2000-4000": {
+          "dispatches": 396,
+          "wasted": 0,
+          "useful": 396,
+          "wasted_frac": 0.0,
+          "physical_wasted": 12,
+          "physical_wasted_frac": 0.030303030303030304
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.3847114664001999,
+        "orin": 0.4231826130402198,
+        "thor": 0.1921059205595803
+      },
+      "1-250": {
+        "xavier": 0.44664031620553357,
+        "orin": 0.383399209486166,
+        "thor": 0.16996047430830039
+      },
+      "250-500": {
+        "xavier": 0.364,
+        "orin": 0.456,
+        "thor": 0.18
+      },
+      "500-1000": {
+        "xavier": 0.404,
+        "orin": 0.436,
+        "thor": 0.16
+      },
+      "1000-2000": {
+        "xavier": 0.383,
+        "orin": 0.412,
+        "thor": 0.205
+      },
+      "2000-4000": {
+        "xavier": 0.3755,
+        "orin": 0.4265,
+        "thor": 0.198
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 455.233712438,
+        "rate": 0.5557584886344661,
+        "dispatch_rate": 0.5557584886344661
+      },
+      "250-500": {
+        "useful": 250,
+        "seconds": 385.7150466930006,
+        "rate": 0.6481468694141473,
+        "dispatch_rate": 0.6481468694141473
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 835.1820171289983,
+        "rate": 0.5986718939648485,
+        "dispatch_rate": 0.5986718939648485
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 1604.728535990005,
+        "rate": 0.6231583582970749,
+        "dispatch_rate": 0.6231583582970749
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 3158.2593731610127,
+        "rate": 0.6332602119370128,
+        "dispatch_rate": 0.6332602119370128
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 531,
+        "killed_viable": 51,
+        "missed_waste": 28,
+        "passed_useful": 3393,
+        "waste_caught_frac": 0.9499105545617174,
+        "viable_killed_frac": 0.014808362369337979,
+        "waste_remaining_frac": 0.0069947539345490885,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 545,
+        "killed_viable": 0,
+        "missed_waste": 14,
+        "passed_useful": 3444,
+        "waste_caught_frac": 0.9749552772808586,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.0034973769672745443,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.99775,
+      "max": 19,
+      "n": 4000,
+      "rebuilt_mean": 2.99775,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.83115,
+      "best": 0.8399,
+      "noise_sd": 0.04760698812969928,
+      "rounds_to_70": 200,
+      "tta_h_70": 0.10203446644083336,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.16600413132083333,
+      "rounds_to_78": 610,
+      "tta_h_78": 0.2829682896383335,
+      "rounds_to_80": 870,
+      "tta_h_80": 0.4009882070236112
+    },
+    "clock_at": {
+      "100": 198.21152259499996,
+      "250": 456.734706561,
+      "500": 842.4497532540006,
+      "1000": 1677.6317703829989,
+      "2000": 3282.360306373004,
+      "4000": 6440.6196795340165
+    },
+    "plato_clock_final": 6628.374900817871,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4003,
+    "idle_events": 1,
+    "idle_seconds": 3.2,
+    "empty_rounds": 0
+  },
+  "gpu|always_accept": {
+    "arm": "gpu",
+    "policy": "always_accept",
+    "crossover_round": 2477,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6687.577776422017,
+      "predicted": 6727.357865981663,
+      "rel_error": 0.005948355426967268,
+      "packing": 1.00105661145921
+    },
+    "redispatch_gap": {
+      "after_waste": 30.27169811320755,
+      "after_useful": 18.342890240370693,
+      "ratio": 1.650323243312161,
+      "n_waste": 530
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4003,
+        "wasted": 0,
+        "useful": 4003,
+        "wasted_frac": 0.0,
+        "physical_wasted": 533,
+        "physical_wasted_frac": 0.13315013739695228
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1615,
+          "wasted": 0,
+          "useful": 1615,
+          "wasted_frac": 0.0,
+          "physical_wasted": 457,
+          "physical_wasted_frac": 0.28297213622291023
+        },
+        "orin": {
+          "dispatches": 1633,
+          "wasted": 0,
+          "useful": 1633,
+          "wasted_frac": 0.0,
+          "physical_wasted": 57,
+          "physical_wasted_frac": 0.03490508266993264
+        },
+        "thor": {
+          "dispatches": 755,
+          "wasted": 0,
+          "useful": 755,
+          "wasted_frac": 0.0,
+          "physical_wasted": 19,
+          "physical_wasted_frac": 0.025165562913907286
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 253,
+          "wasted": 0,
+          "useful": 253,
+          "wasted_frac": 0.0,
+          "physical_wasted": 31,
+          "physical_wasted_frac": 0.1225296442687747
+        },
+        "250-500": {
+          "dispatches": 250,
+          "wasted": 0,
+          "useful": 250,
+          "wasted_frac": 0.0,
+          "physical_wasted": 32,
+          "physical_wasted_frac": 0.128
+        },
+        "500-1000": {
+          "dispatches": 500,
+          "wasted": 0,
+          "useful": 500,
+          "wasted_frac": 0.0,
+          "physical_wasted": 64,
+          "physical_wasted_frac": 0.128
+        },
+        "1000-2000": {
+          "dispatches": 1000,
+          "wasted": 0,
+          "useful": 1000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 127,
+          "physical_wasted_frac": 0.127
+        },
+        "2000-4000": {
+          "dispatches": 2000,
+          "wasted": 0,
+          "useful": 2000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 279,
+          "physical_wasted_frac": 0.1395
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 84,
+          "wasted": 0,
+          "useful": 84,
+          "wasted_frac": 0.0,
+          "physical_wasted": 25,
+          "physical_wasted_frac": 0.2976190476190476
+        },
+        "orin|1-250": {
+          "dispatches": 104,
+          "wasted": 0,
+          "useful": 104,
+          "wasted_frac": 0.0,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.028846153846153848
+        },
+        "thor|1-250": {
+          "dispatches": 65,
+          "wasted": 0,
+          "useful": 65,
+          "wasted_frac": 0.0,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.046153846153846156
+        },
+        "xavier|250-500": {
+          "dispatches": 80,
+          "wasted": 0,
+          "useful": 80,
+          "wasted_frac": 0.0,
+          "physical_wasted": 28,
+          "physical_wasted_frac": 0.35
+        },
+        "orin|250-500": {
+          "dispatches": 118,
+          "wasted": 0,
+          "useful": 118,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.03389830508474576
+        },
+        "thor|250-500": {
+          "dispatches": 52,
+          "wasted": 0,
+          "useful": 52,
+          "wasted_frac": 0.0,
+          "physical_wasted": 0,
+          "physical_wasted_frac": 0.0
+        },
+        "xavier|500-1000": {
+          "dispatches": 195,
+          "wasted": 0,
+          "useful": 195,
+          "wasted_frac": 0.0,
+          "physical_wasted": 55,
+          "physical_wasted_frac": 0.28205128205128205
+        },
+        "orin|500-1000": {
+          "dispatches": 214,
+          "wasted": 0,
+          "useful": 214,
+          "wasted_frac": 0.0,
+          "physical_wasted": 8,
+          "physical_wasted_frac": 0.037383177570093455
+        },
+        "thor|500-1000": {
+          "dispatches": 91,
+          "wasted": 0,
+          "useful": 91,
+          "wasted_frac": 0.0,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.01098901098901099
+        },
+        "xavier|1000-2000": {
+          "dispatches": 399,
+          "wasted": 0,
+          "useful": 399,
+          "wasted_frac": 0.0,
+          "physical_wasted": 111,
+          "physical_wasted_frac": 0.2781954887218045
+        },
+        "orin|1000-2000": {
+          "dispatches": 406,
+          "wasted": 0,
+          "useful": 406,
+          "wasted_frac": 0.0,
+          "physical_wasted": 11,
+          "physical_wasted_frac": 0.027093596059113302
+        },
+        "thor|1000-2000": {
+          "dispatches": 195,
+          "wasted": 0,
+          "useful": 195,
+          "wasted_frac": 0.0,
+          "physical_wasted": 5,
+          "physical_wasted_frac": 0.02564102564102564
+        },
+        "xavier|2000-4000": {
+          "dispatches": 857,
+          "wasted": 0,
+          "useful": 857,
+          "wasted_frac": 0.0,
+          "physical_wasted": 238,
+          "physical_wasted_frac": 0.2777129521586931
+        },
+        "orin|2000-4000": {
+          "dispatches": 791,
+          "wasted": 0,
+          "useful": 791,
+          "wasted_frac": 0.0,
+          "physical_wasted": 31,
+          "physical_wasted_frac": 0.039190897597977246
+        },
+        "thor|2000-4000": {
+          "dispatches": 352,
+          "wasted": 0,
+          "useful": 352,
+          "wasted_frac": 0.0,
+          "physical_wasted": 10,
+          "physical_wasted_frac": 0.028409090909090908
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.40344741443917065,
+        "orin": 0.40794404196852363,
+        "thor": 0.18860854359230578
+      },
+      "1-250": {
+        "xavier": 0.33201581027667987,
+        "orin": 0.41106719367588934,
+        "thor": 0.25691699604743085
+      },
+      "250-500": {
+        "xavier": 0.32,
+        "orin": 0.472,
+        "thor": 0.208
+      },
+      "500-1000": {
+        "xavier": 0.39,
+        "orin": 0.428,
+        "thor": 0.182
+      },
+      "1000-2000": {
+        "xavier": 0.399,
+        "orin": 0.406,
+        "thor": 0.195
+      },
+      "2000-4000": {
+        "xavier": 0.4285,
+        "orin": 0.3955,
+        "thor": 0.176
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 356.51203778300015,
+        "rate": 0.7096534567901315,
+        "dispatch_rate": 0.7096534567901315
+      },
+      "250-500": {
+        "useful": 250,
+        "seconds": 354.2893120080003,
+        "rate": 0.7056379956343551,
+        "dispatch_rate": 0.7056379956343551
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 818.2867860959991,
+        "rate": 0.6110327192077393,
+        "dispatch_rate": 0.6110327192077393
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 1664.9039377149998,
+        "rate": 0.6006352542912786,
+        "dispatch_rate": 0.6006352542912786
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 3492.053711481018,
+        "rate": 0.5727288768281225,
+        "dispatch_rate": 0.5727288768281225
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 498,
+        "killed_viable": 43,
+        "missed_waste": 35,
+        "passed_useful": 3427,
+        "waste_caught_frac": 0.9343339587242027,
+        "viable_killed_frac": 0.01239193083573487,
+        "waste_remaining_frac": 0.00874344241818636,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 509,
+        "killed_viable": 0,
+        "missed_waste": 24,
+        "passed_useful": 3470,
+        "waste_caught_frac": 0.9549718574108818,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.005995503372470647,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.9975,
+      "max": 19,
+      "n": 4000,
+      "rebuilt_mean": 2.9975,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.8279000000000001,
+      "best": 0.8426,
+      "noise_sd": 0.055166065790223824,
+      "rounds_to_70": 240,
+      "tta_h_70": 0.09606219856749999,
+      "rounds_to_75": 370,
+      "tta_h_75": 0.14220966808472224,
+      "rounds_to_78": 520,
+      "tta_h_78": 0.20593031842388895,
+      "rounds_to_80": 1010,
+      "tta_h_80": 0.4304549595977777
+    },
+    "clock_at": {
+      "100": 143.48798884800001,
+      "250": 358.04402912200015,
+      "500": 712.3333411300005,
+      "1000": 1530.6201272259996,
+      "2000": 3195.5240649409993,
+      "4000": 6687.577776422017
+    },
+    "plato_clock_final": 6872.623555898666,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4003,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 0
+  },
+  "cpu|always_accept": {
+    "arm": "cpu",
+    "policy": "always_accept",
+    "crossover_round": 412,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7948.254664133022,
+      "predicted": 7997.665386846052,
+      "rel_error": 0.006216550022736273,
+      "packing": 1.00110263376848
+    },
+    "redispatch_gap": {
+      "after_waste": 26.008995502248876,
+      "after_useful": 18.700241254523522,
+      "ratio": 1.3908374308249842,
+      "n_waste": 667
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4003,
+        "wasted": 0,
+        "useful": 4003,
+        "wasted_frac": 0.0,
+        "physical_wasted": 671,
+        "physical_wasted_frac": 0.1676242817886585
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 2013,
+          "wasted": 0,
+          "useful": 2013,
+          "wasted_frac": 0.0,
+          "physical_wasted": 595,
+          "physical_wasted_frac": 0.295578738201689
+        },
+        "orin": {
+          "dispatches": 1338,
+          "wasted": 0,
+          "useful": 1338,
+          "wasted_frac": 0.0,
+          "physical_wasted": 55,
+          "physical_wasted_frac": 0.04110612855007474
+        },
+        "thor": {
+          "dispatches": 652,
+          "wasted": 0,
+          "useful": 652,
+          "wasted_frac": 0.0,
+          "physical_wasted": 21,
+          "physical_wasted_frac": 0.032208588957055216
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 253,
+          "wasted": 0,
+          "useful": 253,
+          "wasted_frac": 0.0,
+          "physical_wasted": 41,
+          "physical_wasted_frac": 0.16205533596837945
+        },
+        "250-500": {
+          "dispatches": 250,
+          "wasted": 0,
+          "useful": 250,
+          "wasted_frac": 0.0,
+          "physical_wasted": 34,
+          "physical_wasted_frac": 0.136
+        },
+        "500-1000": {
+          "dispatches": 500,
+          "wasted": 0,
+          "useful": 500,
+          "wasted_frac": 0.0,
+          "physical_wasted": 83,
+          "physical_wasted_frac": 0.166
+        },
+        "1000-2000": {
+          "dispatches": 1000,
+          "wasted": 0,
+          "useful": 1000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 169,
+          "physical_wasted_frac": 0.169
+        },
+        "2000-4000": {
+          "dispatches": 2000,
+          "wasted": 0,
+          "useful": 2000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 344,
+          "physical_wasted_frac": 0.172
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 105,
+          "wasted": 0,
+          "useful": 105,
+          "wasted_frac": 0.0,
+          "physical_wasted": 34,
+          "physical_wasted_frac": 0.3238095238095238
+        },
+        "orin|1-250": {
+          "dispatches": 99,
+          "wasted": 0,
+          "useful": 99,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.04040404040404041
+        },
+        "thor|1-250": {
+          "dispatches": 49,
+          "wasted": 0,
+          "useful": 49,
+          "wasted_frac": 0.0,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.061224489795918366
+        },
+        "xavier|250-500": {
+          "dispatches": 112,
+          "wasted": 0,
+          "useful": 112,
+          "wasted_frac": 0.0,
+          "physical_wasted": 31,
+          "physical_wasted_frac": 0.2767857142857143
+        },
+        "orin|250-500": {
+          "dispatches": 94,
+          "wasted": 0,
+          "useful": 94,
+          "wasted_frac": 0.0,
+          "physical_wasted": 3,
+          "physical_wasted_frac": 0.031914893617021274
+        },
+        "thor|250-500": {
+          "dispatches": 44,
+          "wasted": 0,
+          "useful": 44,
+          "wasted_frac": 0.0,
+          "physical_wasted": 0,
+          "physical_wasted_frac": 0.0
+        },
+        "xavier|500-1000": {
+          "dispatches": 241,
+          "wasted": 0,
+          "useful": 241,
+          "wasted_frac": 0.0,
+          "physical_wasted": 74,
+          "physical_wasted_frac": 0.3070539419087137
+        },
+        "orin|500-1000": {
+          "dispatches": 178,
+          "wasted": 0,
+          "useful": 178,
+          "wasted_frac": 0.0,
+          "physical_wasted": 8,
+          "physical_wasted_frac": 0.0449438202247191
+        },
+        "thor|500-1000": {
+          "dispatches": 81,
+          "wasted": 0,
+          "useful": 81,
+          "wasted_frac": 0.0,
+          "physical_wasted": 1,
+          "physical_wasted_frac": 0.012345679012345678
+        },
+        "xavier|1000-2000": {
+          "dispatches": 505,
+          "wasted": 0,
+          "useful": 505,
+          "wasted_frac": 0.0,
+          "physical_wasted": 150,
+          "physical_wasted_frac": 0.297029702970297
+        },
+        "orin|1000-2000": {
+          "dispatches": 322,
+          "wasted": 0,
+          "useful": 322,
+          "wasted_frac": 0.0,
+          "physical_wasted": 15,
+          "physical_wasted_frac": 0.046583850931677016
+        },
+        "thor|1000-2000": {
+          "dispatches": 173,
+          "wasted": 0,
+          "useful": 173,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.023121387283236993
+        },
+        "xavier|2000-4000": {
+          "dispatches": 1050,
+          "wasted": 0,
+          "useful": 1050,
+          "wasted_frac": 0.0,
+          "physical_wasted": 306,
+          "physical_wasted_frac": 0.2914285714285714
+        },
+        "orin|2000-4000": {
+          "dispatches": 645,
+          "wasted": 0,
+          "useful": 645,
+          "wasted_frac": 0.0,
+          "physical_wasted": 25,
+          "physical_wasted_frac": 0.03875968992248062
+        },
+        "thor|2000-4000": {
+          "dispatches": 305,
+          "wasted": 0,
+          "useful": 305,
+          "wasted_frac": 0.0,
+          "physical_wasted": 13,
+          "physical_wasted_frac": 0.04262295081967213
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.5028728453659755,
+        "orin": 0.3342493130152386,
+        "thor": 0.1628778416187859
+      },
+      "1-250": {
+        "xavier": 0.4150197628458498,
+        "orin": 0.391304347826087,
+        "thor": 0.19367588932806323
+      },
+      "250-500": {
+        "xavier": 0.448,
+        "orin": 0.376,
+        "thor": 0.176
+      },
+      "500-1000": {
+        "xavier": 0.482,
+        "orin": 0.356,
+        "thor": 0.162
+      },
+      "1000-2000": {
+        "xavier": 0.505,
+        "orin": 0.322,
+        "thor": 0.173
+      },
+      "2000-4000": {
+        "xavier": 0.525,
+        "orin": 0.3225,
+        "thor": 0.1525
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 422.095669329,
+        "rate": 0.5993901818566175,
+        "dispatch_rate": 0.5993901818566175
+      },
+      "250-500": {
+        "useful": 250,
+        "seconds": 456.32786864900083,
+        "rate": 0.5478517030751314,
+        "dispatch_rate": 0.5478517030751314
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 966.4928741759986,
+        "rate": 0.5173343884467687,
+        "dispatch_rate": 0.5173343884467687
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 1990.7481577890107,
+        "rate": 0.502323709851191,
+        "dispatch_rate": 0.502323709851191
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 4110.706979967012,
+        "rate": 0.4865343138654096,
+        "dispatch_rate": 0.4865343138654096
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 631,
+        "killed_viable": 48,
+        "missed_waste": 40,
+        "passed_useful": 3284,
+        "waste_caught_frac": 0.940387481371088,
+        "viable_killed_frac": 0.014405762304921969,
+        "waste_remaining_frac": 0.009992505620784412,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 649,
+        "killed_viable": 0,
+        "missed_waste": 22,
+        "passed_useful": 3332,
+        "waste_caught_frac": 0.9672131147540983,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.005495878091431427,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.9975,
+      "max": 17,
+      "n": 4000,
+      "rebuilt_mean": 2.9975,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.8315,
+      "best": 0.8387,
+      "noise_sd": 0.04864287554939222,
+      "rounds_to_70": 220,
+      "tta_h_70": 0.10471773951972224,
+      "rounds_to_75": 350,
+      "tta_h_75": 0.16429948123750004,
+      "rounds_to_78": 590,
+      "tta_h_78": 0.2903420048430556,
+      "rounds_to_80": 990,
+      "tta_h_80": 0.5088610905163887
+    },
+    "clock_at": {
+      "100": 177.19204381399996,
+      "250": 423.978783552,
+      "500": 880.3066522010008,
+      "1000": 1846.7995263769994,
+      "2000": 3837.54768416601,
+      "4000": 7948.254664133022
+    },
+    "plato_clock_final": 8137.533874988556,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4003,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 0
+  },
+  "observed|always_accept": {
+    "arm": "observed",
+    "policy": "always_accept",
+    "crossover_round": 2482,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6685.356834611017,
+      "predicted": 6742.4155405187785,
+      "rel_error": 0.008534878140290249,
+      "packing": 1.0005874768224907
+    },
+    "redispatch_gap": {
+      "after_waste": 30.884816753926703,
+      "after_useful": 18.104398826979473,
+      "ratio": 1.7059288766828116,
+      "n_waste": 573
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4003,
+        "wasted": 0,
+        "useful": 4003,
+        "wasted_frac": 0.0,
+        "physical_wasted": 578,
+        "physical_wasted_frac": 0.14439170622033476
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1619,
+          "wasted": 0,
+          "useful": 1619,
+          "wasted_frac": 0.0,
+          "physical_wasted": 473,
+          "physical_wasted_frac": 0.29215565163681284
+        },
+        "orin": {
+          "dispatches": 1643,
+          "wasted": 0,
+          "useful": 1643,
+          "wasted_frac": 0.0,
+          "physical_wasted": 80,
+          "physical_wasted_frac": 0.048691418137553254
+        },
+        "thor": {
+          "dispatches": 741,
+          "wasted": 0,
+          "useful": 741,
+          "wasted_frac": 0.0,
+          "physical_wasted": 25,
+          "physical_wasted_frac": 0.033738191632928474
+        }
+      },
+      "per_window": {
+        "1-250": {
+          "dispatches": 253,
+          "wasted": 0,
+          "useful": 253,
+          "wasted_frac": 0.0,
+          "physical_wasted": 29,
+          "physical_wasted_frac": 0.11462450592885376
+        },
+        "250-500": {
+          "dispatches": 250,
+          "wasted": 0,
+          "useful": 250,
+          "wasted_frac": 0.0,
+          "physical_wasted": 30,
+          "physical_wasted_frac": 0.12
+        },
+        "500-1000": {
+          "dispatches": 500,
+          "wasted": 0,
+          "useful": 500,
+          "wasted_frac": 0.0,
+          "physical_wasted": 68,
+          "physical_wasted_frac": 0.136
+        },
+        "1000-2000": {
+          "dispatches": 1000,
+          "wasted": 0,
+          "useful": 1000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 157,
+          "physical_wasted_frac": 0.157
+        },
+        "2000-4000": {
+          "dispatches": 2000,
+          "wasted": 0,
+          "useful": 2000,
+          "wasted_frac": 0.0,
+          "physical_wasted": 294,
+          "physical_wasted_frac": 0.147
+        }
+      },
+      "per_tier_window": {
+        "xavier|1-250": {
+          "dispatches": 86,
+          "wasted": 0,
+          "useful": 86,
+          "wasted_frac": 0.0,
+          "physical_wasted": 23,
+          "physical_wasted_frac": 0.26744186046511625
+        },
+        "orin|1-250": {
+          "dispatches": 108,
+          "wasted": 0,
+          "useful": 108,
+          "wasted_frac": 0.0,
+          "physical_wasted": 6,
+          "physical_wasted_frac": 0.05555555555555555
+        },
+        "thor|1-250": {
+          "dispatches": 59,
+          "wasted": 0,
+          "useful": 59,
+          "wasted_frac": 0.0,
+          "physical_wasted": 0,
+          "physical_wasted_frac": 0.0
+        },
+        "xavier|250-500": {
+          "dispatches": 75,
+          "wasted": 0,
+          "useful": 75,
+          "wasted_frac": 0.0,
+          "physical_wasted": 18,
+          "physical_wasted_frac": 0.24
+        },
+        "orin|250-500": {
+          "dispatches": 115,
+          "wasted": 0,
+          "useful": 115,
+          "wasted_frac": 0.0,
+          "physical_wasted": 8,
+          "physical_wasted_frac": 0.06956521739130435
+        },
+        "thor|250-500": {
+          "dispatches": 60,
+          "wasted": 0,
+          "useful": 60,
+          "wasted_frac": 0.0,
+          "physical_wasted": 4,
+          "physical_wasted_frac": 0.06666666666666667
+        },
+        "xavier|500-1000": {
+          "dispatches": 192,
+          "wasted": 0,
+          "useful": 192,
+          "wasted_frac": 0.0,
+          "physical_wasted": 56,
+          "physical_wasted_frac": 0.2916666666666667
+        },
+        "orin|500-1000": {
+          "dispatches": 219,
+          "wasted": 0,
+          "useful": 219,
+          "wasted_frac": 0.0,
+          "physical_wasted": 10,
+          "physical_wasted_frac": 0.045662100456621
+        },
+        "thor|500-1000": {
+          "dispatches": 89,
+          "wasted": 0,
+          "useful": 89,
+          "wasted_frac": 0.0,
+          "physical_wasted": 2,
+          "physical_wasted_frac": 0.02247191011235955
+        },
+        "xavier|1000-2000": {
+          "dispatches": 407,
+          "wasted": 0,
+          "useful": 407,
+          "wasted_frac": 0.0,
+          "physical_wasted": 128,
+          "physical_wasted_frac": 0.3144963144963145
+        },
+        "orin|1000-2000": {
+          "dispatches": 410,
+          "wasted": 0,
+          "useful": 410,
+          "wasted_frac": 0.0,
+          "physical_wasted": 19,
+          "physical_wasted_frac": 0.046341463414634146
+        },
+        "thor|1000-2000": {
+          "dispatches": 183,
+          "wasted": 0,
+          "useful": 183,
+          "wasted_frac": 0.0,
+          "physical_wasted": 10,
+          "physical_wasted_frac": 0.0546448087431694
+        },
+        "xavier|2000-4000": {
+          "dispatches": 859,
+          "wasted": 0,
+          "useful": 859,
+          "wasted_frac": 0.0,
+          "physical_wasted": 248,
+          "physical_wasted_frac": 0.28870779976717115
+        },
+        "orin|2000-4000": {
+          "dispatches": 791,
+          "wasted": 0,
+          "useful": 791,
+          "wasted_frac": 0.0,
+          "physical_wasted": 37,
+          "physical_wasted_frac": 0.04677623261694058
+        },
+        "thor|2000-4000": {
+          "dispatches": 350,
+          "wasted": 0,
+          "useful": 350,
+          "wasted_frac": 0.0,
+          "physical_wasted": 9,
+          "physical_wasted_frac": 0.025714285714285714
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.40444666500124904,
+        "orin": 0.4104421683737197,
+        "thor": 0.18511116662503121
+      },
+      "1-250": {
+        "xavier": 0.33992094861660077,
+        "orin": 0.4268774703557312,
+        "thor": 0.233201581027668
+      },
+      "250-500": {
+        "xavier": 0.3,
+        "orin": 0.46,
+        "thor": 0.24
+      },
+      "500-1000": {
+        "xavier": 0.384,
+        "orin": 0.438,
+        "thor": 0.178
+      },
+      "1000-2000": {
+        "xavier": 0.407,
+        "orin": 0.41,
+        "thor": 0.183
+      },
+      "2000-4000": {
+        "xavier": 0.4295,
+        "orin": 0.3955,
+        "thor": 0.175
+      }
+    },
+    "useful_work_rate": {
+      "1-250": {
+        "useful": 253,
+        "seconds": 365.50367195399997,
+        "rate": 0.6921955083171942,
+        "dispatch_rate": 0.6921955083171942
+      },
+      "250-500": {
+        "useful": 250,
+        "seconds": 333.7847793800006,
+        "rate": 0.7489856202082391,
+        "dispatch_rate": 0.7489856202082391
+      },
+      "500-1000": {
+        "useful": 500,
+        "seconds": 799.1039245249995,
+        "rate": 0.6257008439762178,
+        "dispatch_rate": 0.6257008439762178
+      },
+      "1000-2000": {
+        "useful": 1000,
+        "seconds": 1691.7946059580058,
+        "rate": 0.5910883014275448,
+        "dispatch_rate": 0.5910883014275448
+      },
+      "2000-4000": {
+        "useful": 2000,
+        "seconds": 3493.286738571011,
+        "rate": 0.5725267204426896,
+        "dispatch_rate": 0.5725267204426896
+      }
+    },
+    "stage0": {
+      "tier_mean": {
+        "killed_waste": 544,
+        "killed_viable": 44,
+        "missed_waste": 34,
+        "passed_useful": 3381,
+        "waste_caught_frac": 0.9411764705882353,
+        "viable_killed_frac": 0.012846715328467153,
+        "waste_remaining_frac": 0.00849362977766675,
+        "dispatched_out_of_range": 0
+      },
+      "oracle_sleep": {
+        "killed_waste": 560,
+        "killed_viable": 0,
+        "missed_waste": 18,
+        "passed_useful": 3425,
+        "waste_caught_frac": 0.9688581314878892,
+        "viable_killed_frac": 0.0,
+        "waste_remaining_frac": 0.0044966275293529855,
+        "dispatched_out_of_range": 0
+      }
+    },
+    "staleness": {
+      "mean": 2.997,
+      "max": 21,
+      "n": 4000,
+      "rebuilt_mean": 2.997,
+      "rebuilt_disagreements": 0
+    },
+    "curve": {
+      "evaluations": 400,
+      "plateau": 0.83205,
+      "best": 0.8407,
+      "noise_sd": 0.04612756030192682,
+      "rounds_to_70": 200,
+      "tta_h_70": 0.0846991181938889,
+      "rounds_to_75": 360,
+      "tta_h_75": 0.13603077228666668,
+      "rounds_to_78": 630,
+      "tta_h_78": 0.24784562446138914,
+      "rounds_to_80": 980,
+      "tta_h_80": 0.40934355463055555
+    },
+    "clock_at": {
+      "100": 143.77981252899997,
+      "250": 367.386786177,
+      "500": 701.1715655570006,
+      "1000": 1500.275490082,
+      "2000": 3192.070096040006,
+      "4000": 6685.356834611017
+    },
+    "plato_clock_final": 6870.4105105400085,
+    "rounds_done": 4000,
+    "dispatch_cycles": 4003,
+    "idle_events": 0,
+    "idle_seconds": 0,
+    "empty_rounds": 0
+  }
+}

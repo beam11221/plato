@@ -1,0 +1,391 @@
+<title>Comm-Latency Sweep</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#eeeeec; --surface:#fcfcfb; --surface-2:#f6f6f3;
+  --ink:#14140f; --ink-2:#4d4d44; --ink-3:#7d7d70;
+  --rule:#dededa; --rule-2:#e8e8e4;
+  --accent:#2a78d6;
+  --arm-gpu:#2a78d6; --arm-cpu:#eb6834; --arm-baseline:#1baf7a;
+  --t-xavier:#86b6ef; --t-orin:#2a78d6; --t-thor:#104281;
+  --pool:#b4b4aa;
+  --flag:#8a5a00; --flag-bg:#fdf5e3; --flag-rule:#e8d9b0;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --ground:#121211; --surface:#1a1a19; --surface-2:#212120;
+    --ink:#f3f3ee; --ink-2:#bcbcb2; --ink-3:#8a8a80;
+    --rule:#33332f; --rule-2:#2a2a27;
+    --accent:#3987e5;
+    --arm-gpu:#3987e5; --arm-cpu:#d95926; --arm-baseline:#199e70;
+    --t-xavier:#cde2fb; --t-orin:#5598e7; --t-thor:#184f95;
+    --pool:#57574f;
+    --flag:#e5c169; --flag-bg:#241f14; --flag-rule:#4a3f24;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#121211; --surface:#1a1a19; --surface-2:#212120;
+  --ink:#f3f3ee; --ink-2:#bcbcb2; --ink-3:#8a8a80;
+  --rule:#33332f; --rule-2:#2a2a27;
+  --accent:#3987e5;
+  --arm-gpu:#3987e5; --arm-cpu:#d95926; --arm-baseline:#199e70;
+  --t-xavier:#cde2fb; --t-orin:#5598e7; --t-thor:#184f95;
+  --pool:#57574f;
+  --flag:#e5c169; --flag-bg:#241f14; --flag-rule:#4a3f24;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:56px 24px 96px}
+.measure{max-width:68ch}
+
+h1,h2,h3{font-family:Charter,"Bitstream Charter","Iowan Old Style",Georgia,serif;
+  font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:2.5rem;line-height:1.12;letter-spacing:-.015em}
+h2{font-size:1.6rem;line-height:1.2;margin-top:0}
+h3{font-size:1.08rem;line-height:1.3}
+p{margin:0}
+.eyebrow{font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.lede{font-size:1.09rem;color:var(--ink-2)}
+.stack{display:flex;flex-direction:column;gap:18px}
+.stack-lg{display:flex;flex-direction:column;gap:56px}
+header.head{display:flex;flex-direction:column;gap:16px;
+  padding-bottom:32px;border-bottom:2px solid var(--ink);margin-bottom:56px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 26px;font:.8rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink-3)}
+.meta b{color:var(--ink-2);font-weight:600}
+
+section{scroll-margin-top:24px}
+.sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  padding:24px 26px 20px;display:flex;flex-direction:column;gap:16px}
+.fig-head{display:flex;flex-direction:column;gap:5px}
+.fig-n{font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.fig-sub{font-size:.88rem;color:var(--ink-2);max-width:62ch}
+.plot{width:100%;overflow-x:auto}
+svg{width:100%;height:auto;display:block;overflow:visible}
+
+.grid{stroke:var(--rule-2);stroke-width:1}
+.axis{stroke:var(--rule);stroke-width:1}
+.pool,.poolline{stroke:var(--pool);stroke-width:1.25;stroke-dasharray:3 3;fill:none}
+.unity{stroke:var(--ink-3);stroke-width:1.25;stroke-dasharray:4 3}
+text{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.tick{font-size:11px;fill:var(--ink-3)}
+.sub{font-size:10.5px;fill:var(--ink-3)}
+.axlab{font-size:11px;fill:var(--ink-2);font-weight:600}
+.panel{font-size:12.5px;fill:var(--ink);font-weight:700}
+.dl{font-size:11.5px;font-weight:700}
+.ln{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.mk{stroke:var(--surface);stroke-width:2}
+.eb{stroke-width:1.5;opacity:.55}
+.hit{fill:transparent;cursor:crosshair}
+
+.gpu{stroke:var(--arm-gpu)} circle.gpu{fill:var(--arm-gpu)} text.gpu{fill:var(--arm-gpu);stroke:none}
+.cpu{stroke:var(--arm-cpu)} circle.cpu{fill:var(--arm-cpu)} text.cpu{fill:var(--arm-cpu);stroke:none}
+.baseline{stroke:var(--arm-baseline)} circle.baseline{fill:var(--arm-baseline)} text.baseline{fill:var(--arm-baseline);stroke:none}
+.xavier{stroke:var(--t-xavier)} circle.xavier{fill:var(--t-xavier)} text.xavier{fill:var(--t-xavier);stroke:none}
+.orin{stroke:var(--t-orin)} circle.orin{fill:var(--t-orin)} text.orin{fill:var(--t-orin);stroke:none}
+.thor{stroke:var(--t-thor)} circle.thor{fill:var(--t-thor)} text.thor{fill:var(--t-thor);stroke:none}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font:.8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:15px;height:3px;border-radius:2px;flex:none}
+.sw.dash{height:0;border-top:1.5px dashed var(--pool);width:15px}
+
+details{border-top:1px solid var(--rule-2);padding-top:12px}
+summary{cursor:pointer;font:.8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:var(--ink-2);letter-spacing:.03em;list-style:none;display:flex;align-items:center;gap:7px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--ink-3);transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.tw{overflow-x:auto;margin-top:14px}
+table{border-collapse:collapse;font:.79rem/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-variant-numeric:tabular-nums;width:100%}
+caption{text-align:left;color:var(--ink-3);font-size:.76rem;padding-bottom:9px}
+th,td{padding:5px 9px;text-align:right;border-bottom:1px solid var(--rule-2);white-space:nowrap}
+thead th{color:var(--ink-3);font-weight:600;border-bottom:1px solid var(--rule)}
+tbody th{text-align:left;color:var(--ink);font-weight:600}
+td{color:var(--ink-2)}
+tr.grp td,tr.grp th{border-top:1px solid var(--rule)}
+.pm{color:var(--ink-3)}
+
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:820px){.pair{grid-template-columns:1fr}}
+
+.flag{background:var(--flag-bg);border:1px solid var(--flag-rule);border-left:3px solid var(--flag);
+  border-radius:3px;padding:16px 20px;display:flex;flex-direction:column;gap:8px}
+.flag h3{font-size:.95rem;color:var(--flag);font-family:inherit;font-weight:700}
+.flag p{font-size:.88rem;color:var(--ink-2)}
+.note{font-size:.86rem;color:var(--ink-3)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;
+  background:var(--surface-2);padding:1px 5px;border-radius:3px;color:var(--ink-2)}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.key{background:var(--surface);padding:13px 16px;display:flex;flex-direction:column;gap:3px}
+.key b{font:600 .7rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3)}
+.key span{font-size:.92rem;color:var(--ink)}
+
+#tip{position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:50;
+  background:var(--ink);color:var(--ground);padding:6px 10px;border-radius:3px;
+  font:.76rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;
+  box-shadow:0 3px 14px rgba(0,0,0,.22)}
+#tip b{display:block;font-weight:600;opacity:.72;font-size:.72rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+var{font-style:italic;color:var(--ink)}
+.run{font:600 .66rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent);padding:1px 6px;border-radius:10px;margin-left:4px}
+.pend{font:600 .66rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink-3);background:var(--surface-2);padding:1px 6px;border-radius:10px;margin-left:4px}
+</style>
+<div class="wrap stack-lg">
+
+<header class="head">
+  <span class="eyebrow">Async federated learning · vehicle GPU tiers · third sweep</span>
+  <h1>Does bandwidth dilute the speed signal?</h1>
+  <p class="lede measure">Fleet pinned at 50/35/15, tier-speed gap pinned at G=30.
+  Only the uplink bandwidth <var>B</var> moves, adding a transfer cost
+  <var>C&nbsp;=&nbsp;D/B</var> identically to belief and reality. As <var>C</var>
+  grows it pushes every tier's training time toward the same additive floor, so
+  the GPU-TOPS speed signal should be <em>diluted, not degraded</em> — this sweep
+  measures where that happens.</p>
+  <div class="meta">
+    <span><b>Target</b> 55% top-1, CIFAR-10 / ResNet-18</span>
+    <span><b>Arms</b> gpu · cpu · baseline</span>
+    <span><b>t_round_model</b> queue</span>
+    <span><b>B=∞ control</b> reused from the fleet-mix sweep</span>
+  </div>
+</header>
+
+
+<div class="flag">
+  <h3>In progress — 9 / 11 runs finished</h3>
+  <p>Running now: cpu/10, cpu/50.
+  Queued: baseline/10, baseline/100, baseline/20, baseline/50, baseline/inf, gpu/10nc.
+  Figures below plot every finished cell as a filled marker and every running
+  cell as a hollow one; queued cells are simply absent. This page regenerates
+  from <code>comm_sweep.py --plots</code> + <code>build_comm_report.py</code> —
+  rerun both once the sweep finishes for the final version.</p>
+</div>
+
+<section class="stack">
+  <div class="sec-head">
+    <span class="eyebrow">Figure 1 — the headline</span>
+    <h2>Which vehicle tier gets picked, as bandwidth falls</h2>
+    <p class="fig-sub measure">gpu arm, percent of dispatches per tier. Dashed
+    lines are the pool's own 50/35/15. Predicted: xavier's share climbs back
+    toward the pool share as <var>B</var> falls (BRIEF § 5.2) — read straight off
+    the dispatch log, no evaluation noise.</p>
+  </div>
+  <div class="card">
+    <div class="plot"><svg viewBox="0 0 620 340" role="img" aria-label="Percent of dispatches per vehicle tier versus uplink bandwidth, gpu arm">
+<line class="grid" x1="58" y1="274.0" x2="578" y2="274.0"/>
+<text class="tick" x="50" y="277.5" text-anchor="end">0</text>
+<line class="grid" x1="58" y1="196.0" x2="578" y2="196.0"/>
+<text class="tick" x="50" y="199.5" text-anchor="end">20</text>
+<line class="grid" x1="58" y1="118.0" x2="578" y2="118.0"/>
+<text class="tick" x="50" y="121.5" text-anchor="end">40</text>
+<line class="grid" x1="58" y1="40.0" x2="578" y2="40.0"/>
+<text class="tick" x="50" y="43.5" text-anchor="end">60</text>
+<text class="tick" x="58.0" y="292" text-anchor="middle">∞</text>
+<text class="tick" x="188.0" y="292" text-anchor="middle">100</text>
+<text class="tick" x="318.0" y="292" text-anchor="middle">50</text>
+<text class="tick" x="448.0" y="292" text-anchor="middle">20</text>
+<text class="tick" x="578.0" y="292" text-anchor="middle">10</text>
+<line class="axis" x1="58" y1="274" x2="578" y2="274"/>
+<text class="axlab" x="58" y="26" text-anchor="start">dispatch share %</text>
+<text class="sub" x="50" y="308" text-anchor="end">B (Mbps)</text>
+<polyline class="ln xavier" points="58.0,129.4 188.0,115.0 318.0,109.4 448.0,100.4 578.0,92.5"/>
+<circle class="mk xavier" cx="58.0" cy="129.4" r="4.5"/>
+<circle class="mk xavier" cx="188.0" cy="115.0" r="4.5"/>
+<circle class="mk xavier" cx="318.0" cy="109.4" r="4.5"/>
+<circle class="mk xavier" cx="448.0" cy="100.4" r="4.5"/>
+<circle class="mk xavier" cx="578.0" cy="92.5" r="4.5"/>
+<text class="dl xavier" x="588.0" y="96.5">xavier</text>
+<polyline class="ln orin" points="58.0,113.8 188.0,116.8 318.0,117.1 448.0,121.1 578.0,126.9"/>
+<circle class="mk orin" cx="58.0" cy="113.8" r="4.5"/>
+<circle class="mk orin" cx="188.0" cy="116.8" r="4.5"/>
+<circle class="mk orin" cx="318.0" cy="117.1" r="4.5"/>
+<circle class="mk orin" cx="448.0" cy="121.1" r="4.5"/>
+<circle class="mk orin" cx="578.0" cy="126.9" r="4.5"/>
+<text class="dl orin" x="588.0" y="130.9">orin</text>
+<polyline class="ln thor" points="58.0,188.8 188.0,200.2 318.0,205.5 448.0,210.5 578.0,212.6"/>
+<circle class="mk thor" cx="58.0" cy="188.8" r="4.5"/>
+<circle class="mk thor" cx="188.0" cy="200.2" r="4.5"/>
+<circle class="mk thor" cx="318.0" cy="205.5" r="4.5"/>
+<circle class="mk thor" cx="448.0" cy="210.5" r="4.5"/>
+<circle class="mk thor" cx="578.0" cy="212.6" r="4.5"/>
+<text class="dl thor" x="588.0" y="216.6">thor</text>
+<line class="pool" x1="58" y1="79.0" x2="578" y2="79.0"/>
+<line class="pool" x1="58" y1="137.5" x2="578" y2="137.5"/>
+<line class="pool" x1="58" y1="215.5" x2="578" y2="215.5"/>
+</svg></div>
+    <div class="legend">
+      <span><i class="sw xavier"></i>xavier (slowest, 20 s)</span>
+      <span><i class="sw orin"></i>orin (3.65 s)</span>
+      <span><i class="sw thor"></i>thor (fastest, 0.67 s)</span>
+      <span><i class="sw dash"></i>pool share</span>
+      <span>hollow marker = run still in progress</span>
+    </div>
+  </div>
+</section>
+
+<section class="pair">
+  <div class="stack">
+    <div class="sec-head">
+      <span class="eyebrow">Figure 2 — the mechanism</span>
+      <h2>Predicted speed-term preference</h2>
+      <p class="fig-sub measure"><var>pref</var> = the speed term's ratio favouring
+      thor over xavier, computed directly from <code>gpu_tier_sleep</code> against
+      each cell's own config. Pre-registered: 3.42 → 2.12 → 1.75 → 1.39 → 1.22
+      for gpu (BRIEF § 5).</p>
+    </div>
+    <div class="card">
+      <div class="plot"><svg viewBox="0 0 620 340" role="img" aria-label="Predicted speed-term preference for thor over xavier versus uplink bandwidth">
+<line class="grid" x1="58" y1="274.0" x2="578" y2="274.0"/>
+<text class="tick" x="50" y="277.5" text-anchor="end">1</text>
+<line class="grid" x1="58" y1="229.0" x2="578" y2="229.0"/>
+<text class="tick" x="50" y="232.5" text-anchor="end">1.5</text>
+<line class="grid" x1="58" y1="184.0" x2="578" y2="184.0"/>
+<text class="tick" x="50" y="187.5" text-anchor="end">2</text>
+<line class="grid" x1="58" y1="139.0" x2="578" y2="139.0"/>
+<text class="tick" x="50" y="142.5" text-anchor="end">2.5</text>
+<line class="grid" x1="58" y1="94.0" x2="578" y2="94.0"/>
+<text class="tick" x="50" y="97.5" text-anchor="end">3</text>
+<line class="grid" x1="58" y1="49.0" x2="578" y2="49.0"/>
+<text class="tick" x="50" y="52.5" text-anchor="end">3.5</text>
+<text class="tick" x="58.0" y="292" text-anchor="middle">∞</text>
+<text class="tick" x="188.0" y="292" text-anchor="middle">100</text>
+<text class="tick" x="318.0" y="292" text-anchor="middle">50</text>
+<text class="tick" x="448.0" y="292" text-anchor="middle">20</text>
+<text class="tick" x="578.0" y="292" text-anchor="middle">10</text>
+<line class="axis" x1="58" y1="274" x2="578" y2="274"/>
+<text class="axlab" x="58" y="26" text-anchor="start">pref  (xavier-over-thor speed term)</text>
+<text class="sub" x="50" y="308" text-anchor="end">B (Mbps)</text>
+<line class="unity" x1="58" y1="274.0" x2="578" y2="274.0"/>
+<polyline class="ln gpu" points="58.0,56.0 188.0,173.6 318.0,206.2 448.0,238.7 578.0,254.1"/>
+<circle class="mk gpu" cx="58.0" cy="56.0" r="4.5"/>
+<circle class="mk gpu" cx="188.0" cy="173.6" r="4.5"/>
+<circle class="mk gpu" cx="318.0" cy="206.2" r="4.5"/>
+<circle class="mk gpu" cx="448.0" cy="238.7" r="4.5"/>
+<circle class="mk gpu" cx="578.0" cy="254.1" r="4.5"/>
+<text class="dl gpu" x="588.0" y="258.1">gpu</text>
+<polyline class="ln cpu" points="58.0,262.7 188.0,264.6 318.0,266.0 448.0,268.4 578.0,270.3"/>
+<circle class="mk cpu" cx="58.0" cy="262.7" r="4.5"/>
+<circle class="mk cpu" cx="188.0" cy="264.6" r="4.5"/>
+<circle cx="318.0" cy="266.0" r="4.5" fill="var(--surface)" class="cpu" stroke-width="2"/>
+<circle class="mk cpu" cx="448.0" cy="268.4" r="4.5"/>
+<circle cx="578.0" cy="270.3" r="4.5" fill="var(--surface)" class="cpu" stroke-width="2"/>
+<text class="dl cpu" x="588.0" y="274.3">cpu</text>
+</svg></div>
+      <div class="legend">
+        <span><i class="sw gpu"></i>gpu</span>
+        <span><i class="sw cpu"></i>cpu</span>
+        <span><i class="sw" style="border-top:1.5px dashed var(--ink-3);height:0"></i>pref = 1 (no signal)</span>
+      </div>
+    </div>
+  </div>
+  <div class="stack">
+    <div class="sec-head">
+      <span class="eyebrow">Figure 3 — end-to-end (provisional)</span>
+      <h2>Time to 55% accuracy</h2>
+      <p class="fig-sub measure">Two cells (cpu at B=50, B=10) are still running
+      and have not yet crossed 55% within their logged rounds so far — their
+      points are omitted here, not zero.</p>
+    </div>
+    <div class="card">
+      <div class="plot"><svg viewBox="0 0 620 340" role="img" aria-label="Simulated hours to 55 percent accuracy versus uplink bandwidth">
+<line class="grid" x1="58" y1="274.0" x2="578" y2="274.0"/>
+<text class="tick" x="50" y="277.5" text-anchor="end">0</text>
+<line class="grid" x1="58" y1="237.4" x2="578" y2="237.4"/>
+<text class="tick" x="50" y="240.9" text-anchor="end">0.5</text>
+<line class="grid" x1="58" y1="200.9" x2="578" y2="200.9"/>
+<text class="tick" x="50" y="204.4" text-anchor="end">1</text>
+<line class="grid" x1="58" y1="164.3" x2="578" y2="164.3"/>
+<text class="tick" x="50" y="167.8" text-anchor="end">1.5</text>
+<line class="grid" x1="58" y1="127.8" x2="578" y2="127.8"/>
+<text class="tick" x="50" y="131.2" text-anchor="end">2</text>
+<line class="grid" x1="58" y1="91.2" x2="578" y2="91.2"/>
+<text class="tick" x="50" y="94.7" text-anchor="end">2.5</text>
+<line class="grid" x1="58" y1="54.6" x2="578" y2="54.6"/>
+<text class="tick" x="50" y="58.1" text-anchor="end">3</text>
+<text class="tick" x="58.0" y="292" text-anchor="middle">∞</text>
+<text class="tick" x="188.0" y="292" text-anchor="middle">100</text>
+<text class="tick" x="318.0" y="292" text-anchor="middle">50</text>
+<text class="tick" x="448.0" y="292" text-anchor="middle">20</text>
+<text class="tick" x="578.0" y="292" text-anchor="middle">10</text>
+<line class="axis" x1="58" y1="274" x2="578" y2="274"/>
+<text class="axlab" x="58" y="26" text-anchor="start">simulated hours to 55%</text>
+<text class="sub" x="50" y="308" text-anchor="end">B (Mbps)</text>
+<polyline class="ln gpu" points="58.0,228.1 188.0,213.7 318.0,204.4 448.0,106.5 578.0,63.6"/>
+<circle class="mk gpu" cx="58.0" cy="228.1" r="4.5"/>
+<circle class="mk gpu" cx="188.0" cy="213.7" r="4.5"/>
+<circle class="mk gpu" cx="318.0" cy="204.4" r="4.5"/>
+<circle class="mk gpu" cx="448.0" cy="106.5" r="4.5"/>
+<circle class="mk gpu" cx="578.0" cy="63.6" r="4.5"/>
+<text class="dl gpu" x="588.0" y="67.6">gpu</text>
+<polyline class="ln cpu" points="58.0,207.3 188.0,210.4 448.0,110.7"/>
+<circle class="mk cpu" cx="58.0" cy="207.3" r="4.5"/>
+<circle class="mk cpu" cx="188.0" cy="210.4" r="4.5"/>
+<circle class="mk cpu" cx="448.0" cy="110.7" r="4.5"/>
+<text class="dl cpu" x="458.0" y="114.7">cpu</text>
+<polyline class="ln baseline" points="58.0,229.1"/>
+<circle class="mk baseline" cx="58.0" cy="229.1" r="4.5"/>
+<text class="dl baseline" x="68.0" y="233.1">baseline</text>
+</svg></div>
+      <div class="legend">
+        <span><i class="sw gpu"></i>gpu</span>
+        <span><i class="sw cpu"></i>cpu</span>
+        <span><i class="sw baseline"></i>baseline</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stack">
+  <div class="sec-head">
+    <span class="eyebrow">Data table</span>
+    <h2>xavier dispatch share and pref, per bandwidth</h2>
+  </div>
+  <div class="tw">
+    <table>
+      <caption>Each cell: xavier dispatch share % / predicted pref. Pool share is 50% xavier.</caption>
+      <thead><tr><th>B (Mbps)</th><th>C (s)</th><th>gpu</th><th>cpu</th><th>baseline</th></tr></thead>
+      <tbody>
+        <tr><th>∞</th><td>0</td><td>37.1% <span class="pm">/</span> 3.42</td><td>51.7% <span class="pm">/</span> 1.13</td><td>— <span class="pm">/</span> —</td></tr>
+<tr><th>100</th><td>3.42</td><td>40.8% <span class="pm">/</span> 2.12</td><td>50.8% <span class="pm">/</span> 1.10</td><td>— <span class="pm">/</span> — <span class="pend">queued</span></td></tr>
+<tr><th>50</th><td>6.83</td><td>42.2% <span class="pm">/</span> 1.75</td><td>46.4% <span class="pm">/</span> 1.09 <span class="run">running</span></td><td>— <span class="pm">/</span> — <span class="pend">queued</span></td></tr>
+<tr><th>20</th><td>17.08</td><td>44.5% <span class="pm">/</span> 1.39</td><td>49.5% <span class="pm">/</span> 1.06</td><td>— <span class="pm">/</span> — <span class="pend">queued</span></td></tr>
+<tr><th>10</th><td>34.15</td><td>46.5% <span class="pm">/</span> 1.22</td><td>47.2% <span class="pm">/</span> 1.04 <span class="run">running</span></td><td>— <span class="pm">/</span> — <span class="pend">queued</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="stack">
+  <details>
+    <summary>Reading notes</summary>
+    <div class="stack" style="padding-top:12px">
+      <p class="note measure">The gpu arm's full B-axis (∞/100/50/20/10) is
+      already complete and matches the pre-registered <var>pref</var> table
+      exactly, including the required "must reproduce 3.42 at C=0" sanity check.
+      cpu is complete at ∞/100/20 and running at 50/10. baseline (sanity anchor
+      at B=20/10) and the belief-vs-reality ablation (gpu, B=10,
+      <code>comm_in_predictor=false</code>) have not started yet.</p>
+      <p class="note measure">Time-to-target figures carry the usual ~10%
+      evaluation-noise floor (HANDOFF § 4.13) — a gpu-vs-cpu ratio under ~1.15×
+      is not a resolvable result on its own. The dispatch-share and
+      <var>pref</var> figures do not carry this limit.</p>
+    </div>
+  </details>
+</section>
+
+</div>

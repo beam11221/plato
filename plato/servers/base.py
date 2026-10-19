@@ -1201,6 +1201,13 @@ class Server:
                         self.wall_time = stale_client_info[0]
                         client = stale_client_info[2]
 
+                        # The same bookkeeping the Step 2 path does above.  _select_clients()
+                        # refills the pipeline with len(current_processed_clients) clients, so a
+                        # client merged here and left unrecorded is never replaced and its slot
+                        # is gone for the rest of the run — the concurrency drains flush by
+                        # flush, silently, however high max_concurrency is set.
+                        self.current_processed_clients[client["client_id"]] = True
+
                         # Add the report and payload of the extracted reporting client into updates
                         logging.info(
                             "[Server #%s] Adding client #%s to the list of clients for "

@@ -1,0 +1,15 @@
+{
+  "model": "plato.models.resnet.Model",
+  "counter": "fvcore.nn.FlopCountAnalysis (counts multiply-adds = MACs)",
+  "macs_fwd": 556651520,
+  "flops_fwd": 1113303040,
+  "macs_by_operator": {
+    "conv": 555417600,
+    "batch_norm": 1228800,
+    "linear": 5120
+  },
+  "deviation_from_1p1_gflop": 0.012093672727272686,
+  "parameters": 11173962,
+  "state_dict_elements": 11183582,
+  "model_bits_D": 357566784
+}

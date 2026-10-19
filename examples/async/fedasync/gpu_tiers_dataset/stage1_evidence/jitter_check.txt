@@ -1,0 +1,109 @@
+Stage 1 - jitter check
+========================================================================
+
+fleet                n20_x10-o7-t3_xa15_p2500_j0p180_s4126
+tier file            tiers_estimated_15x.csv (sha256 323548f8f67ec199)
+anchor               xavier = 15 s
+partition_size       2500   epochs 1
+
+1. sigma, and why this one
+------------------------------------------------------------------------
+sigma = 0.18, drawn once per client from seed 4126:
+
+    sleep_i = T_tier(tier_i) * exp(eps_i),   eps_i ~ Normal(0, sigma)
+
+The CV of that lognormal is sqrt(exp(sigma^2) - 1) = 18.15%,
+which is the middle of the 15-20% the brief asks for. sigma was chosen on that
+number and not adjusted afterwards: it is a property of the
+distribution, so it does not move with the draw and cannot be tuned
+to make a realised statistic land anywhere in particular.
+
+2. realised CV per tier
+------------------------------------------------------------------------
+tier       n   CV(pop)   CV(smp)   in 15-20%?
+xavier    10    16.55%    17.45%   yes
+orin       7    14.90%    16.10%   pop below
+thor       3    17.25%    21.13%   smp above
+
+Two conventions are given because the tiers are small and the two
+differ by sqrt(n/(n-1)) -- 22% at n = 3. Quoting one without saying
+which would make the target unfalsifiable.
+
+NOT EVERY NUMBER IS INSIDE THE BAND, and no sigma puts them all there.
+In this fleet orin has the lowest realised CV and thor the highest, so
+the band is constrained from both sides at once: orin's population CV
+reaches 15% only near sigma = 0.17, and thor's sample CV passes 20% at
+about the same point, leaving a window roughly 0.001 wide in sigma.
+Chasing it would be tuning sigma to make a statistic land somewhere,
+which the brief forbids.
+
+These are sampling errors of the estimator at small n, not a statement
+about the jitter. The same sigma and the same draw rule give, per tier
+and per fleet size (pop / smp):
+
+    N     xavier            orin              thor
+    20    16.55 / 17.45     14.90 / 16.10     17.25 / 21.13
+    30    15.22 / 15.75     19.26 / 20.30     16.83 / 18.81
+    40    17.32 / 17.77     16.47 / 17.09     13.68 / 14.99
+
+Every tier moves several points between fleet sizes, and which tier is
+high and which is low changes with them -- thor is the highest at
+N = 20 and the lowest at N = 40. That is what n = 3..6 does to a CV.
+
+3. min / mean / max sleep per tier
+------------------------------------------------------------------------
+tier       n    T_tier       min      mean       max  max/min
+xavier    10   15.0000   10.8446   14.2802   17.8947   1.650x
+orin       7    1.9231    1.4260    1.7550    2.1976   1.541x
+thor       3    1.0000    0.9399    1.0910    1.3564   1.443x
+
+T_tier is the datasheet value and, because exp(eps) has median 1, the
+tier's MEDIAN rather than its mean. The mean sits at T_tier *
+exp(sigma^2/2) = 1.0163x T_tier in expectation;
+what each tier's mean actually did is above, and it is dominated by
+the draw, not by that factor, at these fleet sizes.
+
+4. do the tiers still separate?
+------------------------------------------------------------------------
+The requirement: jitter must not blur the tiers. Margin is
+slower.min / faster.max, so > 1 means the ranges do not touch.
+
+xavier   [ 10.8446,  17.8947]  vs  orin     [  1.4260,   2.1976]
+         -> no overlap, margin 4.935x
+orin     [  1.4260,   2.1976]  vs  thor     [  0.9399,   1.3564]
+         -> no overlap, margin 1.051x
+
+EXPLICIT STATEMENT: neither xavier/orin nor orin/thor overlaps.
+
+The binding constraint on sigma is orin/thor, not the CV target.
+Those two tiers are only 1.92x apart before jitter (1.9231 s against
+1.0 s), against 7.8x for xavier/orin. At sigma = 0.20 they overlap in
+this draw; at 0.18 they clear by the margin above.
+
+5. tier mean ratios, before and after jitter
+------------------------------------------------------------------------
+pair                     before      after
+xavier/thor              15.00x     13.09x
+xavier/orin               7.80x      8.14x
+orin/thor                 1.92x      1.61x
+
+The xavier:thor gap is the one the fleet is built around. It is still
+an order of magnitude; the movement is the draw, not the jitter model.
+
+6. what this does to the round clock
+------------------------------------------------------------------------
+E[T] over datasheet T_tier   8.3231 s   (what the gpu arm believes)
+E[T] over realised sleeps    7.9180 s   (what actually happens)
+difference                   -4.87%
+
+T_round = E[T]/C, so the gpu arm's denominator is now wrong by that
+much as well as its per-client numerator. That is the belief/reality
+gap the split between `gpu` and `gpu_oracle` is there to measure.
+
+  C =  1   T_round = 7.918013 s   tau_hat_xavier =  1.8944 rounds   staleness_bound = 7
+  C =  2   T_round = 3.959007 s   tau_hat_xavier =  3.7888 rounds   staleness_bound = 13
+  C =  4   T_round = 1.979503 s   tau_hat_xavier =  7.5777 rounds   staleness_bound = 25
+  C =  6   T_round = 1.319669 s   tau_hat_xavier = 11.3665 rounds   staleness_bound = 38
+  C =  8   T_round = 0.989752 s   tau_hat_xavier = 15.1553 rounds   staleness_bound = 50
+  C = 10   T_round = 0.791801 s   tau_hat_xavier = 18.9441 rounds   staleness_bound = 63
+

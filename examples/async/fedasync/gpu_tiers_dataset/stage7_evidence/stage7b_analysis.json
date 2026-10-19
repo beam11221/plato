@@ -1,0 +1,1498 @@
+{
+  "baseline_closed": {
+    "p_recur": 1.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7260.359773999953,
+      "predicted": 7260.413883308345,
+      "rel_error": 7.4527034577325e-06,
+      "mean_sleep": 6.275632043412527
+    },
+    "clock_at": {
+      "100": 214.01240200000004,
+      "250": 485.71392199999997,
+      "500": 898.8497239999998,
+      "1000": 1861.8150010000013,
+      "2000": 3679.165966999999,
+      "4000": 7260.359773999953
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4630,
+        "wasted": 628,
+        "wasted_frac": 0.13563714902807775
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1717,
+          "wasted": 505,
+          "wasted_frac": 0.29411764705882354
+        },
+        "orin": {
+          "dispatches": 2009,
+          "wasted": 98,
+          "wasted_frac": 0.04878048780487805
+        },
+        "thor": {
+          "dispatches": 904,
+          "wasted": 25,
+          "wasted_frac": 0.02765486725663717
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.37084233261339095,
+        "orin": 0.43390928725701944,
+        "thor": 0.19524838012958964
+      },
+      "1-250": {
+        "xavier": 0.3972602739726027,
+        "orin": 0.4006849315068493,
+        "thor": 0.20205479452054795
+      },
+      "250-500": {
+        "xavier": 0.34385964912280703,
+        "orin": 0.45263157894736844,
+        "thor": 0.20350877192982456
+      },
+      "500-1000": {
+        "xavier": 0.38747884940778343,
+        "orin": 0.43824027072758037,
+        "thor": 0.17428087986463622
+      },
+      "1000-2000": {
+        "xavier": 0.3739130434782609,
+        "orin": 0.42434782608695654,
+        "thor": 0.20173913043478262
+      },
+      "2000-4000": {
+        "xavier": 0.36505190311418684,
+        "orin": 0.43944636678200694,
+        "thor": 0.19550173010380623
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1863,
+      "mean": 2.485238862050456,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 5.0,
+      "max": 11,
+      "distribution": {
+        "1": 525,
+        "2": 660,
+        "3": 337,
+        "4": 146,
+        "5": 89,
+        "6": 50,
+        "7": 28,
+        "8": 13,
+        "9": 7,
+        "10": 6,
+        "11": 2
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 23,
+        "xavier": 0.5652173913043478,
+        "orin": 0.30434782608695654,
+        "thor": 0.13043478260869565
+      },
+      "ge1_obs": {
+        "n": 4607,
+        "xavier": 0.3698719340134578,
+        "orin": 0.43455611026698504,
+        "thor": 0.19557195571955718
+      }
+    },
+    "predictor_tier_agreement": null,
+    "information_state": {
+      "observations_mean": 110.72591792656587,
+      "observations_median": 94.0,
+      "observations_max": 324,
+      "fraction_zero_observations": 0.004967602591792656,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 6.5034246575342465,
+          "fraction_zero_observations": 0.07876712328767123,
+          "fraction_G_i_at_prior": null
+        },
+        "250-500": {
+          "observations_mean": 21.185964912280703,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": null
+        },
+        "500-1000": {
+          "observations_mean": 41.05414551607445,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": null
+        },
+        "1000-2000": {
+          "observations_mean": 82.79652173913044,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": null
+        },
+        "2000-4000": {
+          "observations_mean": 166.62846020761245,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": null
+        }
+      }
+    },
+    "s_tau": {
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.17975,
+      "max": 18,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.8340000000000001,
+      "best": 0.8481,
+      "noise_sd": 0.04453179263878149,
+      "rounds_to_70": 180,
+      "tta_h_70": 0.09900523722222221,
+      "rounds_to_75": 330,
+      "tta_h_75": 0.17160982750000003,
+      "rounds_to_78": 560,
+      "tta_h_78": 0.27898469944444454,
+      "rounds_to_80": 860,
+      "tta_h_80": 0.4480799530555561
+    },
+    "recycles": 2054,
+    "state_resets": 20,
+    "summary": {
+      "recycles": 2054,
+      "state_resets": 20,
+      "slot_exhausted": 39,
+      "occupancy_digest": "e109080e4726eaea0baf9e5bd151e300"
+    }
+  },
+  "baseline_open": {
+    "p_recur": 0.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7238.013661999999,
+      "predicted": 7241.536816841579,
+      "rel_error": 0.0004867571416832629,
+      "mean_sleep": 6.27286371017316
+    },
+    "clock_at": {
+      "100": 135.589472,
+      "250": 460.08784999999983,
+      "500": 954.004908,
+      "1000": 1748.5562999999984,
+      "2000": 3658.4962329999976,
+      "4000": 7238.013661999999
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4620,
+        "wasted": 618,
+        "wasted_frac": 0.13376623376623376
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1602,
+          "wasted": 506,
+          "wasted_frac": 0.31585518102372034
+        },
+        "orin": {
+          "dispatches": 2047,
+          "wasted": 89,
+          "wasted_frac": 0.043478260869565216
+        },
+        "thor": {
+          "dispatches": 971,
+          "wasted": 23,
+          "wasted_frac": 0.02368692070030896
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.34675324675324676,
+        "orin": 0.44307359307359306,
+        "thor": 0.21017316017316018
+      },
+      "1-250": {
+        "xavier": 0.3559322033898305,
+        "orin": 0.46779661016949153,
+        "thor": 0.17627118644067796
+      },
+      "250-500": {
+        "xavier": 0.3877551020408163,
+        "orin": 0.46938775510204084,
+        "thor": 0.14285714285714285
+      },
+      "500-1000": {
+        "xavier": 0.3120567375886525,
+        "orin": 0.425531914893617,
+        "thor": 0.2624113475177305
+      },
+      "1000-2000": {
+        "xavier": 0.3652694610778443,
+        "orin": 0.4268605645851155,
+        "thor": 0.20786997433704021
+      },
+      "2000-4000": {
+        "xavier": 0.3394255874673629,
+        "orin": 0.4490861618798956,
+        "thor": 0.21148825065274152
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1874,
+      "mean": 2.4653148345784417,
+      "median": 2.0,
+      "p10": 1.0,
+      "p90": 5.0,
+      "max": 15,
+      "distribution": {
+        "1": 557,
+        "2": 674,
+        "3": 313,
+        "4": 137,
+        "5": 81,
+        "6": 52,
+        "7": 18,
+        "8": 14,
+        "9": 17,
+        "10": 6,
+        "11": 3,
+        "12": 1,
+        "15": 1
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 1874,
+        "xavier": 0.4855923159018143,
+        "orin": 0.3505869797225187,
+        "thor": 0.163820704375667
+      },
+      "ge1_obs": {
+        "n": 2746,
+        "xavier": 0.2520029133284778,
+        "orin": 0.5061908230152949,
+        "thor": 0.24180626365622723
+      }
+    },
+    "predictor_tier_agreement": null,
+    "information_state": {
+      "observations_mean": 1.3015151515151515,
+      "observations_median": 1.0,
+      "observations_max": 14,
+      "fraction_zero_observations": 0.4056277056277056,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 0.9084745762711864,
+          "fraction_zero_observations": 0.4576271186440678,
+          "fraction_G_i_at_prior": null
+        },
+        "250-500": {
+          "observations_mean": 1.098639455782313,
+          "fraction_zero_observations": 0.43197278911564624,
+          "fraction_G_i_at_prior": null
+        },
+        "500-1000": {
+          "observations_mean": 1.5638297872340425,
+          "fraction_zero_observations": 0.34929078014184395,
+          "fraction_G_i_at_prior": null
+        },
+        "1000-2000": {
+          "observations_mean": 1.0778443113772456,
+          "fraction_zero_observations": 0.4354148845166809,
+          "fraction_G_i_at_prior": null
+        },
+        "2000-4000": {
+          "observations_mean": 1.4273281114012184,
+          "fraction_zero_observations": 0.39425587467362927,
+          "fraction_G_i_at_prior": null
+        }
+      }
+    },
+    "s_tau": {
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.2091977005748564,
+      "max": 27,
+      "n": 4001
+    },
+    "curve": {
+      "plateau": 0.82785,
+      "best": 0.8433,
+      "noise_sd": 0.0404662673932481,
+      "rounds_to_70": 190,
+      "tta_h_70": 0.09772187499999996,
+      "rounds_to_75": 350,
+      "tta_h_75": 0.1797832152777777,
+      "rounds_to_78": 640,
+      "tta_h_78": 0.3171859030555555,
+      "rounds_to_80": 1060,
+      "tta_h_80": 0.5195673474999996
+    },
+    "recycles": 2048,
+    "state_resets": 2048,
+    "summary": {
+      "recycles": 2048,
+      "state_resets": 2048,
+      "slot_exhausted": 39,
+      "occupancy_digest": "efe71e55c92abb87c2afca4350d8dae8"
+    }
+  },
+  "cpu_closed": {
+    "p_recur": 1.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 9445.732865999982,
+      "predicted": 9442.360666500126,
+      "rel_error": -0.0003570077142446186,
+      "mean_sleep": 7.957425210105264
+    },
+    "clock_at": {
+      "100": 193.25380400000003,
+      "250": 487.79505799999987,
+      "500": 982.1726299999999,
+      "1000": 2173.015359000002,
+      "2000": 4654.978067999986,
+      "4000": 9445.732865999982
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4750,
+        "wasted": 747,
+        "wasted_frac": 0.15726315789473685
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 2381,
+          "wasted": 666,
+          "wasted_frac": 0.27971440571188577
+        },
+        "orin": {
+          "dispatches": 1633,
+          "wasted": 62,
+          "wasted_frac": 0.037966932026944275
+        },
+        "thor": {
+          "dispatches": 736,
+          "wasted": 19,
+          "wasted_frac": 0.025815217391304348
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.5012631578947369,
+        "orin": 0.34378947368421053,
+        "thor": 0.15494736842105264
+      },
+      "1-250": {
+        "xavier": 0.4117647058823529,
+        "orin": 0.4083044982698962,
+        "thor": 0.17993079584775087
+      },
+      "250-500": {
+        "xavier": 0.4186851211072664,
+        "orin": 0.39100346020761245,
+        "thor": 0.1903114186851211
+      },
+      "500-1000": {
+        "xavier": 0.5126903553299492,
+        "orin": 0.3147208121827411,
+        "thor": 0.17258883248730963
+      },
+      "1000-2000": {
+        "xavier": 0.5241666666666667,
+        "orin": 0.3458333333333333,
+        "thor": 0.13
+      },
+      "2000-4000": {
+        "xavier": 0.5077698446031079,
+        "orin": 0.3364132717345653,
+        "thor": 0.15581688366232677
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 2193,
+      "mean": 2.165982672138623,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 3.0,
+      "max": 10,
+      "distribution": {
+        "1": 667,
+        "2": 881,
+        "3": 443,
+        "4": 106,
+        "5": 54,
+        "6": 20,
+        "7": 8,
+        "8": 7,
+        "9": 4,
+        "10": 3
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 22,
+        "xavier": 0.5454545454545454,
+        "orin": 0.3181818181818182,
+        "thor": 0.13636363636363635
+      },
+      "ge1_obs": {
+        "n": 4728,
+        "xavier": 0.501057529610829,
+        "orin": 0.34390862944162437,
+        "thor": 0.15503384094754652
+      }
+    },
+    "predictor_tier_agreement": 1.0,
+    "information_state": {
+      "observations_mean": 101.21115789473684,
+      "observations_median": 98.0,
+      "observations_max": 258,
+      "fraction_zero_observations": 0.0046315789473684215,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 6.539792387543253,
+          "fraction_zero_observations": 0.07612456747404844,
+          "fraction_G_i_at_prior": 0.07612456747404844
+        },
+        "250-500": {
+          "observations_mean": 19.470588235294116,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "500-1000": {
+          "observations_mean": 37.74788494077834,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "1000-2000": {
+          "observations_mean": 74.75416666666666,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "2000-4000": {
+          "observations_mean": 151.7102057958841,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        }
+      },
+      "fraction_G_i_at_prior": 0.0046315789473684215
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.4409341664093681,
+        "median": 0.4409341664093681,
+        "n": 2381
+      },
+      "orin": {
+        "mean": 0.4409341664093681,
+        "median": 0.4409341664093681,
+        "n": 1633
+      },
+      "thor": {
+        "mean": 0.4886923071199608,
+        "median": 0.4886923071199608,
+        "n": 736
+      },
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.20625,
+      "max": 18,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.8326,
+      "best": 0.842,
+      "noise_sd": 0.04792603009484125,
+      "rounds_to_70": 210,
+      "tta_h_70": 0.11410096944444446,
+      "rounds_to_75": 380,
+      "tta_h_75": 0.20716270083333344,
+      "rounds_to_78": 520,
+      "tta_h_78": 0.2841298472222223,
+      "rounds_to_80": 820,
+      "tta_h_80": 0.48389302055555605
+    },
+    "recycles": 2713,
+    "state_resets": 20,
+    "summary": {
+      "recycles": 2713,
+      "state_resets": 20,
+      "slot_exhausted": 52,
+      "occupancy_digest": "b88da3c8e8047da0cd0ad62d1674744b"
+    }
+  },
+  "cpu_open": {
+    "p_recur": 0.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7723.290762000005,
+      "predicted": 7724.144584561579,
+      "rel_error": 0.00011055165315992878,
+      "mean_sleep": 6.914076648479427
+    },
+    "clock_at": {
+      "100": 135.493756,
+      "250": 459.2021819999999,
+      "500": 959.4488809999999,
+      "1000": 1852.161857,
+      "2000": 3841.0674029999973,
+      "4000": 7723.290762000005
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4472,
+        "wasted": 469,
+        "wasted_frac": 0.10487477638640429
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1767,
+          "wasted": 389,
+          "wasted_frac": 0.22014714204867006
+        },
+        "orin": {
+          "dispatches": 1805,
+          "wasted": 69,
+          "wasted_frac": 0.03822714681440443
+        },
+        "thor": {
+          "dispatches": 900,
+          "wasted": 11,
+          "wasted_frac": 0.012222222222222223
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.3951252236135957,
+        "orin": 0.40362254025044725,
+        "thor": 0.20125223613595708
+      },
+      "1-250": {
+        "xavier": 0.37142857142857144,
+        "orin": 0.4785714285714286,
+        "thor": 0.15
+      },
+      "250-500": {
+        "xavier": 0.41637010676156583,
+        "orin": 0.40569395017793597,
+        "thor": 0.17793594306049823
+      },
+      "500-1000": {
+        "xavier": 0.36804308797127466,
+        "orin": 0.40933572710951527,
+        "thor": 0.22262118491921004
+      },
+      "1000-2000": {
+        "xavier": 0.40591397849462363,
+        "orin": 0.3763440860215054,
+        "thor": 0.21774193548387097
+      },
+      "2000-4000": {
+        "xavier": 0.3967828418230563,
+        "orin": 0.4061662198391421,
+        "thor": 0.1970509383378016
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 2173,
+      "mean": 2.05798435342844,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 3.0,
+      "max": 12,
+      "distribution": {
+        "1": 819,
+        "2": 824,
+        "3": 315,
+        "4": 126,
+        "5": 45,
+        "6": 17,
+        "7": 11,
+        "8": 7,
+        "9": 2,
+        "10": 2,
+        "11": 2,
+        "12": 3
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 2173,
+        "xavier": 0.4832029452369995,
+        "orin": 0.3465255407271054,
+        "thor": 0.17027151403589508
+      },
+      "ge1_obs": {
+        "n": 2299,
+        "xavier": 0.31187472814267075,
+        "orin": 0.4575902566333188,
+        "thor": 0.23053501522401043
+      }
+    },
+    "predictor_tier_agreement": 1.0,
+    "information_state": {
+      "observations_mean": 0.9228533094812165,
+      "observations_median": 1.0,
+      "observations_max": 11,
+      "fraction_zero_observations": 0.485912343470483,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 0.725,
+          "fraction_zero_observations": 0.5357142857142857,
+          "fraction_G_i_at_prior": 0.5357142857142857
+        },
+        "250-500": {
+          "observations_mean": 0.708185053380783,
+          "fraction_zero_observations": 0.5088967971530249,
+          "fraction_G_i_at_prior": 0.5088967971530249
+        },
+        "500-1000": {
+          "observations_mean": 1.1579892280071813,
+          "fraction_zero_observations": 0.42190305206463197,
+          "fraction_G_i_at_prior": 0.42190305206463197
+        },
+        "1000-2000": {
+          "observations_mean": 0.7974910394265233,
+          "fraction_zero_observations": 0.5116487455197133,
+          "fraction_G_i_at_prior": 0.5116487455197133
+        },
+        "2000-4000": {
+          "observations_mean": 0.9785522788203753,
+          "fraction_zero_observations": 0.47989276139410186,
+          "fraction_G_i_at_prior": 0.47989276139410186
+        }
+      },
+      "fraction_G_i_at_prior": 0.485912343470483
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.4409341664093681,
+        "median": 0.4409341664093681,
+        "n": 1767
+      },
+      "orin": {
+        "mean": 0.4409341664093681,
+        "median": 0.4409341664093681,
+        "n": 1805
+      },
+      "thor": {
+        "mean": 0.4886923071199608,
+        "median": 0.4886923071199608,
+        "n": 900
+      },
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.407,
+      "max": 24,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.83615,
+      "best": 0.8477,
+      "noise_sd": 0.047456291635291206,
+      "rounds_to_70": 210,
+      "tta_h_70": 0.09892941749999996,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.17878835777777768,
+      "rounds_to_78": 560,
+      "tta_h_78": 0.3049086708333333,
+      "rounds_to_80": 920,
+      "tta_h_80": 0.46963108000000003
+    },
+    "recycles": 2183,
+    "state_resets": 2183,
+    "summary": {
+      "recycles": 2183,
+      "state_resets": 2183,
+      "slot_exhausted": 40,
+      "occupancy_digest": "15c04413301e435ad66d01a4bdd7d951"
+    }
+  },
+  "gpu_closed": {
+    "p_recur": 1.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7659.307165999953,
+      "predicted": 7661.722225887056,
+      "rel_error": 0.0003153104888942752,
+      "mean_sleep": 6.633970650800519
+    },
+    "clock_at": {
+      "100": 162.23350200000002,
+      "250": 390.27949100000006,
+      "500": 730.0553789999996,
+      "1000": 1695.8847190000013,
+      "2000": 3718.2128189999958,
+      "4000": 7659.307165999953
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4622,
+        "wasted": 620,
+        "wasted_frac": 0.13414106447425356
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1843,
+          "wasted": 526,
+          "wasted_frac": 0.2854042322300597
+        },
+        "orin": {
+          "dispatches": 1916,
+          "wasted": 72,
+          "wasted_frac": 0.037578288100208766
+        },
+        "thor": {
+          "dispatches": 863,
+          "wasted": 22,
+          "wasted_frac": 0.02549246813441483
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.39874513197749895,
+        "orin": 0.41453916053656426,
+        "thor": 0.18671570748593683
+      },
+      "1-250": {
+        "xavier": 0.31316725978647686,
+        "orin": 0.4875444839857651,
+        "thor": 0.199288256227758
+      },
+      "250-500": {
+        "xavier": 0.27205882352941174,
+        "orin": 0.47794117647058826,
+        "thor": 0.25
+      },
+      "500-1000": {
+        "xavier": 0.3993115318416523,
+        "orin": 0.4268502581755594,
+        "thor": 0.1738382099827883
+      },
+      "1000-2000": {
+        "xavier": 0.42150170648464164,
+        "orin": 0.39419795221843,
+        "thor": 0.18430034129692832
+      },
+      "2000-4000": {
+        "xavier": 0.4123488773747841,
+        "orin": 0.405440414507772,
+        "thor": 0.18221070811744386
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1855,
+      "mean": 2.491644204851752,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 4.0,
+      "max": 11,
+      "distribution": {
+        "1": 487,
+        "2": 673,
+        "3": 388,
+        "4": 128,
+        "5": 66,
+        "6": 57,
+        "7": 30,
+        "8": 9,
+        "9": 13,
+        "10": 2,
+        "11": 2
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 24,
+        "xavier": 0.5833333333333334,
+        "orin": 0.2916666666666667,
+        "thor": 0.125
+      },
+      "ge1_obs": {
+        "n": 4598,
+        "xavier": 0.39778164419312745,
+        "orin": 0.4151805132666377,
+        "thor": 0.1870378425402349
+      }
+    },
+    "predictor_tier_agreement": 1.0,
+    "information_state": {
+      "observations_mean": 108.52574643011683,
+      "observations_median": 95.0,
+      "observations_max": 307,
+      "fraction_zero_observations": 0.005192557334487235,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 7.274021352313167,
+          "fraction_zero_observations": 0.08540925266903915,
+          "fraction_G_i_at_prior": 0.08540925266903915
+        },
+        "250-500": {
+          "observations_mean": 23.198529411764707,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "500-1000": {
+          "observations_mean": 42.0895008605852,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "1000-2000": {
+          "observations_mean": 80.76621160409556,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "2000-4000": {
+          "observations_mean": 161.54576856649396,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        }
+      },
+      "fraction_G_i_at_prior": 0.005192557334487235
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.3490263841682728,
+        "median": 0.3490263841682728,
+        "n": 1843
+      },
+      "orin": {
+        "mean": 0.7208971605512328,
+        "median": 0.7208971605512328,
+        "n": 1916
+      },
+      "thor": {
+        "mean": 0.8218308643773384,
+        "median": 0.8218308643773384,
+        "n": 863
+      },
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.2265,
+      "max": 21,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.8229,
+      "best": 0.8399,
+      "noise_sd": 0.043896107479639186,
+      "rounds_to_70": 180,
+      "tta_h_70": 0.07699452138888888,
+      "rounds_to_75": 360,
+      "tta_h_75": 0.15310037249999997,
+      "rounds_to_78": 620,
+      "tta_h_78": 0.2690968724999999,
+      "rounds_to_80": 1050,
+      "tta_h_80": 0.49025743722222254
+    },
+    "recycles": 2163,
+    "state_resets": 20,
+    "summary": {
+      "recycles": 2163,
+      "state_resets": 20,
+      "slot_exhausted": 40,
+      "occupancy_digest": "0888693af5e9f633a7051b8078240ef9"
+    }
+  },
+  "gpu_open": {
+    "p_recur": 0.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6768.578327999998,
+      "predicted": 6770.344517611792,
+      "rel_error": 0.0002609395246987071,
+      "mean_sleep": 6.165079414012739
+    },
+    "clock_at": {
+      "100": 116.738227,
+      "250": 389.7564399999999,
+      "500": 821.2948979999998,
+      "1000": 1626.0401100000001,
+      "2000": 3398.3361519999994,
+      "4000": 6768.578327999998
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4396,
+        "wasted": 393,
+        "wasted_frac": 0.08939945404913557
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1494,
+          "wasted": 329,
+          "wasted_frac": 0.22021419009370816
+        },
+        "orin": {
+          "dispatches": 1930,
+          "wasted": 50,
+          "wasted_frac": 0.025906735751295335
+        },
+        "thor": {
+          "dispatches": 972,
+          "wasted": 14,
+          "wasted_frac": 0.01440329218106996
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.3398544131028208,
+        "orin": 0.4390354868061874,
+        "thor": 0.2211101000909918
+      },
+      "1-250": {
+        "xavier": 0.3358208955223881,
+        "orin": 0.48880597014925375,
+        "thor": 0.17537313432835822
+      },
+      "250-500": {
+        "xavier": 0.35036496350364965,
+        "orin": 0.4562043795620438,
+        "thor": 0.19343065693430658
+      },
+      "500-1000": {
+        "xavier": 0.32014388489208634,
+        "orin": 0.4550359712230216,
+        "thor": 0.22482014388489208
+      },
+      "1000-2000": {
+        "xavier": 0.36199095022624433,
+        "orin": 0.3936651583710407,
+        "thor": 0.24434389140271492
+      },
+      "2000-4000": {
+        "xavier": 0.3328773369813042,
+        "orin": 0.4496124031007752,
+        "thor": 0.21751025991792067
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1907,
+      "mean": 2.3051914001048766,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 4.0,
+      "max": 13,
+      "distribution": {
+        "1": 658,
+        "2": 651,
+        "3": 302,
+        "4": 138,
+        "5": 67,
+        "6": 38,
+        "7": 28,
+        "8": 13,
+        "9": 9,
+        "10": 1,
+        "11": 1,
+        "13": 1
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 1907,
+        "xavier": 0.4845306764551652,
+        "orin": 0.34766649187205034,
+        "thor": 0.16780283167278448
+      },
+      "ge1_obs": {
+        "n": 2489,
+        "xavier": 0.22900763358778625,
+        "orin": 0.5090397750100442,
+        "thor": 0.26195259140216953
+      }
+    },
+    "predictor_tier_agreement": 1.0,
+    "information_state": {
+      "observations_mean": 1.155368516833485,
+      "observations_median": 1.0,
+      "observations_max": 12,
+      "fraction_zero_observations": 0.433803457688808,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 0.9664179104477612,
+          "fraction_zero_observations": 0.4925373134328358,
+          "fraction_G_i_at_prior": 0.4925373134328358
+        },
+        "250-500": {
+          "observations_mean": 1.0693430656934306,
+          "fraction_zero_observations": 0.44525547445255476,
+          "fraction_G_i_at_prior": 0.44525547445255476
+        },
+        "500-1000": {
+          "observations_mean": 1.4046762589928057,
+          "fraction_zero_observations": 0.37410071942446044,
+          "fraction_G_i_at_prior": 0.37410071942446044
+        },
+        "1000-2000": {
+          "observations_mean": 0.9791855203619909,
+          "fraction_zero_observations": 0.4597285067873303,
+          "fraction_G_i_at_prior": 0.4597285067873303
+        },
+        "2000-4000": {
+          "observations_mean": 1.2147742818057456,
+          "fraction_zero_observations": 0.4272685818513452,
+          "fraction_G_i_at_prior": 0.4272685818513452
+        }
+      },
+      "fraction_G_i_at_prior": 0.433803457688808
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.3490263841682728,
+        "median": 0.3490263841682728,
+        "n": 1494
+      },
+      "orin": {
+        "mean": 0.7208971605512328,
+        "median": 0.7208971605512328,
+        "n": 1930
+      },
+      "thor": {
+        "mean": 0.8218308643773384,
+        "median": 0.8218308643773384,
+        "n": 972
+      },
+      "_unseen_default_fraction": 0.0
+    },
+    "staleness": {
+      "mean": 2.429,
+      "max": 26,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.82775,
+      "best": 0.8435,
+      "noise_sd": 0.04853488369294522,
+      "rounds_to_70": 200,
+      "tta_h_70": 0.07690713194444443,
+      "rounds_to_75": 430,
+      "tta_h_75": 0.1850924747222223,
+      "rounds_to_78": 630,
+      "tta_h_78": 0.3020835166666666,
+      "rounds_to_80": 910,
+      "tta_h_80": 0.3972828855555557
+    },
+    "recycles": 1916,
+    "state_resets": 1916,
+    "summary": {
+      "recycles": 1916,
+      "state_resets": 1916,
+      "slot_exhausted": 39,
+      "occupancy_digest": "fe61c2e2ad63bddd824d961d5549f521"
+    }
+  },
+  "observed_closed": {
+    "p_recur": 1.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7874.311964999959,
+      "predicted": 7875.875893526619,
+      "rel_error": 0.00019861145121137877,
+      "mean_sleep": 6.751956170987786
+    },
+    "clock_at": {
+      "100": 171.653038,
+      "250": 397.9471229999999,
+      "500": 752.3956479999998,
+      "1000": 1734.9695689999999,
+      "2000": 3794.594142999997,
+      "4000": 7874.311964999959
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4667,
+        "wasted": 666,
+        "wasted_frac": 0.1427040925648168
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1907,
+          "wasted": 573,
+          "wasted_frac": 0.3004719454640797
+        },
+        "orin": {
+          "dispatches": 1902,
+          "wasted": 70,
+          "wasted_frac": 0.03680336487907466
+        },
+        "thor": {
+          "dispatches": 858,
+          "wasted": 23,
+          "wasted_frac": 0.026806526806526808
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.40861367045211056,
+        "orin": 0.40754231840582816,
+        "thor": 0.18384401114206128
+      },
+      "1-250": {
+        "xavier": 0.3238434163701068,
+        "orin": 0.505338078291815,
+        "thor": 0.1708185053380783
+      },
+      "250-500": {
+        "xavier": 0.2872727272727273,
+        "orin": 0.44727272727272727,
+        "thor": 0.26545454545454544
+      },
+      "500-1000": {
+        "xavier": 0.4106529209621993,
+        "orin": 0.4072164948453608,
+        "thor": 0.18213058419243985
+      },
+      "1000-2000": {
+        "xavier": 0.4322469982847341,
+        "orin": 0.3867924528301887,
+        "thor": 0.18096054888507718
+      },
+      "2000-4000": {
+        "xavier": 0.4206517139229793,
+        "orin": 0.4016081252644943,
+        "thor": 0.17774016081252644
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1888,
+      "mean": 2.471927966101695,
+      "median": 2.0,
+      "p10": 1.0,
+      "p90": 4.0,
+      "max": 13,
+      "distribution": {
+        "1": 478,
+        "2": 691,
+        "3": 396,
+        "4": 145,
+        "5": 102,
+        "6": 37,
+        "7": 23,
+        "8": 7,
+        "9": 4,
+        "10": 3,
+        "11": 1,
+        "13": 1
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 24,
+        "xavier": 0.5833333333333334,
+        "orin": 0.2916666666666667,
+        "thor": 0.125
+      },
+      "ge1_obs": {
+        "n": 4643,
+        "xavier": 0.4077105319836313,
+        "orin": 0.40814128796037047,
+        "thor": 0.18414818005599828
+      }
+    },
+    "predictor_tier_agreement": null,
+    "information_state": {
+      "observations_mean": 107.99700021427041,
+      "observations_median": 96,
+      "observations_max": 310,
+      "fraction_zero_observations": 0.005142489822155561,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 7.252669039145908,
+          "fraction_zero_observations": 0.08540925266903915,
+          "fraction_G_i_at_prior": 0.08540925266903915
+        },
+        "250-500": {
+          "observations_mean": 22.727272727272727,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "500-1000": {
+          "observations_mean": 40.89518900343643,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "1000-2000": {
+          "observations_mean": 79.93825042881646,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        },
+        "2000-4000": {
+          "observations_mean": 160.27295810410496,
+          "fraction_zero_observations": 0.0,
+          "fraction_G_i_at_prior": 0.0
+        }
+      },
+      "fraction_G_i_at_prior": 0.005142489822155561
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.43954018203415773,
+        "median": 0.4082482904638631,
+        "n": 1907
+      },
+      "orin": {
+        "mean": 0.8282771849696796,
+        "median": 0.7071067811865475,
+        "n": 1902
+      },
+      "thor": {
+        "mean": 0.8808939275715756,
+        "median": 1.0,
+        "n": 858
+      },
+      "_unseen_default_fraction": 0.005142489822155561
+    },
+    "staleness": {
+      "mean": 2.18475,
+      "max": 19,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.83245,
+      "best": 0.8473,
+      "noise_sd": 0.044289016241604674,
+      "rounds_to_70": 220,
+      "tta_h_70": 0.09892676694444447,
+      "rounds_to_75": 350,
+      "tta_h_75": 0.1505556744444444,
+      "rounds_to_78": 560,
+      "tta_h_78": 0.23592910111111107,
+      "rounds_to_80": 940,
+      "tta_h_80": 0.44946311750000023
+    },
+    "recycles": 2232,
+    "state_resets": 20,
+    "summary": {
+      "recycles": 2232,
+      "state_resets": 20,
+      "slot_exhausted": 40,
+      "occupancy_digest": "ff2063ed20a181df63b52d5edb02a33b"
+    }
+  },
+  "observed_open": {
+    "p_recur": 0.0,
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6901.459588999994,
+      "predicted": 6902.9949775168625,
+      "rel_error": 0.0002224730141600787,
+      "mean_sleep": 6.303076846487226
+    },
+    "clock_at": {
+      "100": 133.885021,
+      "250": 416.5852599999998,
+      "500": 818.0155729999999,
+      "1000": 1626.0030560000005,
+      "2000": 3425.697649999997,
+      "4000": 6901.459588999994
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4384,
+        "wasted": 381,
+        "wasted_frac": 0.08690693430656934
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1526,
+          "wasted": 303,
+          "wasted_frac": 0.19855832241153343
+        },
+        "orin": {
+          "dispatches": 1950,
+          "wasted": 66,
+          "wasted_frac": 0.033846153846153845
+        },
+        "thor": {
+          "dispatches": 908,
+          "wasted": 12,
+          "wasted_frac": 0.013215859030837005
+        }
+      }
+    },
+    "dispatch_share": {
+      "overall": {
+        "xavier": 0.34808394160583944,
+        "orin": 0.4447992700729927,
+        "thor": 0.2071167883211679
+      },
+      "1-250": {
+        "xavier": 0.33935018050541516,
+        "orin": 0.48375451263537905,
+        "thor": 0.17689530685920576
+      },
+      "250-500": {
+        "xavier": 0.31386861313868614,
+        "orin": 0.5109489051094891,
+        "thor": 0.17518248175182483
+      },
+      "500-1000": {
+        "xavier": 0.32727272727272727,
+        "orin": 0.4527272727272727,
+        "thor": 0.22
+      },
+      "1000-2000": {
+        "xavier": 0.36603088101725706,
+        "orin": 0.405086285195277,
+        "thor": 0.22888283378746593
+      },
+      "2000-4000": {
+        "xavier": 0.34967919340055,
+        "orin": 0.44958753437213567,
+        "thor": 0.20073327222731438
+      }
+    },
+    "kappa": {
+      "vehicles_dispatched": 1945,
+      "mean": 2.2539845758354757,
+      "median": 2,
+      "p10": 1.0,
+      "p90": 4.0,
+      "max": 11,
+      "distribution": {
+        "1": 702,
+        "2": 632,
+        "3": 325,
+        "4": 136,
+        "5": 83,
+        "6": 33,
+        "7": 14,
+        "8": 6,
+        "9": 4,
+        "10": 6,
+        "11": 4
+      }
+    },
+    "tier_mix_by_information": {
+      "zero_obs": {
+        "n": 1945,
+        "xavier": 0.48894601542416455,
+        "orin": 0.34498714652956297,
+        "thor": 0.16606683804627248
+      },
+      "ge1_obs": {
+        "n": 2439,
+        "xavier": 0.23575235752357523,
+        "orin": 0.5243952439524395,
+        "thor": 0.23985239852398524
+      }
+    },
+    "predictor_tier_agreement": null,
+    "information_state": {
+      "observations_mean": 1.10492700729927,
+      "observations_median": 1.0,
+      "observations_max": 10,
+      "fraction_zero_observations": 0.4436587591240876,
+      "per_window": {
+        "1-250": {
+          "observations_mean": 0.9638989169675091,
+          "fraction_zero_observations": 0.5054151624548736,
+          "fraction_G_i_at_prior": 0.5054151624548736
+        },
+        "250-500": {
+          "observations_mean": 1.27007299270073,
+          "fraction_zero_observations": 0.41605839416058393,
+          "fraction_G_i_at_prior": 0.41605839416058393
+        },
+        "500-1000": {
+          "observations_mean": 1.3563636363636364,
+          "fraction_zero_observations": 0.38,
+          "fraction_G_i_at_prior": 0.38
+        },
+        "1000-2000": {
+          "observations_mean": 0.9237057220708447,
+          "fraction_zero_observations": 0.4659400544959128,
+          "fraction_G_i_at_prior": 0.4659400544959128
+        },
+        "2000-4000": {
+          "observations_mean": 1.1301558203483044,
+          "fraction_zero_observations": 0.4440879926672777,
+          "fraction_G_i_at_prior": 0.4440879926672777
+        }
+      },
+      "fraction_G_i_at_prior": 0.4436587591240876
+    },
+    "s_tau": {
+      "xavier": {
+        "mean": 0.7684426388048782,
+        "median": 0.9950371902099893,
+        "n": 1526
+      },
+      "orin": {
+        "mean": 0.8614723150273593,
+        "median": 0.9950371902099893,
+        "n": 1950
+      },
+      "thor": {
+        "mean": 0.9189451035705949,
+        "median": 0.9950371902099893,
+        "n": 908
+      },
+      "_unseen_default_fraction": 0.4436587591240876
+    },
+    "staleness": {
+      "mean": 2.46975,
+      "max": 20,
+      "n": 4000
+    },
+    "curve": {
+      "plateau": 0.8269,
+      "best": 0.8497,
+      "noise_sd": 0.046184822032783394,
+      "rounds_to_70": 230,
+      "tta_h_70": 0.10337534472222215,
+      "rounds_to_75": 390,
+      "tta_h_75": 0.1735886461111112,
+      "rounds_to_78": 580,
+      "tta_h_78": 0.27075036611111114,
+      "rounds_to_80": 800,
+      "tta_h_80": 0.35751046166666706
+    },
+    "recycles": 1952,
+    "state_resets": 1952,
+    "summary": {
+      "recycles": 1952,
+      "state_resets": 1952,
+      "slot_exhausted": 39,
+      "occupancy_digest": "aadf9c8735250d8975b4c330c5241ea4"
+    }
+  },
+  "_occupancy_invariant": {
+    "common_time_s": 6768.578327999998,
+    "expected_digest": "35fbd45f899a318ba5a26b3636394b5b",
+    "expected_recycles": 1879,
+    "expected_turned_away": 39,
+    "realised_prefix_recycles": 1916,
+    "realised_prefix_digests": {
+      "baseline_closed": "68f7c36235dafc085cbcc04fb6400455",
+      "baseline_open": "68f7c36235dafc085cbcc04fb6400455",
+      "cpu_closed": "68f7c36235dafc085cbcc04fb6400455",
+      "cpu_open": "68f7c36235dafc085cbcc04fb6400455",
+      "gpu_closed": "68f7c36235dafc085cbcc04fb6400455",
+      "gpu_open": "68f7c36235dafc085cbcc04fb6400455",
+      "observed_closed": "68f7c36235dafc085cbcc04fb6400455",
+      "observed_open": "68f7c36235dafc085cbcc04fb6400455"
+    },
+    "identical_across_runs": true,
+    "first_divergence": null,
+    "note": "each run's own end-of-run digest is a prefix at ITS final time; compare at this common t instead"
+  }
+}

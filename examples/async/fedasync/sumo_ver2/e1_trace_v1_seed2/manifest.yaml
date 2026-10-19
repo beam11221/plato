@@ -1,0 +1,27 @@
+bundle_version: e1_trace_v1
+created_utc: '2026-09-05T09:02:38.385295+00:00'
+seed: 2
+sumo_version: Eclipse SUMO sumo Version 1.21.0
+e1_sim_git_commit: e4a3c4bc32b3648e3b66aa856d49ef0b596c043c
+e1_sim_git_dirty: false
+sha256:
+  trace.csv: 4bf9214d1a02425c14d4295134414a11c09767e7cab6dccd0589ea29c0517364
+  vehicles.csv: 8f254dbc1b98348d3d750d7a030b6beb0a228e20ca574b9cfeed53c87d2ee01b
+  config.yaml: b051f0fa4cf45b11d93a6c3be539f22da781fe0edf50335328b0ea365953d83c
+derived:
+  mean_pool_size: 19.41255
+  pool_size_v1_pass: true
+  mean_residence_s: 32.35096
+  p95_residence_s: 38.0
+  churn_per_s: 0.809
+  realised_tier_mix:
+    xavier: 0.48349
+    orin: 0.34954
+    thor: 0.16697
+  kappa_estimates:
+    C=1: 0.074178
+    C=2: 0.148357
+    C=4: 0.296714
+  kappa_t_bar_provisional: true
+scope: 'E1-A: RSU is a coverage predicate only; uplink rate is constant; no communication
+  term enters the selection score.'

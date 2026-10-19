@@ -1,0 +1,15 @@
+{
+  "dispatches": [
+    4620,
+    4583
+  ],
+  "dispatch_sequence_identical": false,
+  "first_difference_index": 25,
+  "T4000": [
+    7238.013661999999,
+    7144.861657999994
+  ],
+  "T4000_identical": false,
+  "recycle_sequence_identical": false,
+  "pass": false
+}

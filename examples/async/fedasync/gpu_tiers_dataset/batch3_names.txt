@@ -1,0 +1,4 @@
+# Batch 3 (Machine 2): gpu_oracle at C=4, C=8. Launch ONLY after every name in
+# batch2_names.txt has a .done marker in logs/ -- see STAGE3_run_sweep.md.
+gpu_oracle_a0p8_N20_C4_s4126
+gpu_oracle_a0p8_N20_C8_s4126

@@ -1,0 +1,6 @@
+baseline_a0p8_N40_C4_s4126
+gpu_a0p8_N40_C4_s4126
+cpu_a0p8_N40_C4_s4126
+observed_a0p8_N40_C4_s4126
+gpu_oracle_a0p8_N20_C4_s4126
+gpu_oracle_a0p8_N20_C8_s4126

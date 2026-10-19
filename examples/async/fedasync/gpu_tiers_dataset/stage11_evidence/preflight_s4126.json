@@ -1,0 +1,1196 @@
+{
+  "stage11f_p025_s4126_preflight_gpu_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        46,
+        46,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        37,
+        37,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        9,
+        9,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        8,
+        8,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1241,
+        1241,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1241,
+        1241,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1241,
+        1241,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1241,
+        1241,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        101,
+        101,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        101,
+        101,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        104,
+        104,
+        ""
+      ],
+      "[11] predictor tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        104,
+        104,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        29,
+        29,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "9fed5a63b89723af40cbec3e06f5bec4 vs 9fed5a63b89723af40cbec3e06f5bec4"
+      ]
+    },
+    "allocations": 46,
+    "commuter_allocations": 9,
+    "realised_share": 0.1956521739130435,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 5,
+        "orin": 3,
+        "thor": 1
+      },
+      "transient": {
+        "orin": 16,
+        "thor": 8,
+        "xavier": 13
+      }
+    },
+    "identity_digest_replay": "9fed5a63b89723af40cbec3e06f5bec4",
+    "summary_digest": "9fed5a63b89723af40cbec3e06f5bec4",
+    "pool_after_median": 10,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p025_s4126_preflight_baseline_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        44,
+        44,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        36,
+        36,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        8,
+        8,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        7,
+        7,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1212,
+        1212,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1212,
+        1212,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1212,
+        1212,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1212,
+        1212,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        100,
+        100,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        100,
+        100,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        103,
+        103,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        103,
+        103,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        22,
+        22,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "4cb922abc54c2d0dc72af6e1059bcdd9 vs 4cb922abc54c2d0dc72af6e1059bcdd9"
+      ]
+    },
+    "allocations": 44,
+    "commuter_allocations": 8,
+    "realised_share": 0.18181818181818182,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 5,
+        "orin": 2,
+        "thor": 1
+      },
+      "transient": {
+        "orin": 15,
+        "thor": 8,
+        "xavier": 13
+      }
+    },
+    "identity_digest_replay": "4cb922abc54c2d0dc72af6e1059bcdd9",
+    "summary_digest": "4cb922abc54c2d0dc72af6e1059bcdd9",
+    "pool_after_median": 10.0,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p050_s4126_preflight_gpu_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        47,
+        47,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        24,
+        24,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        23,
+        23,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        17,
+        17,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1239,
+        1239,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1239,
+        1239,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1239,
+        1239,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1239,
+        1239,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        101,
+        101,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        101,
+        101,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        104,
+        104,
+        ""
+      ],
+      "[11] predictor tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        104,
+        104,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        28,
+        28,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        6,
+        6,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "f612165c3b07edf8bc4b5ccc07591c07 vs f612165c3b07edf8bc4b5ccc07591c07"
+      ]
+    },
+    "allocations": 47,
+    "commuter_allocations": 23,
+    "realised_share": 0.48936170212765956,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 13,
+        "orin": 7,
+        "thor": 3
+      },
+      "transient": {
+        "orin": 13,
+        "thor": 5,
+        "xavier": 6
+      }
+    },
+    "identity_digest_replay": "f612165c3b07edf8bc4b5ccc07591c07",
+    "summary_digest": "f612165c3b07edf8bc4b5ccc07591c07",
+    "pool_after_median": 11,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p050_s4126_preflight_baseline_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        54,
+        54,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        26,
+        26,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        28,
+        28,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        17,
+        17,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1209,
+        1209,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1209,
+        1209,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1209,
+        1209,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1209,
+        1209,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        100,
+        100,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        100,
+        100,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        103,
+        103,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        103,
+        103,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        33,
+        33,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        11,
+        11,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "dd74232c256b96a1358c6f70ef5d3767 vs dd74232c256b96a1358c6f70ef5d3767"
+      ]
+    },
+    "allocations": 54,
+    "commuter_allocations": 28,
+    "realised_share": 0.5185185185185185,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 15,
+        "orin": 10,
+        "thor": 3
+      },
+      "transient": {
+        "orin": 13,
+        "thor": 5,
+        "xavier": 8
+      }
+    },
+    "identity_digest_replay": "dd74232c256b96a1358c6f70ef5d3767",
+    "summary_digest": "dd74232c256b96a1358c6f70ef5d3767",
+    "pool_after_median": 10.0,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p075_s4126_preflight_gpu_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        49,
+        49,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        31,
+        31,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        19,
+        19,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        18,
+        18,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1218,
+        1218,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1218,
+        1218,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1218,
+        1218,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1218,
+        1218,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        101,
+        101,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        101,
+        101,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        104,
+        104,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        104,
+        104,
+        ""
+      ],
+      "[11] predictor tier == occupant tier": [
+        104,
+        104,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        104,
+        104,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        42,
+        42,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        12,
+        12,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "700c416ae028dfb1d74968a570ec80e4 vs 700c416ae028dfb1d74968a570ec80e4"
+      ]
+    },
+    "allocations": 49,
+    "commuter_allocations": 31,
+    "realised_share": 0.6326530612244898,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 18,
+        "orin": 8,
+        "thor": 5
+      },
+      "transient": {
+        "thor": 4,
+        "orin": 8,
+        "xavier": 6
+      }
+    },
+    "identity_digest_replay": "700c416ae028dfb1d74968a570ec80e4",
+    "summary_digest": "700c416ae028dfb1d74968a570ec80e4",
+    "pool_after_median": 9,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p075_s4126_preflight_baseline_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        50,
+        50,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        32,
+        32,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        19,
+        19,
+        ""
+      ],
+      "[11] transient identity == trace vehicle, no state carried": [
+        18,
+        18,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1202,
+        1202,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1202,
+        1202,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1202,
+        1202,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1202,
+        1202,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        100,
+        100,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        100,
+        100,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        103,
+        103,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        103,
+        103,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        38,
+        38,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        13,
+        13,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "c11cbde172bcdbdbeb661ac12de88777 vs c11cbde172bcdbdbeb661ac12de88777"
+      ]
+    },
+    "allocations": 50,
+    "commuter_allocations": 32,
+    "realised_share": 0.64,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 18,
+        "orin": 9,
+        "thor": 5
+      },
+      "transient": {
+        "thor": 4,
+        "orin": 8,
+        "xavier": 6
+      }
+    },
+    "identity_digest_replay": "c11cbde172bcdbdbeb661ac12de88777",
+    "summary_digest": "c11cbde172bcdbdbeb661ac12de88777",
+    "pool_after_median": 9.0,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p100_s4126_preflight_gpu_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        52,
+        52,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        52,
+        52,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        20,
+        20,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1185,
+        1185,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1185,
+        1185,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1185,
+        1185,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1185,
+        1185,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        100,
+        100,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        100,
+        100,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        103,
+        103,
+        ""
+      ],
+      "[11] predictor tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        103,
+        103,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        32,
+        32,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        31,
+        31,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "b5f0b25ec0174da27058b38bf5710ad0 vs b5f0b25ec0174da27058b38bf5710ad0"
+      ]
+    },
+    "allocations": 52,
+    "commuter_allocations": 52,
+    "realised_share": 1.0,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 27,
+        "orin": 17,
+        "thor": 8
+      },
+      "transient": {}
+    },
+    "identity_digest_replay": "b5f0b25ec0174da27058b38bf5710ad0",
+    "summary_digest": "b5f0b25ec0174da27058b38bf5710ad0",
+    "pool_after_median": 9.0,
+    "fallback_rate": 0.0
+  },
+  "stage11f_p100_s4126_preflight_baseline_ret": {
+    "rows": {
+      "[11] alloc == independent replay (slot, veh, identity, kind)": [
+        51,
+        51,
+        ""
+      ],
+      "[11] alloc count == replay": [
+        1,
+        1,
+        ""
+      ],
+      "[11] commuter tier == its fleet tier": [
+        51,
+        51,
+        ""
+      ],
+      "[11] first commuter entry starts from the prior": [
+        20,
+        20,
+        ""
+      ],
+      "[11] filter identity / tier == occupant": [
+        1184,
+        1184,
+        ""
+      ],
+      "[11] T_hat == GPU spec for occupant tier": [
+        1184,
+        1184,
+        ""
+      ],
+      "[11] R_i == vmax_distance from the trace vehicle": [
+        1184,
+        1184,
+        ""
+      ],
+      "[11] pass == (R_i >= T_hat)": [
+        1184,
+        1184,
+        ""
+      ],
+      "[11] round line == candidate counts": [
+        100,
+        100,
+        ""
+      ],
+      "[11] fallback == (no pass)": [
+        100,
+        100,
+        ""
+      ],
+      "[11] selected passed (or fell back) with the candidate's values": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch identity == occupant": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch tier == occupant tier": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch sleep == occupant sleep": [
+        103,
+        103,
+        ""
+      ],
+      "[11] dispatch partition == occupant partition": [
+        103,
+        103,
+        ""
+      ],
+      "[11] seed == identity_seed(run seed, identity, round)": [
+        103,
+        103,
+        ""
+      ],
+      "[11] state carried on every commuter re-entry": [
+        31,
+        31,
+        ""
+      ],
+      "[11] undefined R_i only in a window's last second": [
+        27,
+        27,
+        ""
+      ],
+      "[11] state resets == transients + first commuter entries (recycle lines)": [
+        1,
+        1,
+        ""
+      ],
+      "[11] state carried == commuter re-entries": [
+        1,
+        1,
+        ""
+      ],
+      "[11] fallback < 10% of rounds": [
+        1,
+        1,
+        ""
+      ],
+      "[11] median eligible_after_stage0 >= 4": [
+        1,
+        1,
+        ""
+      ],
+      "[11] occupancy == Stage 7b over the common prefix": [
+        1,
+        1,
+        ""
+      ],
+      "[11] identity digest == replay digest at this run's count": [
+        1,
+        1,
+        "495dfed7f2c0458efaf768df19b8abd0 vs 495dfed7f2c0458efaf768df19b8abd0"
+      ]
+    },
+    "allocations": 51,
+    "commuter_allocations": 51,
+    "realised_share": 1.0,
+    "exhaustions": 0,
+    "kind_tiers": {
+      "commuter": {
+        "xavier": 26,
+        "orin": 17,
+        "thor": 8
+      },
+      "transient": {}
+    },
+    "identity_digest_replay": "495dfed7f2c0458efaf768df19b8abd0",
+    "summary_digest": "495dfed7f2c0458efaf768df19b8abd0",
+    "pool_after_median": 9.0,
+    "fallback_rate": 0.0
+  }
+}

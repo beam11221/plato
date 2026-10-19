@@ -1,0 +1,137 @@
+{
+  "warmup": {
+    "raw_windows": 10509,
+    "windows_with_negative_t_enter": 36,
+    "dropped_entirely_before_t0": 22,
+    "clipped_at_t0": 14,
+    "windows_after_clip": 10487,
+    "n_windows_open_at_end_dropped_per_config": 9
+  },
+  "crossing_time": {
+    "median": 45.0,
+    "p10": 42.0,
+    "p90": 52.0,
+    "mean": 46.13187756269667,
+    "min": 3.0,
+    "max": 69.0,
+    "fraction_below_vmax_crossing": 0.0012396300181176695,
+    "vmax_crossing_s": 41.142858083265324,
+    "closed_loop_reference": {
+      "median": 45.0,
+      "p10": 42.0,
+      "p90": 52.0
+    }
+  },
+  "occupancy": {
+    "median": 13.0,
+    "p90": 18.0,
+    "p99": 22.0,
+    "max": 29,
+    "mean": 13.438472222222222,
+    "samples": 36000,
+    "M_from_p99": 22,
+    "M_chosen": 20,
+    "partition_size": 2500,
+    "M_times_partition_size": 50000,
+    "M_divides_dataset_exactly": true,
+    "fraction_time_at_or_above_M": 0.05355555555555556
+  },
+  "sleep_model": {
+    "per_tier": {
+      "xavier": {
+        "n": 5168,
+        "mean": 15.171607281704377,
+        "cv": 0.15113588121891167,
+        "theoretical_mean": 15.167810452263264,
+        "closed_loop_mean": 14.37
+      },
+      "orin": {
+        "n": 3674,
+        "mean": 1.9464774014199997,
+        "cv": 0.14948520118810757,
+        "theoretical_mean": 1.9445911614071387,
+        "closed_loop_mean": 1.78
+      },
+      "thor": {
+        "n": 1681,
+        "mean": 1.0166336728994998,
+        "cv": 0.15180972958579692,
+        "theoretical_mean": 1.0111873634842177,
+        "closed_loop_mean": 1.07
+      }
+    },
+    "sigma": 0.149166,
+    "closed_loop_cv": 0.15
+  },
+  "round_model": {
+    "mean_sleep_s": 8.294150308149307,
+    "t_round_s": 2.0735375770373268,
+    "rounds": 4000,
+    "simulated_span_s": 8294.150308149307,
+    "trace_usable_s": 35999.0,
+    "fits_without_wrap": true
+  },
+  "feasible_idle_pool": {
+    "median": 9.0,
+    "p10": 4.0,
+    "p90": 14.0,
+    "rounds_sampled": 4000,
+    "fraction_below_2C": 0.3545,
+    "two_C": 8,
+    "gate_passes": true
+  },
+  "kappa": {
+    "mean": 1.7122338154163292,
+    "median": 1.6702229730194136,
+    "p10": 1.5588747748181193,
+    "p90": 1.9300354354891,
+    "max": 2.561008558629767,
+    "eligible_pool_used": 12.9935,
+    "closed_loop_reference": "70-188",
+    "k_star_reference": "30-70"
+  },
+  "tier_mix": {
+    "in_coverage": {
+      "xavier": 0.49117955564031657,
+      "orin": 0.34881281586726426,
+      "thor": 0.16000762849241917
+    },
+    "counts": {
+      "xavier": 5151,
+      "orin": 3658,
+      "thor": 1678
+    },
+    "config_realised": {
+      "xavier": 0.4911,
+      "orin": 0.3491,
+      "thor": 0.1597
+    },
+    "n_vehicles_in_coverage": 10487
+  },
+  "slot_exhaustion": {
+    "M": 20,
+    "arrivals": 10487,
+    "slot_exhausted_events": 216,
+    "rate": 0.020596929531801277,
+    "peak_occupancy": 20,
+    "recycles": 10271,
+    "dropped_tier_mix": {
+      "xavier": 0.49074074074074076,
+      "orin": 0.375,
+      "thor": 0.13425925925925927
+    },
+    "admitted_tier_mix": {
+      "xavier": 0.49118878395482424,
+      "orin": 0.34826209716678025,
+      "thor": 0.16054911887839549
+    },
+    "dropped_minus_admitted_pt": {
+      "xavier": -0.04480432140834978,
+      "orin": 2.6737902833219778,
+      "thor": -2.6289859619136227
+    },
+    "occupancy_sequence_digest": "d1002cd7c986a4f4a32f6b04383e99f8",
+    "gate_passes_rate": true,
+    "gate_passes_mix": true
+  }
+}

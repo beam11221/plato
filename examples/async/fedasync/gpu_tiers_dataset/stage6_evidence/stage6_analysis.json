@@ -1,0 +1,1052 @@
+{
+  "_reference": {
+    "baseline_none": {
+      "T": 7525.226086991038,
+      "waste": 0.13169885007593837,
+      "xavier_share": 0.3903232805380777
+    },
+    "baseline_tier_spec_vmax_distance": {
+      "T": 4529.5778721180095,
+      "waste": 0.0019905449116695696,
+      "xavier_share": 0.23463548146305052
+    }
+  },
+  "baseline_fleet_mean_s4126": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6116.151265459022,
+      "predicted": 6155.9028114766215,
+      "rel_error": 0.006499438011302317
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4166,
+        "wasted": 163,
+        "wasted_frac": 0.03912626020163226
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1417,
+          "wasted": 161,
+          "wasted_frac": 0.11362032462949895
+        },
+        "orin": {
+          "dispatches": 1875,
+          "wasted": 1,
+          "wasted_frac": 0.0005333333333333334
+        },
+        "thor": {
+          "dispatches": 874,
+          "wasted": 1,
+          "wasted_frac": 0.0011441647597254005
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.34013442150744116,
+      "orin": 0.4500720115218435,
+      "thor": 0.2097935669707153
+    },
+    "curve": {
+      "plateau": 0.8301000000000001,
+      "best": 0.8407,
+      "noise_sd": 0.051842655132892934,
+      "rounds_to_70": 250,
+      "tta_h_70": 0.11501845764055556,
+      "rounds_to_75": 410,
+      "tta_h_75": 0.18957934745416663,
+      "rounds_to_78": 710,
+      "tta_h_78": 0.31985380548777775,
+      "rounds_to_80": 1020,
+      "tta_h_80": 0.45255860068722187
+    },
+    "clock_at": {
+      "100": 168.68206916700004,
+      "250": 414.06644750600003,
+      "500": 827.4572443500003,
+      "1000": 1598.0727588,
+      "2000": 3127.9084977990005,
+      "4000": 6116.151265459022
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 13,
+      "fallback_frac": 0.00325
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 4081,
+        "killed_viable": 4,
+        "passed_useful": 1256,
+        "missed_waste": 161
+      },
+      "orin": {
+        "killed_viable": 3093,
+        "killed_waste": 662,
+        "passed_useful": 1874,
+        "missed_waste": 1
+      },
+      "thor": {
+        "killed_viable": 1470,
+        "killed_waste": 157,
+        "passed_useful": 873,
+        "missed_waste": 1
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -9.63420957822531,
+      "mix_channel_pct": -9.475079810332788
+    }
+  },
+  "baseline_fleet_mean_vmax_distance_s4127": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6249.717539616027,
+      "predicted": 6288.982052980743,
+      "rel_error": 0.006282606072326269
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4176,
+        "wasted": 173,
+        "wasted_frac": 0.0414272030651341
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1458,
+          "wasted": 169,
+          "wasted_frac": 0.11591220850480109
+        },
+        "orin": {
+          "dispatches": 1842,
+          "wasted": 4,
+          "wasted_frac": 0.002171552660152009
+        },
+        "thor": {
+          "dispatches": 876,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.34913793103448276,
+      "orin": 0.4410919540229885,
+      "thor": 0.20977011494252873
+    },
+    "curve": {
+      "plateau": 0.83445,
+      "best": 0.8465,
+      "noise_sd": 0.04428312209935679,
+      "rounds_to_70": 220,
+      "tta_h_70": 0.0979740738475,
+      "rounds_to_75": 370,
+      "tta_h_75": 0.16288645510249997,
+      "rounds_to_78": 630,
+      "tta_h_78": 0.28000332069444456,
+      "rounds_to_80": 830,
+      "tta_h_80": 0.36658774201555555
+    },
+    "clock_at": {
+      "100": 153.96180984499998,
+      "250": 402.57753223199995,
+      "500": 795.3331457340003,
+      "1000": 1589.4040824839997,
+      "2000": 3114.322630479003,
+      "4000": 6249.717539616027
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 12,
+      "fallback_frac": 0.003
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 3865,
+        "killed_viable": 3,
+        "passed_useful": 1289,
+        "missed_waste": 169
+      },
+      "orin": {
+        "killed_viable": 3012,
+        "killed_waste": 683,
+        "passed_useful": 1838,
+        "missed_waste": 4
+      },
+      "thor": {
+        "killed_viable": 1435,
+        "killed_waste": 159,
+        "passed_useful": 876
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -9.417296975196564,
+      "mix_channel_pct": -7.739558835587017
+    }
+  },
+  "baseline_fleet_mean_vmax_distance_s4128": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6246.5547478650205,
+      "predicted": 6288.985610896577,
+      "rel_error": 0.006792682485662767
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4172,
+        "wasted": 170,
+        "wasted_frac": 0.04074784276126558
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1457,
+          "wasted": 168,
+          "wasted_frac": 0.1153054221002059
+        },
+        "orin": {
+          "dispatches": 1858,
+          "wasted": 2,
+          "wasted_frac": 0.001076426264800861
+        },
+        "thor": {
+          "dispatches": 857,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.34923298178331735,
+      "orin": 0.44534995206136146,
+      "thor": 0.20541706615532118
+    },
+    "curve": {
+      "plateau": 0.83905,
+      "best": 0.8503,
+      "noise_sd": 0.05788558693556356,
+      "rounds_to_70": 210,
+      "tta_h_70": 0.09654908642333333,
+      "rounds_to_75": 380,
+      "tta_h_75": 0.18164895129750003,
+      "rounds_to_78": 610,
+      "tta_h_78": 0.2890006960755557,
+      "rounds_to_80": 950,
+      "tta_h_80": 0.4297231299769445
+    },
+    "clock_at": {
+      "100": 169.18364033300003,
+      "250": 415.22799557300004,
+      "500": 843.9333893900007,
+      "1000": 1635.448621705999,
+      "2000": 3193.1541468610017,
+      "4000": 6246.5547478650205
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 5,
+      "fallback_frac": 0.00125
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 3999,
+        "killed_viable": 3,
+        "passed_useful": 1289,
+        "missed_waste": 168
+      },
+      "orin": {
+        "killed_viable": 3059,
+        "killed_waste": 682,
+        "passed_useful": 1856,
+        "missed_waste": 2
+      },
+      "thor": {
+        "killed_viable": 1531,
+        "killed_waste": 174,
+        "passed_useful": 857
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -9.481449338251243,
+      "mix_channel_pct": -7.674119726595957
+    }
+  },
+  "baseline_none_s4127": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7485.75160817603,
+      "predicted": 7520.601410083623,
+      "rel_error": 0.0046554846769868595
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4594,
+        "wasted": 592,
+        "wasted_frac": 0.12886373530692208
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1792,
+          "wasted": 500,
+          "wasted_frac": 0.27901785714285715
+        },
+        "orin": {
+          "dispatches": 1887,
+          "wasted": 72,
+          "wasted_frac": 0.03815580286168521
+        },
+        "thor": {
+          "dispatches": 915,
+          "wasted": 20,
+          "wasted_frac": 0.02185792349726776
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.39007400957771005,
+      "orin": 0.4107531562908141,
+      "thor": 0.19917283413147585
+    },
+    "curve": {
+      "plateau": 0.8311,
+      "best": 0.845,
+      "noise_sd": 0.043851847941903194,
+      "rounds_to_70": 190,
+      "tta_h_70": 0.09992027823833335,
+      "rounds_to_75": 370,
+      "tta_h_75": 0.19521628741611122,
+      "rounds_to_78": 540,
+      "tta_h_78": 0.2719509071561111,
+      "rounds_to_80": 1120,
+      "tta_h_80": 0.5654652739886109
+    },
+    "clock_at": {
+      "100": 171.98362816299996,
+      "250": 481.43288836799996,
+      "500": 913.7204689590009,
+      "1000": 1834.737016754,
+      "2000": 3725.9717100300045,
+      "4000": 7485.75160817603
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 0,
+      "fallback_frac": 0.0
+    },
+    "stage0_pool_sizes_min_median": null,
+    "stage0_confusion": {
+      "orin": {
+        "passed_useful": 1815,
+        "missed_waste": 72
+      },
+      "xavier": {
+        "passed_useful": 1292,
+        "missed_waste": 500
+      },
+      "thor": {
+        "passed_useful": 895,
+        "missed_waste": 20
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -0.3254502061184643,
+      "mix_channel_pct": 0.264856528226509
+    }
+  },
+  "baseline_none_s4128": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 7593.658022050025,
+      "predicted": 7642.520335312622,
+      "rel_error": 0.006434621248509423
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4617,
+        "wasted": 616,
+        "wasted_frac": 0.13341996967727962
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1822,
+          "wasted": 498,
+          "wasted_frac": 0.27332601536772777
+        },
+        "orin": {
+          "dispatches": 1967,
+          "wasted": 92,
+          "wasted_frac": 0.04677173360447382
+        },
+        "thor": {
+          "dispatches": 828,
+          "wasted": 26,
+          "wasted_frac": 0.03140096618357488
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.3946285466753303,
+      "orin": 0.4260342213558588,
+      "thor": 0.1793372319688109
+    },
+    "curve": {
+      "plateau": 0.8386,
+      "best": 0.8508,
+      "noise_sd": 0.051022959178646875,
+      "rounds_to_70": 190,
+      "tta_h_70": 0.09745823867416667,
+      "rounds_to_75": 330,
+      "tta_h_75": 0.16859003345194443,
+      "rounds_to_78": 570,
+      "tta_h_78": 0.29874959901999987,
+      "rounds_to_80": 840,
+      "tta_h_80": 0.43812779991361056
+    },
+    "clock_at": {
+      "100": 186.63846236800003,
+      "250": 446.45207316700004,
+      "500": 921.3718364950007,
+      "1000": 1864.7501433449995,
+      "2000": 3743.1926693170053,
+      "4000": 7593.658022050025
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 0,
+      "fallback_frac": 0.0
+    },
+    "stage0_pool_sizes_min_median": null,
+    "stage0_confusion": {
+      "orin": {
+        "passed_useful": 1875,
+        "missed_waste": 92
+      },
+      "thor": {
+        "passed_useful": 802,
+        "missed_waste": 26
+      },
+      "xavier": {
+        "passed_useful": 1324,
+        "missed_waste": 498
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": 0.1986105773404874,
+      "mix_channel_pct": 1.3573742560353872
+    }
+  },
+  "baseline_tier_spec_vmax_distance_s4127": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 4586.388413003003,
+      "predicted": 4616.918115026333,
+      "rel_error": 0.006656588861243093
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4019,
+        "wasted": 10,
+        "wasted_frac": 0.002488181139586962
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 960,
+          "wasted": 8,
+          "wasted_frac": 0.008333333333333333
+        },
+        "orin": {
+          "dispatches": 2021,
+          "wasted": 2,
+          "wasted_frac": 0.0009896091044037606
+        },
+        "thor": {
+          "dispatches": 1038,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.23886538940034835,
+      "orin": 0.5028614083105251,
+      "thor": 0.25827320228912665
+    },
+    "curve": {
+      "plateau": 0.82865,
+      "best": 0.8426,
+      "noise_sd": 0.04078013360512081,
+      "rounds_to_70": 170,
+      "tta_h_70": 0.05839010747194443,
+      "rounds_to_75": 420,
+      "tta_h_75": 0.1371057651441667,
+      "rounds_to_78": 670,
+      "tta_h_78": 0.21965988031500008,
+      "rounds_to_80": 910,
+      "tta_h_80": 0.3051465741244447
+    },
+    "clock_at": {
+      "100": 116.555648197,
+      "250": 301.3258398060001,
+      "500": 594.6519899450002,
+      "1000": 1199.0633762679995,
+      "2000": 2295.562722505999,
+      "4000": 4586.388413003003
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 5,
+      "fallback_frac": 0.00125
+    },
+    "stage0_pool_sizes_min_median": 6.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 6967,
+        "killed_viable": 1013,
+        "passed_useful": 952,
+        "missed_waste": 8
+      },
+      "orin": {
+        "killed_viable": 370,
+        "killed_waste": 731,
+        "passed_useful": 2019,
+        "missed_waste": 2
+      },
+      "thor": {
+        "killed_viable": 113,
+        "killed_waste": 169,
+        "passed_useful": 1038
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.953297043033087,
+      "mix_channel_pct": -29.51766333821029
+    }
+  },
+  "baseline_tier_spec_vmax_distance_s4128": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 4590.747935228003,
+      "predicted": 4593.144290806421,
+      "rel_error": 0.0005219967665897458
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4019,
+        "wasted": 11,
+        "wasted_frac": 0.002736999253545658
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 951,
+          "wasted": 8,
+          "wasted_frac": 0.008412197686645636
+        },
+        "orin": {
+          "dispatches": 2049,
+          "wasted": 2,
+          "wasted_frac": 0.0009760858955588092
+        },
+        "thor": {
+          "dispatches": 1019,
+          "wasted": 1,
+          "wasted_frac": 0.0009813542688910696
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.23662602637472008,
+      "orin": 0.5098283155013685,
+      "thor": 0.25354565812391144
+    },
+    "curve": {
+      "plateau": 0.8406,
+      "best": 0.8509,
+      "noise_sd": 0.05659609949574999,
+      "rounds_to_70": 250,
+      "tta_h_70": 0.08301716819527778,
+      "rounds_to_75": 390,
+      "tta_h_75": 0.13431041548388895,
+      "rounds_to_78": 590,
+      "tta_h_78": 0.2024583753191667,
+      "rounds_to_80": 900,
+      "tta_h_80": 0.3037635297313891
+    },
+    "clock_at": {
+      "100": 121.31382562699996,
+      "250": 298.861805503,
+      "500": 621.4552812290001,
+      "1000": 1205.274689766001,
+      "2000": 2320.4457458199977,
+      "4000": 4590.747935228003
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 5,
+      "fallback_frac": 0.00125
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 7118,
+        "killed_viable": 1038,
+        "passed_useful": 943,
+        "missed_waste": 8
+      },
+      "orin": {
+        "killed_viable": 355,
+        "killed_waste": 709,
+        "passed_useful": 2047,
+        "missed_waste": 2
+      },
+      "thor": {
+        "killed_viable": 99,
+        "killed_waste": 183,
+        "passed_useful": 1018,
+        "missed_waste": 1
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.931578803772357,
+      "mix_channel_pct": -29.898087428864027
+    }
+  },
+  "cpu_tier_spec_s4126": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6606.466700964019,
+      "predicted": 6651.226094916506,
+      "rel_error": 0.006775088103593329
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4041,
+        "wasted": 37,
+        "wasted_frac": 0.009156149467953477
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1595,
+          "wasted": 35,
+          "wasted_frac": 0.0219435736677116
+        },
+        "orin": {
+          "dispatches": 1530,
+          "wasted": 1,
+          "wasted_frac": 0.00065359477124183
+        },
+        "thor": {
+          "dispatches": 916,
+          "wasted": 1,
+          "wasted_frac": 0.001091703056768559
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.394704281118535,
+      "orin": 0.37861915367483295,
+      "thor": 0.226676565206632
+    },
+    "curve": {
+      "plateau": 0.8223499999999999,
+      "best": 0.8378,
+      "noise_sd": 0.053104687259050674,
+      "rounds_to_70": 220,
+      "tta_h_70": 0.09433219660888892,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.14820586165777785,
+      "rounds_to_78": 670,
+      "tta_h_78": 0.304150971572778,
+      "rounds_to_80": 990,
+      "tta_h_80": 0.46468020858611103
+    },
+    "clock_at": {
+      "100": 163.33365326900002,
+      "250": 388.14049505500014,
+      "500": 803.8384842,
+      "1000": 1693.5682079329997,
+      "2000": 3352.492921172006,
+      "4000": 6606.466700964019
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 44,
+      "fallback_frac": 0.011
+    },
+    "stage0_pool_sizes_min_median": 5.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 6725,
+        "killed_viable": 999,
+        "passed_useful": 1560,
+        "missed_waste": 35
+      },
+      "orin": {
+        "killed_viable": 6025,
+        "killed_waste": 720,
+        "passed_useful": 1529,
+        "missed_waste": 1
+      },
+      "thor": {
+        "killed_viable": 2157,
+        "killed_waste": 173,
+        "passed_useful": 915,
+        "missed_waste": 1
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.367508820101571,
+      "mix_channel_pct": 0.8595441294309002
+    }
+  },
+  "gpu_tier_spec_s4126": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 5007.355505029004,
+      "predicted": 5033.212396704642,
+      "rel_error": 0.005163781890394824
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4016,
+        "wasted": 13,
+        "wasted_frac": 0.0032370517928286854
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1086,
+          "wasted": 10,
+          "wasted_frac": 0.009208103130755065
+        },
+        "orin": {
+          "dispatches": 1973,
+          "wasted": 1,
+          "wasted_frac": 0.0005068423720223011
+        },
+        "thor": {
+          "dispatches": 957,
+          "wasted": 2,
+          "wasted_frac": 0.0020898641588296763
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.2704183266932271,
+      "orin": 0.49128486055776893,
+      "thor": 0.238296812749004
+    },
+    "curve": {
+      "plateau": 0.81655,
+      "best": 0.8382,
+      "noise_sd": 0.04693655525181457,
+      "rounds_to_70": 240,
+      "tta_h_70": 0.07535152342111115,
+      "rounds_to_75": 340,
+      "tta_h_75": 0.10158864489250001,
+      "rounds_to_78": 640,
+      "tta_h_78": 0.20409700550138887,
+      "rounds_to_80": 1050,
+      "tta_h_80": 0.3562969470730553
+    },
+    "clock_at": {
+      "100": 106.07993752799997,
+      "250": 279.183139292,
+      "500": 573.2976783,
+      "1000": 1222.5873967019993,
+      "2000": 2531.390577970002,
+      "4000": 5007.355505029004
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 5,
+      "fallback_frac": 0.00125
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 7295,
+        "killed_viable": 1093,
+        "passed_useful": 1076,
+        "missed_waste": 10
+      },
+      "orin": {
+        "killed_viable": 340,
+        "killed_waste": 737,
+        "passed_useful": 1972,
+        "missed_waste": 1
+      },
+      "thor": {
+        "killed_waste": 185,
+        "killed_viable": 111,
+        "passed_useful": 955,
+        "missed_waste": 2
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.887898623656469,
+      "mix_channel_pct": -23.220157831404702
+    }
+  },
+  "gpu_tier_spec_vmax_distance_s4127": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 5260.473147075015,
+      "predicted": 5264.88798140517,
+      "rel_error": 0.0008392466241576961
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4021,
+        "wasted": 14,
+        "wasted_frac": 0.003481720964934096
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1161,
+          "wasted": 13,
+          "wasted_frac": 0.01119724375538329
+        },
+        "orin": {
+          "dispatches": 1896,
+          "wasted": 1,
+          "wasted_frac": 0.0005274261603375527
+        },
+        "thor": {
+          "dispatches": 964,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.2887341457348918,
+      "orin": 0.47152449639393185,
+      "thor": 0.2397413578711763
+    },
+    "curve": {
+      "plateau": 0.8325499999999999,
+      "best": 0.8416,
+      "noise_sd": 0.042190025732246166,
+      "rounds_to_70": 190,
+      "tta_h_70": 0.052384831983055574,
+      "rounds_to_75": 370,
+      "tta_h_75": 0.0991028427230556,
+      "rounds_to_78": 620,
+      "tta_h_78": 0.18577318846750016,
+      "rounds_to_80": 830,
+      "tta_h_80": 0.2686699663625003
+    },
+    "clock_at": {
+      "100": 105.52819825599998,
+      "250": 236.08895452999997,
+      "500": 530.8824312850003,
+      "1000": 1214.4171288290001,
+      "2000": 2540.443374976,
+      "4000": 5260.473147075015
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 9,
+      "fallback_frac": 0.00225
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 7025,
+        "killed_viable": 1019,
+        "passed_useful": 1148,
+        "missed_waste": 13
+      },
+      "orin": {
+        "killed_viable": 325,
+        "killed_waste": 695,
+        "passed_useful": 1895,
+        "missed_waste": 1
+      },
+      "thor": {
+        "killed_viable": 110,
+        "killed_waste": 189,
+        "passed_useful": 964
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.866510510490347,
+      "mix_channel_pct": -19.705744403699047
+    }
+  },
+  "gpu_tier_spec_vmax_distance_s4128": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 4771.320761032008,
+      "predicted": 4745.894481309054,
+      "rel_error": -0.005328981428080387
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4028,
+        "wasted": 10,
+        "wasted_frac": 0.0024826216484607746
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 997,
+          "wasted": 7,
+          "wasted_frac": 0.007021063189568706
+        },
+        "orin": {
+          "dispatches": 2103,
+          "wasted": 1,
+          "wasted_frac": 0.00047551117451260106
+        },
+        "thor": {
+          "dispatches": 928,
+          "wasted": 2,
+          "wasted_frac": 0.0021551724137931034
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.24751737835153922,
+      "orin": 0.5220953326713009,
+      "thor": 0.23038728897715988
+    },
+    "curve": {
+      "plateau": 0.83185,
+      "best": 0.839,
+      "noise_sd": 0.05723404546378297,
+      "rounds_to_70": 280,
+      "tta_h_70": 0.08191898172166669,
+      "rounds_to_75": 420,
+      "tta_h_75": 0.12281075068305562,
+      "rounds_to_78": 740,
+      "tta_h_78": 0.23243701674749995,
+      "rounds_to_80": 1040,
+      "tta_h_80": 0.3331512166613885
+    },
+    "clock_at": {
+      "100": 117.13956096699997,
+      "250": 252.0946210390001,
+      "500": 561.4205262879998,
+      "1000": 1153.345986562001,
+      "2000": 2315.2030802500017,
+      "4000": 4771.320761032008
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 3,
+      "fallback_frac": 0.00075
+    },
+    "stage0_pool_sizes_min_median": 6.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 7427,
+        "killed_viable": 1157,
+        "passed_useful": 990,
+        "missed_waste": 7
+      },
+      "orin": {
+        "killed_viable": 343,
+        "killed_waste": 740,
+        "passed_useful": 2102,
+        "missed_waste": 1
+      },
+      "thor": {
+        "killed_viable": 100,
+        "killed_waste": 187,
+        "passed_useful": 926,
+        "missed_waste": 2
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -12.95378218282428,
+      "mix_channel_pct": -27.54829335127332
+    }
+  },
+  "observed_fleet_mean_s4126": {
+    "conservation": {
+      "rounds": 4000,
+      "measured": 6578.538102851013,
+      "predicted": 6627.044022479437,
+      "rel_error": 0.0073733584681075414
+    },
+    "waste": {
+      "overall": {
+        "dispatches": 4176,
+        "wasted": 174,
+        "wasted_frac": 0.041666666666666664
+      },
+      "per_tier": {
+        "xavier": {
+          "dispatches": 1561,
+          "wasted": 174,
+          "wasted_frac": 0.11146700832799487
+        },
+        "orin": {
+          "dispatches": 1809,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        },
+        "thor": {
+          "dispatches": 806,
+          "wasted": 0,
+          "wasted_frac": 0.0
+        }
+      }
+    },
+    "dispatch_share": {
+      "xavier": 0.3738026819923372,
+      "orin": 0.4331896551724138,
+      "thor": 0.19300766283524903
+    },
+    "curve": {
+      "plateau": 0.82515,
+      "best": 0.843,
+      "noise_sd": 0.04997084336294024,
+      "rounds_to_70": 170,
+      "tta_h_70": 0.05916205770527778,
+      "rounds_to_75": 360,
+      "tta_h_75": 0.13004667753361118,
+      "rounds_to_78": 610,
+      "tta_h_78": 0.23941983415527793,
+      "rounds_to_80": 1060,
+      "tta_h_80": 0.45705155190777785
+    },
+    "clock_at": {
+      "100": 129.542236852,
+      "250": 318.5089687470001,
+      "500": 694.7701922080001,
+      "1000": 1552.988046292001,
+      "2000": 3246.322915201,
+      "4000": 6578.538102851013
+    },
+    "stage0_fallback": {
+      "rounds": 4000,
+      "fallback": 6,
+      "fallback_frac": 0.0015
+    },
+    "stage0_pool_sizes_min_median": 7.0,
+    "stage0_confusion": {
+      "xavier": {
+        "killed_waste": 3942,
+        "killed_viable": 3,
+        "passed_useful": 1387,
+        "missed_waste": 174
+      },
+      "orin": {
+        "killed_viable": 3167,
+        "killed_waste": 703,
+        "passed_useful": 1809
+      },
+      "thor": {
+        "killed_viable": 1532,
+        "killed_waste": 184,
+        "passed_useful": 806
+      }
+    },
+    "decomposition_vs_baseline_none": {
+      "waste_channel_pct": -9.39466261661966,
+      "mix_channel_pct": -2.8044187384583577
+    }
+  }
+}
