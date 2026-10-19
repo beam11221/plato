@@ -58,9 +58,12 @@ def source_tree() -> dict:
     try:
         head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True,
                               text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--", *SOURCE_GLOBS],
-                               cwd=REPO, capture_output=True, text=True,
-                               check=True).stdout.strip()
+        status = subprocess.run(["git", "status", "--porcelain", "--",
+                                 *(f":(glob){g}" for g in SOURCE_GLOBS)],
+                                cwd=REPO, capture_output=True, text=True,
+                                check=True).stdout.splitlines()
+        # A file deleted from the working tree is not hashed, so it is not "dirty".
+        dirty = [line for line in status if "D" not in line[:2]]
     except (OSError, subprocess.CalledProcessError):
         head, dirty = None, "unknown"
     return {"source_tree_sha256": h.hexdigest(), "source_files": len(files),
