@@ -95,9 +95,11 @@ class WenStage0Gate(_Wrapper):
         passed, failed = [], []
         self.last_pass = {}
         stats = {"n_eligible": len(clients_pool), "n_rej_time": 0, "n_rej_energy": 0,
-                 "n_rej_both": 0, **{f"n_rej_{tr}": 0 for tr in TIERS}}
+                 "n_rej_both": 0, **{f"n_rej_{tr}": 0 for tr in TIERS},
+                 **{f"n_elig_{tr}": 0 for tr in TIERS}}
         for cid in clients_pool:
             rv = server.wen_report(cid, t)
+            stats[f"n_elig_{rv.tier}"] += 1
             time_ok, energy_ok, _ = stage0_checks(rv, self.estimator.estimate(rv),
                                                   self.e_max, self.exit_x)
             ok = time_ok and energy_ok

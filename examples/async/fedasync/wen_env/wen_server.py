@@ -85,7 +85,8 @@ POOL_FIELDS = ["cycle", "round", "t", "selectable", "eligible",
                "feasible_gpu", "open_slots"]
 STAGE0_FIELDS = ["cycle", "round", "t", "n_eligible", "n_passed", "n_rejected",
                  "n_rej_time", "n_rej_energy", "n_rej_both",
-                 "n_rej_xavier", "n_rej_orin", "n_rej_thor", "fallback"]
+                 "n_rej_xavier", "n_rej_orin", "n_rej_thor",
+                 "n_elig_xavier", "n_elig_orin", "n_elig_thor", "fallback"]
 
 
 class ClockMismatchError(RuntimeError):
