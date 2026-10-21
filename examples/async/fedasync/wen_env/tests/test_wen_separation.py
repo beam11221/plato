@@ -30,6 +30,7 @@ SELECTOR_SIDE = {
     "wen_egreedy": WEN / "wen_egreedy.py",
     "wen_faithful": WEN / "wen_faithful.py",
     "wen_fresh": WEN / "wen_fresh.py",
+    "wen_polaris": WEN / "wen_polaris.py",
     "wen_formulas": WEN / "wen_formulas.py",
     "wen_partition": WEN / "wen_partition.py",
     "fedasync_polaris_vi_selection": FEDASYNC / "fedasync_polaris_vi_selection.py",
@@ -122,3 +123,16 @@ def test_stage0_and_fresh_loss_read_reported_records_only():
                     and n.value.id == "server"}
     assert server_attrs <= {"global_version", "require_trainer", "current_round",
                             "sumo_time"}, server_attrs
+
+
+def test_polaris_reads_only_observed_quantities():
+    """Polaris sees G_i (aggregation state), its own observed staleness, the
+    reported partition sizes and the clock -- no estimator, position or tier."""
+    src = (WEN / "wen_polaris.py").read_text()
+    tree = ast.parse(src)
+    server_attrs = {n.attr for n in ast.walk(tree)
+                    if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name)
+                    and n.value.id == "server"}
+    assert server_attrs <= {"sumo_time"}, server_attrs
+    assert not _imports(WEN / "wen_polaris.py") & {"wen_estimators", "wen_reported",
+                                                    "wen_formulas", "wen_selection"}

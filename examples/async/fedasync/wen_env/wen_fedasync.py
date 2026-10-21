@@ -50,11 +50,13 @@ import wen_estimators  # noqa: E402
 import wen_faithful  # noqa: E402
 import wen_fresh  # noqa: E402
 import wen_manifest  # noqa: E402
+import wen_polaris  # noqa: E402
 from wen_config import validate_config  # noqa: E402
 from wen_client import WenClient  # noqa: E402
 from wen_fleet import Fleet  # noqa: E402
 from wen_reported import ReportedView  # noqa: E402
-from wen_server import WenBaselineServer, WenPolarisServer  # noqa: E402
+from wen_server import (WenBaselineServer, WenPolarisHostServer,  # noqa: E402
+                        WenPolarisServer)
 from wen_trace import TraceIndex, load_speeds, veh_id, verify_bundle  # noqa: E402
 from wen_truth import GroundTruth  # noqa: E402
 
@@ -160,8 +162,11 @@ def main() -> None:
                                           int(cfg.data.random_seed)),
                 stale_f3_test=settings["wen_fresh_stale_f3_test"],
                 stage0_columns=settings["stage0"], **selector_args)
+    if host == "polaris":
+        wen["selector"] = wen_polaris.PolarisSelection(seed=seed, out_dir=out_dir)
     algorithm = fedasync_algorithm.Algorithm
     server_class = (WenBaselineServer if host in ("random", "wen", "wen_fresh")
+                    else WenPolarisHostServer if host == "polaris"
                     else WenPolarisServer)
     server = server_class(wen=wen, algorithm=algorithm)
     client = WenClient(algorithm=algorithm,

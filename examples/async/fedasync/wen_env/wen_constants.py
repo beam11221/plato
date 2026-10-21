@@ -94,3 +94,11 @@ E_MAX_J = 600.0                              # non-binding by default
 # --- Scenarios ---------------------------------------------------------------
 SCENARIOS = ("S1", "S2")
 UPLOAD_POLICY = {"S1": "always_accept", "S2": "coverage_gated"}
+
+# --- Polaris (Prompt J PL4): the authors' Plato-code defaults --------------
+# alpha: the unseen-client G prior scale (paper's gamma, Eq. 26); A: P4's
+# staleness constant; stored tau = observed staleness + 0.1, initial 0.01.
+POLARIS_ALPHA = 10.0
+POLARIS_A = 1.0
+POLARIS_TAU_OFFSET = 0.1
+POLARIS_INITIAL_TAU = 0.01

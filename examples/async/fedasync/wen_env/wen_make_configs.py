@@ -59,7 +59,8 @@ VARYING = {("general", "base_path"), ("server", "port"), ("wen_env", "scenario")
            ("wen_env", "cpu_rho"), ("wen_env", "cpu_rho_test_override"),
            ("wen_env", "wen_t_max"), ("wen_env", "wen_e_max"),
            ("wen_env", "wen_fresh_stale_f3_test"), ("wen_env", "study2_plugin_off_test"),
-           ("server", "random_seed"), ("data", "random_seed")}
+           ("server", "random_seed"), ("data", "random_seed"),
+           ("server", "polaris_alpha")}
 
 TEMPLATE = """\
 # =============================================================================
@@ -112,7 +113,7 @@ mixing_hyperparameter = 0.5
 adaptive_mixing = true
 eval_interval = 10
 random_seed = {seed}
-polaris_alpha = 1.0
+polaris_alpha = {polaris_alpha}
 polaris_initial_gradient_bound = 0.5
 polaris_initial_staleness = 0.01
 
@@ -225,6 +226,10 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
             if arm != "wen_fresh":
                 raise SystemExit("@stale is a wen_fresh test configuration")
             rule_lines += "wen_fresh_stale_f3_test = true\n"
+    if arm == "polaris":
+        # Prompt J: P4's own sampling rule, no epsilon.
+        rule, epsilon = "polaris", None
+        rule_lines = 'selection = "polaris"\n'
     if suffix == "pluginoff":
         if arm not in STUDY2_ARMS:
             raise SystemExit("@pluginoff is a Study 2 test configuration")
@@ -241,6 +246,7 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
         stage0_tag=(" + Stage 0" if stage0 else "") + (f" / {rule}"
                     + (f" eps={epsilon}" if epsilon is not None else "")),
         rule_lines=rule_lines,
+        polaris_alpha=repr(K.POLARIS_ALPHA if arm == "polaris" else 1.0),
         stage0="true" if stage0 else "false", seed=seed, port=port, rounds=rounds,
         config_path=path.relative_to(FEDASYNC),
         base_path=f"./runs/wen_env/{name}", n=K.N_CLIENTS, c=K.CONCURRENCY,

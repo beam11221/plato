@@ -192,6 +192,10 @@ class FedAsyncPolarisAggregationStrategy(
         # The mean measured norm the proxy was built from (proxy = alpha x this).
         # Recorded for Stage 9's pre-flight; nothing here reads it.
         self.last_proxy_basis: float | None = None
+        # Prompt J (polaris): {client_id: conv weights of the global model the
+        # client was sent}. None -> the update is taken against the current
+        # global (every earlier arm, unchanged).
+        self.start_weights: dict | None = None
 
     def setup(self, context: ServerContext) -> None:
         super().setup(context)
@@ -265,14 +269,17 @@ class FedAsyncPolarisAggregationStrategy(
         for update, w_client in zip(updates, weights_received):
             client_index = update.client_id - 1
             squared_delta = 0.0
+            base = baseline_weights
+            if self.start_weights is not None:
+                base = self.start_weights.pop(update.client_id)
 
             for layer_name, w_val in w_client.items():
                 if "conv" not in layer_name:
                     continue
-                if layer_name not in baseline_weights:
+                if layer_name not in base:
                     continue
 
-                delta = w_val - baseline_weights[layer_name]
+                delta = w_val - base[layer_name]
                 if isinstance(delta, torch.Tensor):
                     delta_np = delta.detach().cpu().numpy()
                 else:

@@ -341,6 +341,8 @@ class WenEnvMixin:
         unexplored = getattr(agg, "unexplored_clients", None) or set()
         stage0_pass = self.wen_stage0.last_pass if self.wen_stage0 else {}
         picks = self.wen_selector.last_picks
+        # polaris (Prompt J PL7): score = q of the pick.
+        polaris_q = getattr(self.wen_selector, "last_q", None)
 
         for cid in selected:
             if cid in self._in_flight:
@@ -371,7 +373,8 @@ class WenEnvMixin:
                 "s_tau_hat": s_tau if s_tau is not None else "",
                 "G_i": g_i if g_i is not None else "",
                 "g_is_prior": (cid - 1) in unexplored if bounds is not None else "",
-                "score": g_i * s_tau if (g_i is not None and s_tau is not None) else "",
+                "score": (polaris_q[cid] if polaris_q is not None else
+                          g_i * s_tau if (g_i is not None and s_tau is not None) else ""),
                 "stage0_pass": stage0_pass.get(cid, "") if self.wen_stage0 else "",
                 "T_train_true": outcome.T_train_true, "x_finish": outcome.x_finish,
                 "d_finish": outcome.d_finish, "chi2": outcome.chi2,
@@ -523,4 +526,22 @@ class WenPolarisServer(WenEnvMixin, fedasync_server.Server):
         self.install_wen(**wen)
 
 
-__all__ = ["WenBaselineServer", "WenPolarisServer", "ClockMismatchError"]
+class WenPolarisHostServer(WenPolarisServer):
+    """The `polaris` arm (Prompt J): the Polaris server's G_i tracking with the
+    `polaris` host as the selector. G_i is the norm of the update against the
+    global model the client was SENT (its starting point, the paper's
+    Delta_i(w_{t - tau})), so the conv weights of each payload are kept until
+    that client's update is merged."""
+
+    def __init__(self, wen: dict, **kwargs) -> None:
+        super().__init__(wen, **kwargs)
+        self.aggregation_strategy.inner.start_weights = {}
+
+    def customize_server_payload(self, payload):
+        self.aggregation_strategy.inner.start_weights[self.selected_client_id] = {
+            k: v.detach().clone() for k, v in payload.items() if "conv" in k}
+        return super().customize_server_payload(payload)
+
+
+__all__ = ["WenBaselineServer", "WenPolarisServer", "WenPolarisHostServer",
+           "ClockMismatchError"]
