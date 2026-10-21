@@ -99,6 +99,10 @@ def fmt(v, f="{:.3f}"):
     return "—" if v is None else f.format(v)
 
 
+def ran(cell: str, seed: int) -> bool:
+    return any((run_dir(cell, seed) / "results").glob("*.csv"))
+
+
 def coverage(arm: str, seed: int) -> dict:
     """Prompt F Step 4: share of the 50,000 images in aggregated updates."""
     by_check = {check: cov for check, _upto, _kl, cov, _n in C.step4("S1", arm, seed)}
@@ -112,6 +116,9 @@ def s1_table(seed: int) -> tuple[list[str], dict]:
            "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     data = {}
     for cell in CELLS:
+        if not ran(cell, seed):
+            out.append(f"| {cell.split('_', 1)[1]} | not run at seed {seed} |" + " |" * 10)
+            continue
         m = S1m.one(cell, seed)
         if (cell, seed) in READING_B and m["tta"][0.90] is None:
             curve = R.accuracy_curve(run_dir(cell, seed))
@@ -194,7 +201,7 @@ def plot(seed: int, path: Path) -> None:
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(8, 4.8))
-    for cell in CELLS:
+    for cell in (c for c in CELLS if ran(c, seed)):
         curve = R.accuracy_curve(run_dir(cell, seed))
         ax.plot([p[1] for p in curve], [p[2] for p in curve],
                 lw=1.6 if cell == "S1_polaris" else 0.9, label=cell)
