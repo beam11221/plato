@@ -1,11 +1,12 @@
-"""S1: TTA@80/85/90% and ground-truth energy to each, per seed (random, gpu, wen, wen_fresh, polaris)."""
+"""S1: TTA@80/85/90% and ground-truth energy to each, per seed (random, gpu, wen, wen_fresh, wen_fresh_gpu, polaris)."""
 import statistics as st
 import sys
 import wen_main_report as R
 from wen_ptable import run_dir
 
 ARMS = [("random", "S1_random"), ("Ours (gpu)", "S1_gpu"), ("Wen et al. (wen)", "S1_wen"),
-        ("Wen et al. (wen_fresh)", "S1_wen_fresh"), ("Polaris", "S1_polaris")]
+        ("Wen et al. (wen_fresh)", "S1_wen_fresh"),
+        ("Wen et al. + GPU (wen_fresh_gpu)", "S1_wen_fresh_gpu"), ("Polaris", "S1_polaris")]
 THR = (0.80, 0.85, 0.90)
 READING_B = {("S1_gpu", 4126)}
 res = {}
