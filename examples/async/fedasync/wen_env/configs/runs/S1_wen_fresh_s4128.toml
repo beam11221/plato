@@ -36,7 +36,7 @@ csv_path = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/fleets/n3
 
 [server]
 address = "127.0.0.1"
-port = 20614
+port = 20712
 synchronous = false
 simulate_wall_time = true
 periodic_interval = 1
