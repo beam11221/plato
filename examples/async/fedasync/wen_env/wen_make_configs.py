@@ -52,7 +52,8 @@ RULE_SUFFIXES = {"": None, "eps0": ("egreedy", 0.0), "eps1": ("egreedy", 1.0),
                  "stale": None,
                  # Study 2 plug-in arm with its plug-in off: Prompt I Step 3 test 1
                  "pluginoff": None}
-STUDY2_ARMS = ("random_s0", "wen_fresh_s0", "wen_fresh_gpu", "wen_fresh_gpu_s0")
+STUDY2_ARMS = ("random_s0", "wen_fresh_s0", "wen_fresh_gpu", "wen_fresh_gpu_s0",
+               "polaris_s0")
 VARYING = {("general", "base_path"), ("server", "port"), ("wen_env", "scenario"),
            ("wen_env", "arm"), ("wen_env", "stage0"), ("clients", "random_seed"),
            ("wen_env", "selection"), ("wen_env", "epsilon"),
@@ -226,7 +227,7 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
             if arm != "wen_fresh":
                 raise SystemExit("@stale is a wen_fresh test configuration")
             rule_lines += "wen_fresh_stale_f3_test = true\n"
-    if arm == "polaris":
+    if arm in ("polaris", "polaris_s0"):
         # Prompt J: P4's own sampling rule, no epsilon.
         rule, epsilon = "polaris", None
         rule_lines = 'selection = "polaris"\n'
@@ -246,7 +247,7 @@ def render(cell: str, seed: int, rounds: int, port: int, outdir: Path, tag: str)
         stage0_tag=(" + Stage 0" if stage0 else "") + (f" / {rule}"
                     + (f" eps={epsilon}" if epsilon is not None else "")),
         rule_lines=rule_lines,
-        polaris_alpha=repr(K.POLARIS_ALPHA if arm == "polaris" else 1.0),
+        polaris_alpha=repr(K.POLARIS_ALPHA if arm in ("polaris", "polaris_s0") else 1.0),
         stage0="true" if stage0 else "false", seed=seed, port=port, rounds=rounds,
         config_path=path.relative_to(FEDASYNC),
         base_path=f"./runs/wen_env/{name}", n=K.N_CLIENTS, c=K.CONCURRENCY,

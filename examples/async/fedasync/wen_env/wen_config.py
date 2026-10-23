@@ -15,7 +15,9 @@ from wen_egreedy import DEFAULT_EPSILON, SELECTION_RULES
 # run Stage 0 with the gpu estimator in front of an unchanged host.
 STUDY2_ARMS = {"random_s0": ("random", None), "wen_fresh_s0": ("wen_fresh", "cpu"),
                "wen_fresh_gpu": ("wen_fresh", "gpu"),
-               "wen_fresh_gpu_s0": ("wen_fresh", "gpu")}
+               "wen_fresh_gpu_s0": ("wen_fresh", "gpu"),
+               # Prompt L: the same Stage 0 plug-in in front of the Polaris host.
+               "polaris_s0": ("polaris", None)}
 ARMS = (("random", "observed", "wen", "wen_fresh", "polaris")
         + wen_estimators.ESTIMATOR_ARMS + tuple(STUDY2_ARMS))
 WEN_ARMS = ("wen", "wen_fresh")
@@ -75,15 +77,17 @@ def validate_config(cfg) -> dict:
                       wen_f12="cpu" if study2["wen_f12"] else None)
     study2["study2_plugin_off_test"] = plugin_off
     if host == "polaris":
-        # Prompt J: Polaris as proposed, S1 only; alpha = 10 (Plato code, PL4)
-        # is the one exception to the alpha = 1 lock.
-        if scenario != "S1" or stage0:
-            raise ValueError("[WenEnv] polaris runs in S1 without Stage 0 (Prompt J PL6).")
+        # Prompt J: Polaris as proposed; alpha = 10 (Plato code, PL4) is the one
+        # exception to the alpha = 1 lock. Prompt L: also S2; polaris_s0 is S2 only.
+        if arm == "polaris_s0" and scenario != "S2":
+            raise ValueError("[WenEnv] polaris_s0 runs in S2 only (Prompt L).")
+        if arm == "polaris" and stage0:
+            raise ValueError("[WenEnv] arm polaris runs without Stage 0; use polaris_s0.")
         if str(getattr(wen, "selection", "polaris")) != "polaris" or hasattr(wen, "epsilon"):
             raise ValueError("[WenEnv] arm polaris uses selection = 'polaris' and no epsilon.")
         if float(cfg.server.polaris_alpha) != K.POLARIS_ALPHA:
             raise ValueError(f"[WenEnv] polaris_alpha is locked at {K.POLARIS_ALPHA} for polaris.")
-        return {"arm": arm, "scenario": scenario, "stage0": False, "selection": "polaris",
+        return {"arm": arm, "scenario": scenario, "stage0": stage0, "selection": "polaris",
                 "epsilon": None, "cpu_rho": None, "cpu_rho_test_override": False, **study2,
                 "bundle_dir": Path(wen.bundle_dir),
                 "bundle_zip": Path(wen.bundle_zip) if hasattr(wen, "bundle_zip") else None,

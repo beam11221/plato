@@ -177,3 +177,108 @@ def test_polaris_constants_are_the_plato_defaults():
     assert (K.POLARIS_ALPHA, K.POLARIS_A, K.POLARIS_TAU_OFFSET,
             K.POLARIS_INITIAL_TAU) == (10.0, 1.0, 0.1, 0.01)
     assert wen_polaris.A_CONST == K.POLARIS_A
+
+
+# -- Prompt L (S2): Stage 0 in front of Polaris, lost uploads, runs -------------
+
+def test_polaris_behind_stage0_sees_only_passed_vehicles(tmp_path):
+    from conftest import BUNDLE_DIR, FLEET_DIR, TIERS_CSV
+    from wen_estimators import GpuEstimator
+    from wen_fleet import Fleet
+    from wen_reported import ReportedView
+    from wen_selection import WenStage0Gate
+    from wen_trace import TraceIndex, load_speeds, veh_id
+
+    speeds = load_speeds(BUNDLE_DIR)
+    trace = TraceIndex.from_bundle(BUNDLE_DIR, speeds)
+    fleet = Fleet.load(FLEET_DIR, TIERS_CSV)
+    view = ReportedView(position=lambda c, t: trace.x_at(veh_id(c), t),
+                        speed=lambda c: speeds[veh_id(c)],
+                        spec=lambda c: (fleet.spec(c).tier_id, fleet.spec(c).tflops_fp16,
+                                        fleet.spec(c).cpu_ghz),
+                        n_samples=K.partition_size)
+    est = GpuEstimator(K.FLOPS_FWD_PER_IMAGE, 357_566_784)
+    lo, hi = K.S2_COVERAGE_M
+    checked = 0
+    for t in np.arange(100.0, 3000.0, 97.0):
+        eligible = [c for c in range(1, 31) if lo <= view.report(c, t).x <= hi]
+        server = SimpleNamespace(training_clients={}, current_round=int(t),
+                                 sumo_time=lambda t=t: t,
+                                 wen_report=lambda c, tt: view.report(c, tt),
+                                 wen_is_eligible=lambda c, tt, e=set(eligible): c in e)
+        host = PolarisSelection(seed=4126, out_dir=tmp_path / f"t{int(t)}")
+        gate = WenStage0Gate(host, est, scenario="S2")
+        ctx = SimpleNamespace(server=server, state={"polaris": {
+            "local_gradient_bounds": np.linspace(0.5, 3.0, 30)}})
+        gate.select_clients(eligible, 1, ctx)
+        passed = sorted(c for c, ok in gate.last_pass.items() if ok)
+        row = _rows(tmp_path / f"t{int(t)}" / "polaris_decisions.csv")[0]
+        pool = json.loads(row["pool"])
+        assert pool == (sorted(eligible) if gate.last_stats["fallback"] else passed)
+        q = np.array(json.loads(row["q"]))
+        assert abs(q.sum() - 1) < 1e-12
+        checked += int(len(passed) < len(eligible))
+    assert checked > 0                       # some calls actually rejected vehicles
+
+
+def test_lost_upload_changes_neither_g_nor_tau(tmp_path):
+    import asyncio
+
+    from sumo_gates import UPLOADED_KEY, UploadGate
+
+    class _Recorder:
+        seen = None
+
+        async def aggregate_weights(self, updates, baseline, weights, context):
+            _Recorder.seen = [u.client_id for u in updates]
+            return baseline
+
+    bounds = np.full(30, 0.5)
+    ctx = SimpleNamespace(server=_Server(), state={
+        "polaris": {"local_gradient_bounds": bounds}, UPLOADED_KEY: {3: False, 4: True}})
+    lost = SimpleNamespace(client_id=3, staleness=2, report=SimpleNamespace())
+    kept = SimpleNamespace(client_id=4, staleness=1, report=SimpleNamespace())
+
+    sel = PolarisSelection(seed=4126, out_dir=tmp_path)
+    sel.on_reports_received([lost, kept], ctx)
+    assert sel.tau[2] == K.POLARIS_INITIAL_TAU               # lost: unchanged
+    assert sel.tau[3] == 1 + K.POLARIS_TAU_OFFSET            # merged: updated
+
+    gate = UploadGate(_Recorder())
+    asyncio.run(gate.aggregate_weights([lost, kept], {}, [{}, {}], ctx))
+    assert _Recorder.seen == [4]          # the G tracker never sees the lost update
+    out = asyncio.run(gate.aggregate_weights([lost], {"w": 1}, [{}], ctx))
+    assert out == {"w": 1} and np.all(bounds == 0.5)
+
+
+S2_DET = (RUNS_DIR / "S2_polaris_s0_s4126_det1", RUNS_DIR / "S2_polaris_s0_s4126_det2")
+
+
+def test_polaris_s0_plugin_off_reproduces_polaris_s2():
+    a, b = RUNS_DIR / "S2_polaris_s0_pluginoff_s4126", RUNS_DIR / "S2_polaris_s4126_det1"
+    if not ((a / "dispatch_log.csv").exists() and (b / "dispatch_log.csv").exists()):
+        pytest.skip("S2 polaris plug-in-off runs not present")
+    keys = [[tuple(r[c] for c in DETERMINISTIC) for r in _rows(d / "dispatch_log.csv")
+             if int(r["round"]) <= 100] for d in (a, b)]
+    assert len(keys[0]) >= 100 and keys[0] == keys[1]
+
+
+def test_determinism_two_100_round_polaris_s0_runs():
+    a, b = S2_DET
+    if not ((a / "dispatch_log.csv").exists() and (b / "dispatch_log.csv").exists()):
+        pytest.skip("S2 polaris_s0 determinism runs not present")
+    keys = [[tuple(r[c] for c in DETERMINISTIC) for r in _rows(d / "dispatch_log.csv")]
+            for d in (a, b)]
+    assert len(keys[0]) >= 100 and keys[0] == keys[1]
+    for f in ("polaris_decisions.csv", "stage0_log.csv"):
+        assert _rows(a / f) == _rows(b / f)
+
+
+@pytest.mark.parametrize("run", ["S2_polaris_s4126_det1", "S2_polaris_s0_s4126_det1"])
+def test_s2_logged_q_is_a_distribution_over_the_post_filter_pool(run):
+    d = RUNS_DIR / run
+    if not (d / "polaris_decisions.csv").exists():
+        pytest.skip(f"{run} not present")
+    for r in _rows(d / "polaris_decisions.csv"):
+        q, pool = np.array(json.loads(r["q"])), json.loads(r["pool"])
+        assert len(q) == len(pool) and abs(q.sum() - 1) < 1e-12 and (q >= 0).all()

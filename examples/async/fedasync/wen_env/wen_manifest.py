@@ -35,6 +35,10 @@ ADDENDUM_V3_4 = FEDASYNC / "docs" / "predictions_v3_4_addendum.md"
 STUDY2_ARMS = frozenset({"random_s0", "wen_fresh_s0", "wen_fresh_gpu", "wen_fresh_gpu_s0"})
 # Prompt J: no polaris run (of any length) before the v3.5 addendum is committed.
 ADDENDUM_V3_5 = FEDASYNC / "docs" / "predictions_v3_5_addendum.md"
+# Prompt L: no S2 polaris / polaris_s0 run before the v3.6 addendum is committed;
+# its hash is recorded in every S2 manifest from then on.
+ADDENDUM_V3_6 = FEDASYNC / "docs" / "predictions_v3_6_addendum.md"
+POLARIS_ARMS = frozenset({"polaris", "polaris_s0"})
 FULL_RUN_ROUNDS = 4000
 REPO = FEDASYNC.parents[2]
 # Prompt I Step 0b.1: the code a run executes, hashed into every manifest.
@@ -127,12 +131,19 @@ def write(base_path: Path, config_path: Path, settings: dict, rounds: int,
                 f"arm {settings['arm']} refused: {ADDENDUM_V3_4} is missing, uncommitted "
                 "or modified (Prompt I Step 1).")
     addendum_v3_5 = None
-    if settings["arm"] == "polaris":
+    if settings["arm"] in POLARIS_ARMS:
         addendum_v3_5 = predictions_commit(ADDENDUM_V3_5)
         if addendum_v3_5 is None:
             raise PredictionsNotLockedError(
                 f"arm polaris refused: {ADDENDUM_V3_5} is missing, uncommitted or "
                 "modified (Prompt J Step 1).")
+    addendum_v3_6 = None
+    if settings["scenario"] == "S2":
+        addendum_v3_6 = predictions_commit(ADDENDUM_V3_6)
+        if addendum_v3_6 is None and settings["arm"] in POLARIS_ARMS:
+            raise PredictionsNotLockedError(
+                f"S2 arm {settings['arm']} refused: {ADDENDUM_V3_6} is missing, "
+                "uncommitted or modified (Prompt L Step 1).")
     if rounds >= FULL_RUN_ROUNDS and commit is None:
         raise PredictionsNotLockedError(
             f"{rounds}-round run refused: {PREDICTIONS} is missing, uncommitted or "
@@ -149,6 +160,7 @@ def write(base_path: Path, config_path: Path, settings: dict, rounds: int,
         "predictions_v3_3_addendum_commit": addendum_v3_3,
         "predictions_v3_4_addendum_commit": addendum_v3_4,
         "predictions_v3_5_addendum_commit": addendum_v3_5,
+        "predictions_v3_6_addendum_commit": addendum_v3_6,
         "wen_t_max": settings.get("wen_t_max"),
         "wen_e_max": settings.get("wen_e_max"),
         "cpu_rho": settings.get("cpu_rho"),
