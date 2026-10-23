@@ -79,6 +79,27 @@ def render_smoke(run: Path) -> list[str]:
     for w in q_windows(dec, 50):
         out.append(f"| {w['rounds']} | {w['calls']} | {w['max_q']:.4f} | {w['eff_pool']:.2f} | "
                    f"{w['G'][0]:.3f}–{w['G'][1]:.3f} | {w['tau'][0]:.2f}–{w['tau'][1]:.2f} |")
+    if disp[0]["scenario"] == "S2":
+        # Prompt L (S2-F): successful training ratio = merged / dispatched.
+        lost = [r for r in disp if r["accepted"] == "0"]
+        out += ["", "| STR (merged / dispatched) | failed dispatches | failed GPU-s | "
+                "failed kJ | Stage 0 rejected (of eligible) | by reason time / energy / both "
+                "| by tier X / O / T (rejected / eligible) | Stage 0 fallback calls |",
+                "|---|---|---|---|---|---|---|---|"]
+        s0 = "— | — | — | —"
+        if (run / "stage0_log.csv").exists():
+            s = rows(run / "stage0_log.csv")
+            n = lambda k: sum(int(r[k]) for r in s)
+            rej = n("n_rejected")
+            s0 = (f"{rej / max(n('n_eligible'), 1):.3f} | "
+                  + " / ".join(f"{n(k) / max(rej, 1):.2f}" for k in
+                               ("n_rej_time", "n_rej_energy", "n_rej_both")) + " | "
+                  + " / ".join(f"{n(f'n_rej_{t}') / max(n(f'n_elig_{t}'), 1):.3f}"
+                               for t in TIERS) + f" | {n('fallback')}")
+        out.append(f"| {1 - len(lost) / len(disp):.3f} | {len(lost)} | "
+                   f"{sum(float(r['T_train_true']) for r in lost):.0f} | "
+                   f"{sum(float(r['E_train']) + float(r['E_up']) for r in lost) / 1000:.2f} | "
+                   f"{s0} |")
     return out
 
 
