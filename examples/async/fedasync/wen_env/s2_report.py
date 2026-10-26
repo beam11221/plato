@@ -64,9 +64,9 @@ def staleness(run: Path) -> float:
     return st.fmean(out)
 
 
-def metrics(cell: str) -> dict:
-    run = run_dir(cell, SEED)
-    m = S1m.one(cell, SEED)
+def metrics(cell: str, seed: int = SEED) -> dict:
+    run = run_dir(cell, seed)
+    m = S1m.one(cell, seed)
     curve = R.accuracy_curve(run)
     disp = rows(run / "dispatch_log.csv")
     lost = [r for r in disp if r["accepted"] == "0"]
@@ -89,17 +89,17 @@ def metrics(cell: str) -> dict:
     m["fail_kj"] = sum(float(r["E_train"]) + float(r["E_up"]) for r in lost) / 1000
     m["staleness"] = staleness(run)
     m["distinct"] = len({r["client_id"] for r in disp})
-    m["cov"] = _coverage(cell)
+    m["cov"] = _coverage(cell, seed)
     m["s0"] = stage0_stats(run)
     m["curve"] = curve
     m["energy_curve"] = F.energy_curve(curve, disp)
     return m
 
 
-def _coverage(cell: str) -> dict:
+def _coverage(cell: str, seed: int = SEED) -> dict:
     import wen_concentration as C
     by_check = {check: cov for check, _upto, _kl, cov, _n in
-                C.step4("S2", cell.split("_", 1)[1], SEED)}
+                C.step4("S2", cell.split("_", 1)[1], seed)}
     return {"r500": by_check[500], "r1000": by_check[1000], "end": by_check[4000]}
 
 
