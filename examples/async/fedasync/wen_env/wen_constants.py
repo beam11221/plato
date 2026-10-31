@@ -21,6 +21,14 @@ N_CLIENTS = 30
 CONCURRENCY = 3
 TIER_COUNTS = {"xavier": 15, "orin": 10, "thor": 5}
 
+# --- Tier-mix sweep (Prompt M Part B, predictions v3.7) ----------------------
+# Xavier / Orin / Thor counts; tiers are contiguous ID blocks in that order.
+# M0 is the locked fleet above; only the counts change between mixes.
+FLEET_MIXES = {
+    "M0": (15, 10, 5), "M1": (10, 10, 10), "M2": (5, 10, 15), "M3": (2, 8, 20),
+    "T1": (15, 0, 15), "T2": (5, 0, 25), "T3": (15, 15, 0),
+}
+
 # --- Data: 50,000 CIFAR-10 training images split with no image reused --------
 # 20 clients x 1,667 + 10 x 1,666 = 50,000. Clients 21-30 carry the 1,666.
 TRAIN_IMAGES = 50_000

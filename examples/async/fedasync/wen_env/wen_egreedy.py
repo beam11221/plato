@@ -104,6 +104,8 @@ class WenSelector(ClientSelectionStrategy):
         self.seed = seed
         self._decisions_per_round: dict[int, int] = defaultdict(int)
         self.last_picks: dict[int, PickRecord] = {}
+        self.last_scores: dict[int, float] | None = None
+        self.last_call_tau_hats: dict[int, float] | None = None
 
     # -- lifecycle: delegate to the scorer when there is one -----------------
 
@@ -147,8 +149,11 @@ class WenSelector(ClientSelectionStrategy):
             return selected
 
         scores = None
+        self.last_scores, self.last_call_tau_hats = None, None
         if self.inner is not None:
             scores, tau_hats, _G, _total = self.inner.score_candidates(candidates, context)
+            # The call's snapshot, for the mechanism log (Prompt M A1); never read back.
+            self.last_scores, self.last_call_tau_hats = dict(scores), dict(tau_hats)
         round_no = int(getattr(server, "current_round", 0))
         selected: list[int] = []
         remaining = list(candidates)

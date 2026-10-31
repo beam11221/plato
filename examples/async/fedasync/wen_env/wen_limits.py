@@ -37,14 +37,14 @@ import numpy as np
 
 import wen_constants as K
 from wen_estimators import CpuEstimator, GpuEstimator
-from wen_fleet import Fleet
+from wen_fleet import Fleet, mix_fleet_dir
 from wen_reported import ReportedVehicle
 from wen_trace import TraceIndex, load_speeds, veh_id
 
 HERE = Path(__file__).resolve().parent
 FEDASYNC = HERE.parent
 BUNDLE = FEDASYNC / "sumo_ver2" / "bundle_wen_closed_v1"
-FLEET = FEDASYNC / "gpu_tiers_dataset" / "fleets" / "n30_x15-o10-t5_phys_p1667_j0p149_s4126"
+FLEETS = FEDASYNC / "gpu_tiers_dataset" / "fleets"
 TIERS = FEDASYNC / "gpu_tiers_dataset" / "tiers" / "tiers_wen.csv"
 MODEL_BITS = 357_566_784
 QUANTILE = 90
@@ -54,11 +54,11 @@ TIER_ORDER = ("xavier", "orin", "thor")
 FAMILIES = {"cpu": CpuEstimator, "gpu": GpuEstimator}
 
 
-def population(family: str = "cpu") -> dict[str, np.ndarray]:
+def population(family: str = "cpu", mix: str = "M0") -> dict[str, np.ndarray]:
     """F1, F2, tier and position at decision time for every (vehicle, sample)."""
     speeds = load_speeds(BUNDLE)
     trace = TraceIndex.from_bundle(BUNDLE, speeds)
-    fleet = Fleet.load(FLEET, TIERS)
+    fleet = Fleet.load(mix_fleet_dir(FLEETS, mix), TIERS, mix=mix)
     est = FAMILIES[family](K.FLOPS_FWD_PER_IMAGE, MODEL_BITS)
     f1, f2, tier, xs = [], [], [], []
     for cid in fleet.client_ids:
@@ -86,8 +86,11 @@ def limits(pop) -> tuple[float, float]:
 def table(pop, t_max, e_max, mask) -> list[str]:
     rows = ["| tier | F1 range (s) | F2 range (J) | cut by T only | cut by E only | "
             "cut by both | total cut |", "|---|---|---|---|---|---|---|"]
-    for tier in TIER_ORDER + ("fleet",):
+    present = [t for t in TIER_ORDER if np.any(pop["tier"] == t)]
+    for tier in present + ["fleet"]:
         m = mask & ((pop["tier"] == tier) if tier != "fleet" else True)
+        if not m.any():
+            continue
         f1, f2 = pop["F1"][m], pop["F2"][m]
         t_cut, e_cut = f1 > t_max, f2 > e_max
         rows.append(
@@ -101,9 +104,13 @@ def qualitative_check(pop, t_max, e_max) -> list[str]:
     """Prompt E / I stop rule: E_max must not exclude every position of any tier
     (Prompt E named Thor), and each limit must cut at least one candidate."""
     problems = []
-    for tier in TIER_ORDER:
+    # Prompt M B0.2: a tier absent from the mix is not "cut at every position".
+    for tier in (t for t in TIER_ORDER if np.any(pop["tier"] == t)):
         if np.all(pop["F2"][pop["tier"] == tier] > e_max):
             problems.append(f"E_max excludes every {tier.capitalize()} position")
+        if np.all((pop["F1"][pop["tier"] == tier] > t_max)
+                  | (pop["F2"][pop["tier"] == tier] > e_max)):
+            problems.append(f"the limits cut every {tier.capitalize()} position")
     if not np.any(pop["F1"] > t_max):
         problems.append("T_max cuts no candidate")
     if not np.any(pop["F2"] > e_max):
@@ -116,14 +123,16 @@ def main() -> int:
     parser.add_argument("--json", type=Path, required=True)
     parser.add_argument("--out", type=Path)
     parser.add_argument("--family", choices=sorted(FAMILIES), default="cpu")
+    parser.add_argument("--mix", default="M0")
     args = parser.parse_args()
-    pop = population(args.family)
+    pop = population(args.family, args.mix)
     t_max, e_max = limits(pop)
     problems = qualitative_check(pop, t_max, e_max)
     inside = (pop["x"] >= K.S2_COVERAGE_M[0]) & (pop["x"] <= K.S2_COVERAGE_M[1])
     text = "\n".join([
         f"# Wen constraint limits, {args.family} family F1 / F2 (W5 rule; "
-        f"{'Prompt E Step 1' if args.family == 'cpu' else 'Prompt I Step 2.3'})", "",
+        f"{'Prompt E Step 1' if args.family == 'cpu' else 'Prompt I Step 2.3'}"
+        f"{'' if args.mix == 'M0' else '; Prompt M B0.2, mix ' + args.mix})", "",
         f"Population: {len(pop['F1']):,} (vehicle, 1 s trace sample) pairs, t = 1..30,000 s.",
         f"T_max = P{QUANTILE}(F1) = **{t_max!r} s**; E_max = P{QUANTILE}(F2) = **{e_max!r} J**.",
         f"Qualitative check: {'PASS' if not problems else 'FAIL — ' + '; '.join(problems)}.", "",
@@ -132,7 +141,7 @@ def main() -> int:
         *table(pop, t_max, e_max, inside), ""])
     print(text)
     args.json.write_text(json.dumps({"family": args.family, "t_max": t_max, "e_max": e_max,
-                                     "quantile": QUANTILE,
+                                     "quantile": QUANTILE, "mix": args.mix,
                                      "population": int(len(pop["F1"])),
                                      "qualitative_problems": problems}, indent=2) + "\n")
     if args.out:

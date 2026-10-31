@@ -39,6 +39,9 @@ ADDENDUM_V3_5 = FEDASYNC / "docs" / "predictions_v3_5_addendum.md"
 # its hash is recorded in every S2 manifest from then on.
 ADDENDUM_V3_6 = FEDASYNC / "docs" / "predictions_v3_6_addendum.md"
 POLARIS_ARMS = frozenset({"polaris", "polaris_s0"})
+# Prompt M B1: no tier-mix sweep run (fleet_mix other than M0, any length) before
+# the v3.7 addendum is committed; its hash is recorded in every sweep manifest.
+ADDENDUM_V3_7 = FEDASYNC / "docs" / "predictions_v3_7_addendum.md"
 FULL_RUN_ROUNDS = 4000
 REPO = FEDASYNC.parents[2]
 # Prompt I Step 0b.1: the code a run executes, hashed into every manifest.
@@ -55,6 +58,17 @@ class PredictionsNotLockedError(RuntimeError):
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _fleet_sha256(fleet_dir: Path) -> str | None:
+    """sha256 over the fleet files, as wen_fleet_mixes.fleet_files_sha256."""
+    h = hashlib.sha256()
+    for name in ("clients.csv", "sleep_table.csv", "manifest.json"):
+        path = fleet_dir / name
+        if not path.exists():
+            return None
+        h.update(name.encode() + b"\0" + path.read_bytes())
+    return h.hexdigest()
 
 
 def source_tree() -> dict:
@@ -144,6 +158,14 @@ def write(base_path: Path, config_path: Path, settings: dict, rounds: int,
             raise PredictionsNotLockedError(
                 f"S2 arm {settings['arm']} refused: {ADDENDUM_V3_6} is missing, "
                 "uncommitted or modified (Prompt L Step 1).")
+    addendum_v3_7 = None
+    mix = settings.get("fleet_mix", "M0")
+    if mix != "M0":
+        addendum_v3_7 = predictions_commit(ADDENDUM_V3_7)
+        if addendum_v3_7 is None:
+            raise PredictionsNotLockedError(
+                f"fleet_mix {mix} refused: {ADDENDUM_V3_7} is missing, uncommitted or "
+                "modified (Prompt M B1).")
     if rounds >= FULL_RUN_ROUNDS and commit is None:
         raise PredictionsNotLockedError(
             f"{rounds}-round run refused: {PREDICTIONS} is missing, uncommitted or "
@@ -153,6 +175,9 @@ def write(base_path: Path, config_path: Path, settings: dict, rounds: int,
         "config": str(config_path),
         "config_sha256": _sha256(config_path),
         "fleet": Path(settings["fleet_dir"]).name,
+        "fleet_mix": mix,
+        "fleet_files_sha256": _fleet_sha256(Path(settings["fleet_dir"])),
+        "predictions_v3_7_addendum_commit": addendum_v3_7,
         "bundle_manifest_sha256": _sha256(Path(settings["bundle_dir"]) / "manifest.yaml"),
         "predictions_commit": commit,
         "predictions_v3_1_addendum_commit": addendum,

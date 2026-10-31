@@ -109,7 +109,12 @@ DECISION_FIELDS = (
        "F1", "F2", "F3", "F4", "nF1", "nF2", "nF3", "nF4", "x_hat_upload"]
 )
 CANDIDATE_FIELDS = ["round", "t", "decision", "client_id", "tier", "x",
-                    "F1", "F2", "F3", "F4", "feasible", "pareto", "picked"]
+                    "F1", "F2", "F3", "F4", "feasible", "pareto", "picked",
+                    # Prompt M A1: what decided each pick.
+                    "slot_k", "feasible_T", "feasible_E", "fallback", "in_pareto",
+                    "nF1", "nF2", "nF3", "nF4", "score", "rank_by_score",
+                    "is_min_F1", "is_min_F2", "is_min_F3", "is_min_F4",
+                    "T_hat_com_cpu", "x_hat_upload_cpu"]
 
 
 class WenFaithfulSelection(ClientSelectionStrategy):
@@ -152,11 +157,13 @@ class WenFaithfulSelection(ClientSelectionStrategy):
 
     def objectives(self, server, candidates, t):
         out, x_hat, tier, xs = {}, {}, {}, {}
+        self._t_com = {}
         for c in candidates:
             rv = server.wen_report(c, t)
             e = self.estimator.estimate(rv)
             out[c] = (e.total, e.E, self.f3(c), self.kl[c])
             x_hat[c], tier[c], xs[c] = e.x_finish, rv.tier, rv.x
+            self._t_com[c] = e.T_train
         return out, x_hat, tier, xs
 
     def select_clients(self, clients_pool, clients_count, context):
@@ -166,9 +173,10 @@ class WenFaithfulSelection(ClientSelectionStrategy):
         t = server.sumo_time()
         round_no = int(getattr(server, "current_round", 0))
         picks = []
-        for _ in range(min(clients_count, len(remaining))):
+        for k in range(min(clients_count, len(remaining))):
             obj, x_hat, tier, xs = self.objectives(server, remaining, t)
             d = decide(obj, self.t_max, self.e_max)
+            self._slot_k = k
             self._log(round_no, t, obj, d, x_hat, tier, xs)
             picks.append(d.pick)
             remaining.remove(d.pick)
@@ -194,18 +202,30 @@ class WenFaithfulSelection(ClientSelectionStrategy):
         for i in range(4):
             row[f"F{i + 1}"] = repr(obj[d.pick][i])
             row[f"nF{i + 1}"] = repr(d.normalised[d.pick][i])
-        row.update(self.log_extra())
+        row.update({k: v for k, v in self.log_extra().items() if k in self.decision_fields})
         self._dec.writerow(row)
         self._dec_fh.flush()
         pareto = set(d.pareto)
         feasible = set(d.feasible)
+        ranked = sorted(d.pareto, key=lambda c: (d.score[c], c))
+        mins = [min(f[i] for f in obj.values()) for i in range(4)]
+        extra = {k: v for k, v in self.log_extra().items() if k in self.candidate_fields}
         for c, f in obj.items():
+            norm = d.normalised.get(c)
             self._cand.writerow({
                 "round": round_no, "t": repr(t), "decision": self._decisions, "client_id": c,
                 "tier": tier[c], "x": repr(xs[c]), "F1": repr(f[0]), "F2": repr(f[1]),
                 "F3": repr(f[2]), "F4": repr(f[3]), "feasible": int(c in feasible),
                 "pareto": int(c in pareto), "picked": int(c == d.pick),
-                **{k: v for k, v in self.log_extra().items() if k in self.candidate_fields}})
+                "slot_k": getattr(self, "_slot_k", ""),
+                "feasible_T": int(f[0] <= self.t_max), "feasible_E": int(f[1] <= self.e_max),
+                "fallback": int(d.fallback), "in_pareto": int(c in pareto),
+                **{f"nF{i + 1}": (repr(norm[i]) if norm else "") for i in range(4)},
+                "score": repr(d.score[c]) if c in d.score else "",
+                "rank_by_score": ranked.index(c) + 1 if c in pareto else "",
+                **{f"is_min_F{i + 1}": int(f[i] == mins[i]) for i in range(4)},
+                "T_hat_com_cpu": repr(self._t_com[c]), "x_hat_upload_cpu": repr(x_hat[c]),
+                **extra})
         self._cand_fh.flush()
 
     def log_extra(self) -> dict:

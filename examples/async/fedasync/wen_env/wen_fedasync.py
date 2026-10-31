@@ -74,7 +74,8 @@ def build_environment(settings: dict, seed: int):
     verify_bundle(settings["bundle_dir"], settings["bundle_zip"])
     speeds = load_speeds(settings["bundle_dir"])
     trace = TraceIndex.from_bundle(settings["bundle_dir"], speeds)
-    fleet = Fleet.load(settings["fleet_dir"], settings["tiers_csv"])
+    fleet = Fleet.load(settings["fleet_dir"], settings["tiers_csv"],
+                       mix=settings.get("fleet_mix", "M0"))
     bits = model_bits()
     truth = GroundTruth(fleet, trace, K.FLOPS_FWD_PER_IMAGE, bits, seed,
                         settings["scenario"])

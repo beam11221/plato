@@ -10,6 +10,7 @@ from pathlib import Path
 import wen_constants as K
 import wen_estimators
 from wen_egreedy import DEFAULT_EPSILON, SELECTION_RULES
+from wen_fleet import mix_fleet_dir
 
 # Prompt I (Study 2): plug-in arms = (host, Wen F1/F2 family). The `_s0` arms
 # run Stage 0 with the gpu estimator in front of an unchanged host.
@@ -21,6 +22,8 @@ STUDY2_ARMS = {"random_s0": ("random", None), "wen_fresh_s0": ("wen_fresh", "cpu
 ARMS = (("random", "observed", "wen", "wen_fresh", "polaris")
         + wen_estimators.ESTIMATOR_ARMS + tuple(STUDY2_ARMS))
 WEN_ARMS = ("wen", "wen_fresh")
+# Prompt M Part B: the arms of the tier-mix sweep.
+SWEEP_ARMS = ("random", "gpu", "polaris", "wen_fresh")
 
 
 def host_of(arm: str) -> str:
@@ -30,6 +33,24 @@ ALLOWED_GPU_TIER_KEYS = {"t_round_model"}
 
 def validate_config(cfg) -> dict:
     """Return the [wen_env] settings, refusing anything ambiguous."""
+    settings = _validate(cfg)
+    # Prompt M Part B: `fleet_mix` (default M0) names the tier mix; fleet_dir must
+    # be that mix's directory, so the two keys cannot disagree.
+    mix = str(getattr(cfg.wen_env, "fleet_mix", "M0"))
+    if mix not in K.FLEET_MIXES:
+        raise ValueError(f"[WenEnv] fleet_mix {mix!r} not in {sorted(K.FLEET_MIXES)}")
+    expected = mix_fleet_dir(settings["fleet_dir"].parent, mix)
+    if settings["fleet_dir"] != expected:
+        raise ValueError(f"[WenEnv] fleet_mix {mix} needs fleet_dir {expected}, "
+                         f"got {settings['fleet_dir']}")
+    if mix != "M0" and (settings["scenario"] != "S1" or
+                        settings["arm"] not in SWEEP_ARMS):
+        raise ValueError(f"[WenEnv] the tier-mix sweep is S1 with arms {SWEEP_ARMS}.")
+    settings["fleet_mix"] = mix
+    return settings
+
+
+def _validate(cfg) -> dict:
     wen = getattr(cfg, "wen_env", None)
     if wen is None:
         raise ValueError("[WenEnv] the config has no [wen_env] section.")

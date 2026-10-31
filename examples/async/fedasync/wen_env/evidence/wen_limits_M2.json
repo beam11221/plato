@@ -1,0 +1,9 @@
+{
+  "family": "cpu",
+  "t_max": 34.062392404031414,
+  "e_max": 36.76129724789274,
+  "quantile": 90,
+  "mix": "M2",
+  "population": 900000,
+  "qualitative_problems": []
+}

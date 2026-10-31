@@ -171,5 +171,7 @@ class WenCoverageGate(_Wrapper):
         slots = self.open_slots(server)
         server.record_pool(t, len(clients_pool), len(eligible), feasible, slots)
         selected = self.inner.select_clients(eligible, slots, context) if slots else []
+        if hasattr(server, "record_candidates"):
+            server.record_candidates(eligible, selected, context)
         server.record_dispatches(selected, context)
         return selected

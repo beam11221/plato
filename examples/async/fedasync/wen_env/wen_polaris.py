@@ -97,6 +97,7 @@ class PolarisSelection(ClientSelectionStrategy):
         self._decisions_per_round: dict[int, int] = defaultdict(int)
         self.last_picks: dict = {}                    # the D1 columns stay blank
         self.last_q: dict[int, float] = {}            # dispatch log `score` (PL7)
+        self.last_call: dict | None = None            # mechanism log (Prompt M)
         out_dir = Path(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         self._fh = (out_dir / "polaris_decisions.csv").open("w", newline="")
@@ -130,14 +131,25 @@ class PolarisSelection(ClientSelectionStrategy):
         round_no = int(getattr(server, "current_round", 0))
         remaining = list(pool)
         picks = []
+        draws = []
         for _ in range(count):
             w = np.array([self.last_q[c] for c in remaining])
+            k = self._decisions_per_round[round_no]
             pick = remaining[int(self._rng(round_no).choice(len(remaining), p=w / w.sum()))]
+            # Generator.choice(p=...) draws one random(); a separate generator
+            # with the same key repeats it, so logging u consumes nothing.
+            u = float(np.random.default_rng([self.seed, round_no, k, _SALT]).random())
+            draws.append({"pick": pick, "draw_u": u,
+                          "q_renorm": {c: float(x) for c, x in zip(remaining, w / w.sum())}})
             picks.append(pick)
             remaining.remove(pick)
 
         f1 = p * p * G * G
         f2 = self.A * p * p * tau * G
+        # The call's inputs and draws, for the mechanism log (Prompt M A1).
+        self.last_call = {"pool": pool, "G": G.tolist(), "tau": tau.tolist(),
+                          "p": p.tolist(), "f1": f1.tolist(), "f2": f2.tolist(),
+                          "mu": float(mu), "q": q.tolist(), "draws": draws}
         self._log.writerow({
             "round": round_no, "t": repr(server.sumo_time()), "pool": json.dumps(pool),
             "G": json.dumps(G.tolist()), "tau": json.dumps(tau.tolist()),

@@ -113,7 +113,7 @@ FRESH_EVAL_FIELDS = (["global_version", "round", "t", "fresh_eval_s"]
 
 class WenFreshSelection(WenFaithfulSelection):
     decision_fields = DECISION_FIELDS + ["global_version"]
-    candidate_fields = CANDIDATE_FIELDS + ["global_version"]
+    candidate_fields = CANDIDATE_FIELDS + ["global_version", "F3_global_version"]
 
     def __init__(self, fresh: FreshLoss, stale_f3_test: bool = False,
                  stage0_columns: bool = False, **kwargs) -> None:
@@ -164,7 +164,8 @@ class WenFreshSelection(WenFaithfulSelection):
         return super().select_clients(clients_pool, clients_count, context)
 
     def log_extra(self) -> dict:
-        extra = {"global_version": self.version}
+        # F3_global_version: the model version F3 was evaluated on (Prompt M A1).
+        extra = {"global_version": self.version, "F3_global_version": self.version}
         gate = getattr(self._server, "wen_stage0", None)
         if self.stage0_columns and gate is not None:
             st = gate.last_stats

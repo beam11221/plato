@@ -1,0 +1,107 @@
+# =============================================================================
+# Wen-aligned environment -- S1 T1 / polaris / polaris / seed 4126
+# =============================================================================
+# Prompt M Part B, mix T1 (15, 0, 15): S1_polaris_s4126_pm.toml with base_path, port, fleet_dir, fleet_mix (and Wen limits) changed.
+# Locked values (wen_env/wen_constants.py, recorded here for the audit only):
+#   N=30 C=3  partitions 20x1667 + 10x1666  Dirichlet 0.8  E=1
+#   FLOPs_fwd=1113303040  eta=0.2  jitter sigma=0.149166  no anchor
+#   upload: B=2e+06 Hz p=23 dBm N=-114 dBm phi=3 eps=0  |chi|^2~Exp(1)
+#   rho=1250 cycles/bit  P=40/75/130 W  p_up=0.2 W  E_max=600 J
+#
+# Run (from examples/async/fedasync):
+#   PYTHONPATH=<repo root> python wen_env/wen_fedasync.py -c wen_env/configs/promptM/S1_T1_polaris_s4126.toml
+# =============================================================================
+
+[general]
+base_path = "./runs/wen_env/S1_T1_polaris_s4126"
+
+[clients]
+type = "simple"
+total_clients = 30
+per_round = 3
+do_test = false
+speed_simulation = true
+comm_simulation = true
+sleep_simulation = true
+avg_training_time = 0.0
+max_sleep_time = 300
+random_seed = 4126
+
+[clients.simulation_distribution]
+# Required by PLATO's client; every duration is overwritten per dispatch by
+# the server (wen_server.process_client_info), so these values never reach
+# the clock.
+distribution = "custom"
+csv_path = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/fleets/n30_mixT1_x15-o0-t15_phys_p1667_j0p149_s4126/sleep_times.csv"
+
+[server]
+address = "127.0.0.1"
+port = 22230
+synchronous = false
+simulate_wall_time = true
+periodic_interval = 1
+ping_interval = 30
+ping_timeout = 3600
+staleness_bound = 19
+minimum_clients_aggregated = 1
+mixing_hyperparameter = 0.5
+adaptive_mixing = true
+eval_interval = 10
+random_seed = 4126
+polaris_alpha = 10.0
+polaris_initial_gradient_bound = 0.5
+polaris_initial_staleness = 0.01
+
+[server.staleness_weighting_function]
+type = "polynomial"
+a = 0.5
+
+[wen_env]
+scenario = "S1"
+arm = "polaris"
+stage0 = false
+selection = "polaris"
+bundle_dir = "/workspace/plato/examples/async/fedasync/sumo_ver2/bundle_wen_closed_v1"
+fleet_dir = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/fleets/n30_mixT1_x15-o0-t15_phys_p1667_j0p149_s4126"
+tiers_csv = "/workspace/plato/examples/async/fedasync/gpu_tiers_dataset/tiers/tiers_wen.csv"
+fleet_mix = "T1"
+
+[gpu_tier]
+t_round_model = "queue"
+
+[data]
+datasource = "Torchvision"
+dataset_name = "CIFAR10"
+download = true
+data_path = "/workspace/plato/examples/async/fedasync/data"
+partition_size = 1667
+sampler = "noniid"
+concentration = 0.8
+random_seed = 4126
+
+[trainer]
+type = "basic"
+rounds = 4000
+max_concurrency = 3
+target_accuracy = 0.9
+model_name = "resnet_18"
+epochs = 1
+batch_size = 64
+optimizer = "SGD"
+
+[algorithm]
+type = "fedavg"
+
+[parameters]
+
+[parameters.model]
+num_classes = 10
+
+[parameters.optimizer]
+lr = 0.01
+momentum = 0.9
+weight_decay = 0.0005
+
+[results]
+types = "round, elapsed_time, accuracy, train_loss, valid_loss"
+record_clients_accuracy = false

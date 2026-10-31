@@ -29,6 +29,29 @@ from wen_trace import veh_id
 TIER_ORDER = ("xavier", "orin", "thor")
 
 
+def mix_counts(mix: str) -> dict[str, int]:
+    """{tier: count} of a Prompt M tier mix (M0 = the locked fleet)."""
+    if mix not in K.FLEET_MIXES:
+        raise ValueError(f"[WenFleet] fleet_mix {mix!r} not in {sorted(K.FLEET_MIXES)}")
+    return dict(zip(TIER_ORDER, K.FLEET_MIXES[mix]))
+
+
+def contiguous_tiers(mix: str) -> list[str]:
+    """Tier of client ids 1..30 in order: contiguous blocks Xavier -> Orin -> Thor."""
+    return [t for t, n in mix_counts(mix).items() for _ in range(n)]
+
+
+def mix_fleet_dir(fleets_root: Path, mix: str) -> Path:
+    """M0 is the locked fleet directory; every other mix is derived from it."""
+    if mix == "M0":
+        return Path(fleets_root) / M0_FLEET
+    x, o, t = K.FLEET_MIXES[mix]
+    return Path(fleets_root) / f"n30_mix{mix}_x{x}-o{o}-t{t}_phys_p1667_j0p149_s4126"
+
+
+M0_FLEET = "n30_x15-o10-t5_phys_p1667_j0p149_s4126"
+
+
 @dataclass(frozen=True)
 class TierSpec:
     tier_id: str
@@ -72,7 +95,7 @@ class Fleet:
         self.manifest = manifest
 
     @classmethod
-    def load(cls, fleet_dir: Path, tiers_csv: Path) -> "Fleet":
+    def load(cls, fleet_dir: Path, tiers_csv: Path, mix: str = "M0") -> "Fleet":
         fleet_dir = Path(fleet_dir)
         manifest = json.loads((fleet_dir / "manifest.json").read_text())
         with (fleet_dir / "clients.csv").open(newline="") as fh:
@@ -84,8 +107,13 @@ class Fleet:
         if sorted(tiers) != list(range(1, K.N_CLIENTS + 1)):
             problems.append(f"client ids are not 1..{K.N_CLIENTS}")
         counts = {t: sum(1 for v in tiers.values() if v == t) for t in TIER_ORDER}
-        if counts != K.TIER_COUNTS:
-            problems.append(f"tier counts {counts} != locked {K.TIER_COUNTS}")
+        expected = mix_counts(mix)
+        if counts != expected:
+            problems.append(f"tier counts {counts} != mix {mix} {expected}")
+        if [tiers[c] for c in sorted(tiers)] != contiguous_tiers(mix):
+            problems.append(f"tiers are not contiguous Xavier -> Orin -> Thor blocks ({mix})")
+        if manifest.get("mix_id", "M0") != mix:
+            problems.append(f"fleet manifest mix_id {manifest.get('mix_id', 'M0')!r} != {mix!r}")
         if not math.isclose(float(manifest["jitter_sigma"]), K.JITTER_SIGMA,
                             abs_tol=5e-7):
             problems.append(f"jitter_sigma {manifest['jitter_sigma']} != locked "

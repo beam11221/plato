@@ -55,9 +55,10 @@ import fedasync_server
 import gpu_tier_sleep
 import wen_constants as K
 from fedasync_polaris_vi_server import FedAsyncPolarisAggregationStrategy
-from sumo_gates import UPLOADED_KEY, UploadGate, delivered
+from sumo_gates import UPLOADED_KEY, delivered
 from wen_egreedy import WenSelector
 from wen_estimators import Estimator, GpuEstimator
+from wen_mechanism_log import MechanismLogger, ObservedUploadGate
 from wen_reported import ReportedView
 from wen_selection import WenCoverageGate, WenStage0Gate
 from wen_truth import DispatchOutcome, GroundTruth
@@ -183,7 +184,13 @@ class WenEnvMixin:
             inner = self.wen_stage0
         diagnostic = GpuEstimator(truth.flops_fwd, truth.model_bits)
         self.client_selection_strategy = WenCoverageGate(inner, scenario, diagnostic)
-        self.aggregation_strategy = UploadGate(self.aggregation_strategy)
+        # Prompt M A1: the passive mechanism log (never read by a selector).
+        self.wen_mech = MechanismLogger(
+            self, out_dir, arm,
+            host="polaris" if hasattr(self.wen_selector, "last_call") else arm,
+            seed=seed, run_id=run_id, model_bits=truth.model_bits)
+        self.aggregation_strategy = ObservedUploadGate(self.aggregation_strategy,
+                                                       self.wen_mech.on_merge)
 
         selector = self.polaris_selector()
         if estimator is not None:
@@ -330,6 +337,9 @@ class WenEnvMixin:
     def record_stage0(self, t, stats: dict) -> None:
         self._stage0_log.write({"cycle": self._dispatch_cycles, "round": self.current_round,
                                 "t": repr(t), **stats})
+
+    def record_candidates(self, clients_pool, selected: list[int], context) -> None:
+        self.wen_mech.record(clients_pool, selected, context)
 
     def record_dispatches(self, selected: list[int], context) -> None:
         t = self._online_now

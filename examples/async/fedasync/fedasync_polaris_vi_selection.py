@@ -332,6 +332,9 @@ class PolarisViClientSelectionStrategy(FedAsyncClientSelectionStrategy):
             )
 
         self.last_tau_hats = dict(tau_hats)
+        # The T_round this call converted seconds to rounds with (Prompt M
+        # mechanism logging); read by the passive logger only.
+        self.last_t_round = t_round
         return scores, tau_hats, G, total
 
     # ------------------------------------------------------------------
