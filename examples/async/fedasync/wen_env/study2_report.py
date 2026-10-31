@@ -5,6 +5,7 @@ Prompt I (Study 2, plug-in study, seed 4126): mechanical report.
     --smoke     Step 4 smoke table for the 5 Study 2 cells (accuracy not read)
     --study     Step 6 tables: 2a, 2b, cell 5, GPU limits and realised cuts,
                 P26-P33 (seed 4126 directions, "single seed -- not evaluated"), curves
+    --interim   with --study: Study 2a part only (cells 1-2 done, 3-5 still running)
 
 Usage:
     python wen_env/study2_report.py --step0 --smoke --study --out wen_env/evidence/study2_plugin_s4126.md
@@ -244,14 +245,44 @@ def render_smoke() -> list[str]:
 # Study tables
 # ---------------------------------------------------------------------------
 
-def render_study(evidence: Path) -> list[str]:
+INTERIM_PREAMBLE = [
+    "# Study 2 plug-in study, seed 4126 — interim (Study 2a only)", "",
+    "**Status (20 Oct 2026, 06:30 UTC).** Cells 1 (`S2_random_s0`) and 2 (`S2_wen_fresh_s0`) "
+    "finished at 90%. Cells 3–5 are running; § 2–4 and P29–P33 follow in the final file.", "",
+    "**Deviations.**",
+    "- Cells 3 (`S1_wen_fresh_gpu`) and 4 (`S2_wen_fresh_gpu`) hung on 19 Oct at ~23:30–23:42 UTC "
+    "on `OSError: [Errno 5] Input/output error` while writing a payload / model file to /workspace "
+    "(MooseFS; disk 60.5 / 200 GB, writes worked again afterwards). They were stopped on 20 Oct "
+    "06:03 UTC, archived as `_failed/*_hung_eio_2340` (r3250 and r3030), and rerun from scratch "
+    "(user decision, option A1). Cell 5 started at 06:04 UTC, alongside the reruns instead of "
+    "after cells 3–4.",
+    "- The watchdog logged STALL for both hung runs (~00:00 UTC) but does not stop runs; no action "
+    "was taken until 06:00 UTC.", "",
+]
+
+
+FINAL_PREAMBLE = [
+    "# Study 2 plug-in study, seed 4126 — final", "",
+    "**Status (21 Oct 2026).** All 5 cells finished. Cells 1–2 stopped at 90%; cells 3–5 ran the "
+    "full 4,000 rounds without reaching 90%.", "",
+    "**Deviations.**",
+    INTERIM_PREAMBLE[5], INTERIM_PREAMBLE[6].replace("no action\n", "no action"),
+    "- The reruns of cells 3–4 are row-identical to the hung runs up to the hang (dispatch log and "
+    "accuracy, checked at ~r2000), so the reported runs equal uninterrupted runs.", "",
+]
+
+
+def render_study(evidence: Path, interim: bool = False) -> list[str]:
     cells_2a = ("S2_random", "S2_random_s0", "S2_wen_fresh", "S2_wen_fresh_s0", "S2_gpu",
                 "S2_gpu_stage0")
     cells_2b = ("S1_wen_fresh", "S1_wen_fresh_gpu", "S1_gpu", "S1_random",
                 "S2_wen_fresh", "S2_wen_fresh_gpu", "S2_gpu", "S2_random")
     cells_5 = ("S2_wen_fresh", "S2_wen_fresh_s0", "S2_wen_fresh_gpu", "S2_wen_fresh_gpu_s0")
+    if interim:
+        cells_2b = cells_5 = ()
     data = {c: metrics(c) for c in dict.fromkeys(cells_2a + cells_2b + cells_5)}
-    out = ["## 1. Study 2a — Stage 0 plug-in (S2, seed 4126)", "",
+    out = INTERIM_PREAMBLE if interim else FINAL_PREAMBLE
+    out = out + ["## 1. Study 2a — Stage 0 plug-in (S2, seed 4126)", "",
            "| cell | TTA@80% (s) | TTA@85% (s) | TTA@90% (s) | s/round | energy to 80% (kJ) | "
            "waste (disp / GPU-s / kJ) | Stage 0 rejected | by reason time / energy / both | "
            "by tier X / O / T | Stage 0 fallback | share X / O / T | "
@@ -266,7 +297,15 @@ def render_study(evidence: Path) -> list[str]:
                    + " / ".join(f"{m['share'][t]:.2f}" for t in TIERS) +
                    f" | {m['upload_dist']:.0f} | {m['gini']:.3f} |")
     out += ["", "S2_gpu_stage0 is the existing run: its Stage 0 is reconstructed from the server "
-            "log (rejection rate and per-tier rejection counts; reasons were not logged).", "",
+            "log (rejection rate and per-tier rejection counts; reasons were not logged).", ""]
+    if interim:
+        out += ["## 5. P26–P28 (seed 4126 direction; status: single seed — not evaluated)", "",
+                *p_table(data, interim=True), "", "## 6. Curves", "",
+                "`study2_plugin_s4126_curves.png`: accuracy vs online clock (2a random, 2a wen_fresh).",
+                ""]
+        plot(evidence / "study2_plugin_s4126_curves.png", interim=True)
+        return out
+    out += [
             "## 2. Study 2b — GPU plug-in (seed 4126)", "",
             "| cell | TTA@80% (s) | TTA@85% (s) | TTA@90% (s) | s/round | energy to 80% (kJ) | "
             "waste (disp / GPU-s / kJ) | share X / O / T | Thor share | "
@@ -316,7 +355,7 @@ def render_study(evidence: Path) -> list[str]:
     return out
 
 
-def p_table(d) -> list[str]:
+def p_table(d, interim: bool = False) -> list[str]:
     def row(p, txt, ok, a, b):
         return (f"| {p} | {txt} | {a} vs {b} | {'as predicted' if ok else 'not as predicted'} | "
                 "single seed — not evaluated |")
@@ -330,10 +369,12 @@ def p_table(d) -> list[str]:
     a, b = d["S2_wen_fresh_s0"], d["S2_wen_fresh"]
     out.append(row("P28", "wen_fresh + Stage 0 waste fraction < wen_fresh (S2)",
                    a["waste"] < b["waste"], f"{a['waste']:.3f}", f"{b['waste']:.3f}"))
+    if interim:
+        return out
     a, b = d["S1_wen_fresh_gpu"], d["S1_wen_fresh"]
-    out.append(row("P29", "wen_fresh + GPU mean |x̂ − x| < wen_fresh (S1)",
+    out.append(row("P29", "wen_fresh + GPU mean \\|x̂ − x\\| < wen_fresh (S1)",
                    a["xhat_err"] < b["xhat_err"], f"{a['xhat_err']:.0f} m", f"{b['xhat_err']:.0f} m"))
-    out.append(row("P30", "wen_fresh + GPU mean |x_upload − 1000| < wen_fresh (S1)",
+    out.append(row("P30", "wen_fresh + GPU mean \\|x_upload − 1000\\| < wen_fresh (S1)",
                    a["upload_dist"] < b["upload_dist"], f"{a['upload_dist']:.0f} m",
                    f"{b['upload_dist']:.0f} m"))
     out.append(row("P31", "wen_fresh + GPU s/round < wen_fresh (S1)", a["spr"] < b["spr"],
@@ -347,7 +388,7 @@ def p_table(d) -> list[str]:
     return out
 
 
-def plot(path: Path) -> None:
+def plot(path: Path, interim: bool = False) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -359,6 +400,8 @@ def plot(path: Path) -> None:
               ("2b: S2", ("S2_wen_fresh", "S2_wen_fresh_gpu", "S2_gpu", "S2_random")),
               ("cell 5 (S2)", ("S2_wen_fresh", "S2_wen_fresh_s0", "S2_wen_fresh_gpu",
                                "S2_wen_fresh_gpu_s0"))]
+    if interim:
+        groups = groups[:2]
     fig, axes = plt.subplots(1, len(groups), figsize=(5.2 * len(groups), 4.4), sharey=True)
     for ax, (title, cells) in zip(axes, groups):
         for c in cells:
@@ -379,11 +422,12 @@ def main() -> int:
     parser.add_argument("--step0", action="store_true")
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--study", action="store_true")
+    parser.add_argument("--interim", action="store_true")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     lines = []
     if args.study:
-        lines += render_study(args.out.parent) + [""]
+        lines += render_study(args.out.parent, args.interim) + [""]
     if args.step0:
         lines += render_step0() + [""]
     if args.smoke:
